@@ -1,10 +1,9 @@
-import display
-import auth
+from terminal_ui import menu
+from terminal_ui import auth
 
-
-def main():
+def run():
   while True:
-    choice = display.start_menu()
+    choice = menu.start()
 
     if choice == "1":
       if auth.login():
@@ -20,7 +19,3 @@ def main():
 
     else:
       print("❌ Invalid option. Please try again.\n")
-      
-
-if __name__ == "__main__":
-  main()

@@ -1,6 +1,5 @@
 from getpass import getpass
 
-
 def login():
   while True:
     print("-----------")
@@ -10,6 +9,9 @@ def login():
 
     print("Verifying credentials…")
     
+    # Check on the database !!! ./core
+    
+    # simulation
     if username == "admin" and password == "admin":
       print("✅ Login successful\n")
       return True
@@ -39,5 +41,9 @@ def register():
         return False
       
     else:
+      
+      # Add the new user to the database !!! ./core
+      
       print(f"✅ The account for {username} has been successfully created!\n")
       return True
+    

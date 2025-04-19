@@ -1,4 +1,4 @@
-def start_menu():
+def start():
   menu = r"""
   ┌──────────────┐
   │ [1] Log in   │
