@@ -1,2 +1,8 @@
+from gui import auth
+import tkinter as tk
+
 def run():
-  pass
+  root = tk.Tk()
+  auth_app = auth.App(root)
+  root.mainloop()
+  
