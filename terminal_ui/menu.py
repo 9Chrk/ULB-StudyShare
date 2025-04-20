@@ -1,3 +1,5 @@
+import os
+
 def start():
   menu = r"""
   ┌──────────────┐
@@ -6,6 +8,7 @@ def start():
   │ [Q] Exit     │
   └──────────────┘
   """
+  os.system("cls" if os.name == "nt" else "clear")
   print(menu, end="")
   choice = input(">> Select an option: ")
   print()

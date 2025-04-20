@@ -41,9 +41,7 @@ def register():
         return False
       
     else:
-      
       # Add the new user to the database !!! ./core
-      
       print(f"✅ The account for {username} has been successfully created!\n")
       return True
     
