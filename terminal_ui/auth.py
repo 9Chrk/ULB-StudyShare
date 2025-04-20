@@ -1,3 +1,4 @@
+from core import user
 from getpass import getpass
 
 def login():
@@ -9,10 +10,7 @@ def login():
 
     print("Verifying credentials…")
     
-    # Check on the database !!! ./core
-    
-    # simulation
-    if username == "admin" and password == "admin":
+    if user.check(username, password): # simulation
       print("✅ Login successful\n")
       return True
 
@@ -41,7 +39,7 @@ def register():
         return False
       
     else:
-      # Add the new user to the database !!! ./core
+      user.add(username, password) # simulation
       print(f"✅ The account for {username} has been successfully created!\n")
       return True
     
