@@ -1,11 +1,25 @@
+from core import db_manager
+from core.db_manager import DBManager
+
 def check(username, password):
-  # Check on the database !!!
-  # simulation
-  if username == "admin" and password == "admin":
-      return True
-  return False
+  with DBManager() as cursor:
+    cursor.execute(
+      "SELECT * FROM Utilisateur WHERE NomUtilisateur = %s AND MotDePasse = %s",
+      (username, password)
+    )
+    return cursor.fetchone() is not None
 
 def add(username, password):
-  # Add the new user to the database !!!
-  # simulation
-  return True
+  with DBManager() as cursor:
+    cursor.execute(
+      "SELECT * FROM Utilisateur WHERE NomUtilisateur = %s",
+      (username,)
+    )
+    if cursor.fetchone():
+      return False
+    
+    cursor.execute(
+      "INSERT INTO Utilisateur (NomUtilisateur, MotDePasse) VALUES (%s, %s)",
+      (username, password)
+    )
+    return True
