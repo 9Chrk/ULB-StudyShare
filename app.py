@@ -10,7 +10,7 @@ else:
 
 
 def main():
-    execute_sql_script("script.sql")
+    execute_sql_script("schema.sql")
     run()
 
 if __name__ == "__main__":

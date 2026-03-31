@@ -25,13 +25,11 @@ def execute_sql_script(filename):
 
     # Lecture du script SQL
     with open(filename, 'r', encoding='utf-8') as f:
-        sql_commands = f.read().split(';')
+        script = f.read()
 
-    # Exécution ligne par ligne
-    for command in sql_commands:
-        command = command.strip()
-        if command:
-            cursor.execute(command)
+    # Exécution multi-statements
+    for _ in cursor.execute(script, multi=True):
+        pass
 
     connection.commit()
     cursor.close()
