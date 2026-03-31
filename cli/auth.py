@@ -27,6 +27,7 @@ def register():
     while True:
         print("-----------")
         username = input("Choose a username : ")
+        email = input("Enter your email : ")
         password = getpass("Choose a password : ")
         confirm = getpass("Confirm your password : ")
         print("-----------\n")
@@ -40,6 +41,6 @@ def register():
                 return False
             
         else:
-            user.add(username, password)
+            user.add(username, password, email)
             print(f"✅ The account for {username} has been successfully created!\n")
             return True

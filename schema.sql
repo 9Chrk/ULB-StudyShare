@@ -155,24 +155,18 @@ CREATE TABLE IF NOT EXISTS Possede (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-/* ------------------------------ INDEX PERTINENTS ------------------------------ */
-
--- Index pour accélérer les recherches
-
-CREATE INDEX idx_resume_cours ON Resume(codeCours);
-CREATE INDEX idx_resume_utilisateur ON Resume(idUtilisateur);
-CREATE INDEX idx_resume_annee ON Resume(codeAnnee);
-CREATE INDEX idx_transaction_utilisateur_date ON TransactionPoints(idUtilisateur, dateTransaction);
-CREATE INDEX idx_evalue_resume_note ON Evalue(idResume, note);
-CREATE INDEX idx_possede_objet ON Possede(idObjet);
-CREATE INDEX idx_utilisateur_points ON Utilisateur(nombrePoints DESC);
-
-
-/* ------------------------------ TRIGGERS MÉTIER ------------------------------ */
+/* ------------------------------ GARDE-FOU - TRIGGERS MÉTIER ------------------------------ */
 
 -- ⚠️ ATTENTION : CETTE SECTION EST GÉNÉRÉ PAR IA
 -- Les triggers suivants sont essentiels pour garantir l'intégrité métier de la base de données. 
 -- Toute modification doit être effectuée avec précaution et en comprenant bien les règles métier qu'ils appliquent.
+
+DROP TRIGGER IF EXISTS trg_badge_exclusif_ins;
+DROP TRIGGER IF EXISTS trg_titre_exclusif_ins;
+DROP TRIGGER IF EXISTS trg_theme_exclusif_ins;
+DROP TRIGGER IF EXISTS trg_evalue_verifs_ins;
+DROP TRIGGER IF EXISTS trg_possede_date_ins;
+DROP TRIGGER IF EXISTS trg_utilisateur_objets_actifs_upd;
 
 DELIMITER $$
 
