@@ -235,11 +235,12 @@ class App:
         password = password_entry.get()
 
         password_entry.delete(0, tk.END)
-        if user.check(username, password):
+        is_ok, message = user.check(username, password)
+        if is_ok:
             user_entry.delete(0, tk.END)
             self.alert("Login successful!")
         else:
-            self.alert("Invalid username or password.", error=True)
+            self.alert(message, error=True)
 
     def register(self, user_entry, password_entry, confirm_password_entry, email_entry):
         username = user_entry.get()
@@ -252,11 +253,12 @@ class App:
 
         if password == confirm_password:
             user_entry.delete(0, tk.END)
-            if user.add(username, password, email):
+            is_ok, message = user.add(username, password, email)
+            if is_ok:
                 self.alert("Registration successful!")
                 self.login_menu()
             else:
-                self.alert("Username or email already exists.", error=True)
+                self.alert(message, error=True)
         else:
             self.alert("Passwords do not match.", error=True)
 

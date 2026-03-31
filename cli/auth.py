@@ -11,11 +11,12 @@ def login():
 
         print("Verifying credentials…")
         
-        if user.check(username, password):
+        is_ok, message = user.check(username, password)
+        if is_ok:
             print("✅ Login successful\n")
             return True
 
-        print("❌ Incorrect username or password.\n")
+        print(f"❌ {message}\n")
         retry = input(">> Retry ? [yes/no] : ").strip().lower()
         print()
         
@@ -41,6 +42,14 @@ def register():
                 return False
             
         else:
-            user.add(username, password, email)
-            print(f"✅ The account for {username} has been successfully created!\n")
-            return True
+            is_ok, message = user.add(username, password, email)
+            if is_ok:
+                print(f"✅ The account for {username.strip()} has been successfully created!\n")
+                return True
+
+            print(f"❌ {message}\n")
+            retry = input(">> Retry ? [yes/no] : ").strip().lower()
+            print()
+
+            if retry == "no":
+                return False
