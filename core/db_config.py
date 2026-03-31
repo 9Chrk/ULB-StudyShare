@@ -21,16 +21,14 @@ def execute_sql_script(filename):
     
     # Connexion à MySQL
     connection = mysql.connector.connect(**config)
-    cursor = connection.cursor()
 
     # Lecture du script SQL
     with open(filename, 'r', encoding='utf-8') as f:
         script = f.read()
 
-    # Exécution multi-statements
-    for _ in cursor.execute(script, multi=True):
+    # Exécution multi-statements (compatible avec les versions récentes)
+    for _ in connection.cmd_query_iter(script):
         pass
 
     connection.commit()
-    cursor.close()
     connection.close()
