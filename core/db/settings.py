@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Dictionnaire centralisé des paramètres de connexion MySQL
-DB_CONFIG: dict[str, str | None] = {
+DB_CONFIG = {
     'host': os.getenv('DB_HOST'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
