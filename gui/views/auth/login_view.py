@@ -7,11 +7,15 @@ from gui.ui_helpers import bind_entry_placeholder, clear_frames
 
 
 def build(root: tk.Tk, on_login, on_register_link) -> dict:
+    """Construit la vue de connexion et connecte les callbacks de l'application."""
+    # Nettoyer la fenêtre avant d'afficher la vue de login
     clear_frames(root)
 
+    # Frame principale blanche, centrée dans la fenêtre
     login_frame = tk.Frame(root, bg="white", bd=0)
     login_frame.place(relx=0.5, rely=0.5, width=350, height=320, anchor="center")
 
+    # Bouton de fermeture (croix en haut à droite)
     close_button = tk.Label(
         login_frame,
         text="×",
@@ -23,6 +27,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     close_button.place(x=320, y=10)
     close_button.bind("<Button-1>", lambda _: root.destroy())
 
+    # Titre principal de l'application
     title_label = tk.Label(
         login_frame,
         text="ULB StudyShare",
@@ -31,6 +36,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     )
     title_label.place(relx=0.5, y=40, anchor="center")
 
+    # Sous-titre (slogan) sous le titre principal
     subtitle_label = tk.Label(
         login_frame,
         text="Share. Learn. Grow.",
@@ -40,18 +46,21 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     )
     subtitle_label.place(relx=0.5, y=70, anchor="center")
 
+    # Icône + champ de saisie pour le nom d'utilisateur
     user_icon = tk.Label(login_frame, text="👤", font=("Segoe UI", 12), bg="white")
     user_icon.place(x=20, y=110)
     user_entry = ttk.Entry(login_frame, font=("Segoe UI", 10))
     user_entry.insert(0, "Username")
     user_entry.place(x=50, y=110, width=270, height=30)
 
+    # Icône + champ de saisie pour le mot de passe
     password_icon = tk.Label(login_frame, text="🔒", font=("Segoe UI", 12), bg="white")
     password_icon.place(x=20, y=160)
     password_entry = ttk.Entry(login_frame, font=("Segoe UI", 10))
     password_entry.insert(0, "Password")
     password_entry.place(x=50, y=160, width=270, height=30)
 
+    # Bouton qui déclenche la tentative de connexion
     login_button = tk.Button(
         login_frame,
         text="Log in",
@@ -64,6 +73,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     login_button.place(x=30, y=210, width=290, height=40)
     login_button.bind("<Button-1>", lambda _: on_login(user_entry, password_entry))
 
+    # Texte + lien cliquable pour naviguer vers l'inscription
     register_label = tk.Label(
         login_frame,
         text="New user? ",
@@ -84,6 +94,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     register_link.place(x=130, y=270)
     register_link.bind("<Button-1>", lambda _: on_register_link())
 
+    # Gestion des placeholders et masquage du mot de passe
     bind_entry_placeholder(user_entry, "Username")
     bind_entry_placeholder(password_entry, "Password", is_password=True)
 

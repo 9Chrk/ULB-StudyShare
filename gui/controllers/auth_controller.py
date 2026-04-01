@@ -17,14 +17,14 @@ class AuthController:
         login_view.build(
             root=self.root,
             on_login=self.login,
-            on_register_link=self.show_register,
+            on_register_link=self.app_controller.show_register,
         )
         
     def show_register(self):
         register_view.build(
             root=self.root,
             on_register=self.register,
-            on_login_link=self.show_login,
+            on_login_link=self.app_controller.show_login,
         )
 
     # ---------- FONCTIONS DE GESTION DE L'AUTHENTIFICATION ---------
