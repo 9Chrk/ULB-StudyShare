@@ -1,7 +1,9 @@
+"""Fonctions utilitaires pour parser des fichiers XML."""
+
 import xml.etree.ElementTree as xml
 
 
-def xml_to_dict(file_path) -> list[dict]:
+def xml_to_dict(file_path: str) -> list[dict]:
     tree = xml.parse(file_path)
     root = tree.getroot()
     data = []

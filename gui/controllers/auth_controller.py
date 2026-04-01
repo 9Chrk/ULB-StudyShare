@@ -1,3 +1,5 @@
+"""Contrôleur responsable de la logique d'authentification côté GUI."""
+
 from core.auth import service
 import gui.messages as messages
 import gui.views.auth.login_view as login_view
@@ -5,6 +7,8 @@ import gui.views.auth.register_view as register_view
 
 
 class AuthController:
+    """Gère la navigation et les actions entre les vues login/register."""
+
     def __init__(self, root, app_controller):
         self.root = root
         self.app_controller = app_controller

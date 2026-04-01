@@ -1,8 +1,12 @@
+"""Configuration de la fenêtre principale Tkinter."""
+
 import tkinter as tk
 from tkinter import font, ttk
 
 
 def configure_root(root: tk.Tk) -> None:
+    """Configure la fenêtre racine (titre, thème et styles globaux)."""
+    
     root.title("ULB StudyShare")
     root.configure(bg="#1a1a2e")
     _center_window(root, width=500, height=600)
@@ -19,6 +23,7 @@ def configure_root(root: tk.Tk) -> None:
 # ---------- FONCTIONS UTILITAIRES ---------
 
 def _center_window(root: tk.Tk, width: int, height: int) -> None:
+    """Centre la fenêtre sur l'écran en fonction de la taille donnée."""
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     offset_x = (screen_width - width) // 2

@@ -1,9 +1,13 @@
+"""Utilitaires d'initialisation de la base de données (exécution de script SQL)."""
+
 import mysql.connector
 
 from core.db.settings import DB_CONFIG
 
 
-def execute_sql_script(filename):
+def execute_sql_script(filename: str) -> None:
+    """Exécute un script SQL complet sur le serveur MySQL."""
+    
     config = DB_CONFIG.copy()
     del config['database']
     

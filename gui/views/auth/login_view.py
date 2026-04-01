@@ -1,4 +1,4 @@
-"""Vue de connexion."""
+"""Vue de connexion (construction des widgets et wiring des callbacks)."""
 
 import tkinter as tk
 from tkinter import ttk

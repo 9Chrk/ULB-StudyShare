@@ -1,4 +1,4 @@
-"""Contrôleur de l'authentification GUI."""
+"""Contrôleur principal de l'application."""
 
 from tkinter import font, ttk
 
@@ -6,6 +6,8 @@ from gui.controllers.auth_controller import AuthController
 
 
 class AppController:
+    """Contrôle la navigation entre les écrans."""
+    
     def __init__(self, root):
         self.root = root
 
@@ -19,7 +21,9 @@ class AppController:
     # ---------- FONCTIONS DE NAVIGATION ENTRE VUES ---------
     
     def show_login(self):
+        """Affiche l'écran de connexion."""
         self.auth_controller.show_login()
     
     def show_register(self):
+        """Affiche l'écran d'inscription."""
         self.auth_controller.show_register()
