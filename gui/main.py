@@ -1,8 +1,8 @@
-from gui import auth
+from gui import app
 import tkinter as tk
 
 
 def run():
     root = tk.Tk()
-    auth_app = auth.App(root)
+    app.App(root)
     root.mainloop()
