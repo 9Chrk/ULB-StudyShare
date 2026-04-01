@@ -65,9 +65,11 @@ class App:
             messages.show_error(self.root, "Passwords do not match.")
             return
 
-        user_entry.delete(0, "end")
         is_ok, message = auth_service.add(username, password, email)
+        
         if is_ok:
+            user_entry.delete(0, "end")
+            email_entry.delete(0, "end")
             messages.show_info(self.root, "Registration successful!")
             self.login_menu()
         else:
