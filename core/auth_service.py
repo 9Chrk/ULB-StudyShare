@@ -20,7 +20,7 @@ def check(username: str, password: str) -> tuple[bool, str]:
         user_exists = cursor.fetchone() is not None
 
     if not user_exists:
-        return False, "Nom d'utilisateur ou mot de passe incorrect."
+        return False, "Incorrect username or password."
 
     return True, ""
 
@@ -43,7 +43,7 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
             user_or_email_exists = cursor.fetchone() is not None
 
             if user_or_email_exists:
-                return False, "Le nom d'utilisateur ou l'email existe déjà."
+                return False, "Username or email already exists."
 
             cursor.execute(
                 """
@@ -55,4 +55,4 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
         return True, ""
     
     except mysql.connector.Error:
-        return False, "Impossible de créer le compte pour le moment."
+        return False, "Unable to create the account at the moment."

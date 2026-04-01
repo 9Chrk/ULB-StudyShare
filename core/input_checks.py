@@ -17,13 +17,13 @@ def is_blank(value: str) -> bool:
 def validate_login_input(username: str, password: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
     if is_blank(username) or is_blank(password):
-        return False, "Le nom d'utilisateur et le mot de passe sont obligatoires."
+        return False, "Username and password are required."
     # Les champs ne peuvent pas dépasser les longueurs maximales
     if len(username.strip()) > USERNAME_MAX_LENGTH:
-        return False, f"Le nom d'utilisateur ne peut pas dépasser {USERNAME_MAX_LENGTH} caractères."
+        return False, f"Username cannot exceed {USERNAME_MAX_LENGTH} characters."
     # idem
     if len(password) > PASSWORD_MAX_LENGTH:
-        return False, f"Le mot de passe ne peut pas dépasser {PASSWORD_MAX_LENGTH} caractères."
+        return False, f"Password cannot exceed {PASSWORD_MAX_LENGTH} characters."
 
     return True, ""
 
@@ -38,16 +38,16 @@ def validate_registration_input(username: str, password: str, email: str) -> tup
 
     # Les champs ne peuvent pas dépasser les longueurs maximales
     if len(username) > USERNAME_MAX_LENGTH:
-        return False, f"Le nom d'utilisateur ne peut pas dépasser {USERNAME_MAX_LENGTH} caractères."
+        return False, f"Username cannot exceed {USERNAME_MAX_LENGTH} characters."
 
     if len(email) > EMAIL_MAX_LENGTH:
-        return False, f"L'email ne peut pas dépasser {EMAIL_MAX_LENGTH} caractères."
+        return False, f"Email cannot exceed {EMAIL_MAX_LENGTH} characters."
 
     if len(password) > PASSWORD_MAX_LENGTH:
-        return False, f"Le mot de passe ne peut pas dépasser {PASSWORD_MAX_LENGTH} caractères."
+        return False, f"Password cannot exceed {PASSWORD_MAX_LENGTH} characters."
 
     # Le format de l'email doit être valide: <>@<>.<>
     if not EMAIL_REGEX.match(email):
-        return False, "Le format de l'email est invalide."
+        return False, "Invalid email format."
 
     return True, ""
