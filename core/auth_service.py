@@ -8,6 +8,7 @@ from core.input_checks import validate_login_input, validate_registration_input
 
 def check(username: str, password: str) -> tuple[bool, str]:
     is_valid, error = validate_login_input(username, password)
+    
     if not is_valid:
         return False, error
 
@@ -26,6 +27,7 @@ def check(username: str, password: str) -> tuple[bool, str]:
 
 def add(username: str, password: str, email: str) -> tuple[bool, str]:
     is_valid, error = validate_registration_input(username, password, email)
+    
     if not is_valid:
         return False, error
 
@@ -49,7 +51,7 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
                 """,
                 (username, email, password),
             )
-
         return True, ""
+    
     except mysql.connector.Error:
         return False, "Impossible de créer le compte pour le moment."
