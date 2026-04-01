@@ -10,13 +10,13 @@ EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 ##########################################################
 
 
-def is_blank(value: str) -> bool:
+def _is_blank(value: str) -> bool:
     return not value or not value.strip()
 
 
 def validate_login_input(username: str, password: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
-    if is_blank(username) or is_blank(password):
+    if _is_blank(username) or _is_blank(password):
         return False, "Username and password are required."
     # Les champs ne peuvent pas dépasser les longueurs maximales
     if len(username.strip()) > USERNAME_MAX_LENGTH:
@@ -30,7 +30,7 @@ def validate_login_input(username: str, password: str) -> tuple[bool, str]:
 
 def validate_registration_input(username: str, password: str, email: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
-    if is_blank(username) or is_blank(email) or is_blank(password):
+    if _is_blank(username) or _is_blank(email) or _is_blank(password):
         return False, "Tous les champs sont obligatoires."
 
     username = username.strip()

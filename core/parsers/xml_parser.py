@@ -1,18 +1,4 @@
-import csv
-import json
 import xml.etree.ElementTree as xml
-
-
-def csv_to_dict(file_path) -> list[dict[str, str]]:
-    with open(file_path, mode='r', encoding='utf-8') as csvfile:
-        data = csv.DictReader(csvfile)
-        return [row for row in data]
-
-
-def json_to_dict(file_path) -> list[dict[str, str]] | list[dict[str, list]]:
-    with open(file_path, mode='r', encoding='utf-8') as jsonfile: 
-        data = json.load(jsonfile)
-        return data[list(data.keys())[0]]
 
 
 def xml_to_dict(file_path) -> list[dict]:

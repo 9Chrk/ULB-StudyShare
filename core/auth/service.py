@@ -2,8 +2,8 @@
 
 import mysql.connector
 
-from core.db_manager import DBManager
-from core.input_checks import validate_login_input, validate_registration_input
+from core.db.manager import DBManager
+from core.auth.validators import validate_login_input, validate_registration_input
 
 
 def check(username: str, password: str) -> tuple[bool, str]:

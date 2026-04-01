@@ -1,5 +1,5 @@
-from core.db_config import execute_sql_script
-from gui.main import run
+from core.db.init import execute_sql_script
+from gui.app import run
 
 
 def main():

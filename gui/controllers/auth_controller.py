@@ -1,0 +1,62 @@
+from core.auth import service
+import gui.messages as messages
+import gui.views.auth.login_view as login_view
+import gui.views.auth.register_view as register_view
+
+
+class AuthController:
+    def __init__(self, root, app_controller):
+        self.root = root
+        self.app_controller = app_controller
+        
+    def show_login(self):
+        login_view.build(
+            root=self.root,
+            on_login=self.login,
+            on_register_link=self.show_register,
+        )
+        
+    def show_register(self):
+        register_view.build(
+            root=self.root,
+            on_register=self.register,
+            on_login_link=self.show_login,
+        )
+
+    # ---------- FONCTIONS DE GESTION DE L'AUTHENTIFICATION ---------
+    
+    def login(self, user_entry, password_entry):
+        username = user_entry.get()
+        password = password_entry.get()
+
+        password_entry.delete(0, "end")
+        is_ok, message = service.check(username, password)
+
+        if is_ok:
+            user_entry.delete(0, "end")
+            messages.show_info(self.root, "Login successful!")
+        else:
+            messages.show_error(self.root, message)
+
+    def register(self, user_entry, password_entry, confirm_password_entry, email_entry):
+        username = user_entry.get()
+        email = email_entry.get()
+        password = password_entry.get()
+        confirm_password = confirm_password_entry.get()
+
+        password_entry.delete(0, "end")
+        confirm_password_entry.delete(0, "end")
+
+        if password != confirm_password:
+            messages.show_error(self.root, "Passwords do not match.")
+            return
+
+        is_ok, message = service.add(username, password, email)
+        
+        if is_ok:
+            user_entry.delete(0, "end")
+            email_entry.delete(0, "end")
+            messages.show_info(self.root, "Registration successful!")
+            self.show_login()
+        else:
+            messages.show_error(self.root, message)

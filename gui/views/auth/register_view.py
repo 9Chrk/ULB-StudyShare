@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from gui.views.common import bind_entry_placeholder, clear_frames
+from gui.ui_helpers import bind_entry_placeholder, clear_frames
 
 
 def build(root: tk.Tk, on_register, on_login_link) -> dict:

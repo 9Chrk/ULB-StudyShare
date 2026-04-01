@@ -1,5 +1,6 @@
 import mysql.connector
-from core.db_config import DB_CONFIG
+
+from core.db.settings import DB_CONFIG
 
 
 class DBManager:
