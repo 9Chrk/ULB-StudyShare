@@ -8,6 +8,7 @@ from core.db.settings import DB_CONFIG
 def execute_sql_script(filename: str) -> None:
     """Exécute un script SQL complet sur le serveur MySQL."""
     
+    # On part de la configuration globale mais sans base sélectionnée
     config = DB_CONFIG.copy()
     del config['database']
     

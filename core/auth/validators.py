@@ -3,14 +3,17 @@
 import re
 
 ############### CONSTANTES DE VALIDATION #################
+# Limites simples pour éviter les entrées trop longues dans la db
 USERNAME_MAX_LENGTH = 50
 EMAIL_MAX_LENGTH = 255
 PASSWORD_MAX_LENGTH = 255
+# Regex basique, exemple de validation d'email: <>@<>.<>
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 ##########################################################
 
 
 def _is_blank(value: str) -> bool:
+    """Renvoie True si la chaîne est vide ou ne contient que des espaces."""
     return not value or not value.strip()
 
 

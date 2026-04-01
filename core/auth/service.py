@@ -7,11 +7,14 @@ from core.auth.validators import validate_login_input, validate_registration_inp
 
 
 def check(username: str, password: str) -> tuple[bool, str]:
+    """Vérifie les identifiants de connexion fournis par l'utilisateur."""
+    # 1) Validation côté applicatif (longueur, champs vides, etc.)
     is_valid, error = validate_login_input(username, password)
     
     if not is_valid:
         return False, error
 
+    # 2) Vérification de l'existence de l'utilisateur en base de données
     with DBManager() as cursor:
         cursor.execute(
             "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
@@ -19,6 +22,7 @@ def check(username: str, password: str) -> tuple[bool, str]:
         )
         user_exists = cursor.fetchone() is not None
 
+    # 3) Aucun enregistrement trouvé : on renvoie un message d'erreur générique
     if not user_exists:
         return False, "Incorrect username or password."
 
@@ -26,6 +30,8 @@ def check(username: str, password: str) -> tuple[bool, str]:
 
 
 def add(username: str, password: str, email: str) -> tuple[bool, str]:
+    """Crée un nouvel utilisateur si les données sont valides et disponibles."""
+    # 1) Validation des données d'inscription
     is_valid, error = validate_registration_input(username, password, email)
     
     if not is_valid:
@@ -35,6 +41,7 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
     email = email.strip()
 
     try:
+        # 2) Vérifier que le nom d'utilisateur ou l'email ne sont pas déjà utilisés
         with DBManager() as cursor:
             cursor.execute(
                 "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s OR email = %s",
@@ -45,6 +52,7 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
             if user_or_email_exists:
                 return False, "Username or email already exists."
 
+            # 3) Insérer le nouvel utilisateur
             cursor.execute(
                 """
                 INSERT INTO Utilisateur (nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
