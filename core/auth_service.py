@@ -40,8 +40,9 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
                 "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s OR email = %s",
                 (username, email),
             )
+            user_or_email_exists = cursor.fetchone() is not None
 
-            if cursor.fetchone():
+            if user_or_email_exists:
                 return False, "Le nom d'utilisateur ou l'email existe déjà."
 
             cursor.execute(
