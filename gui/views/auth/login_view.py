@@ -3,13 +3,16 @@
 import tkinter as tk
 from tkinter import ttk
 
-from gui.ui_helpers import bind_entry_placeholder, clear_frames
+from gui.ui_helpers import bind_entry_placeholder, clear_frames, get_asset_path
 
 
 def build(root: tk.Tk, on_login, on_register_link) -> dict:
     """Construit la vue de connexion et connecte les callbacks de l'application."""
     # Nettoyer la fenêtre avant d'afficher la vue de login
     clear_frames(root)
+
+    # Charger le logo de l'application
+    logo_image = tk.PhotoImage(file=str(get_asset_path("assets", "images", "ulb_logo.png"))).subsample(10, 10)
 
     # Frame principale blanche, centrée dans la fenêtre
     login_frame = tk.Frame(root, bg="white", bd=0)
@@ -27,14 +30,18 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     close_button.place(x=320, y=10)
     close_button.bind("<Button-1>", lambda _: root.destroy())
 
-    # Titre principal de l'application
+    # Logo + titre principal de l'application
+    logo_label = tk.Label(login_frame, image=logo_image, bg="white")
+    logo_label.place(x=45, y=20)
+    login_frame.logo_image = logo_image
+    
     title_label = tk.Label(
         login_frame,
-        text="ULB StudyShare",
+        text="StudyShare",
         font=("Segoe UI", 20, "bold"),
         bg="white",
     )
-    title_label.place(relx=0.5, y=40, anchor="center")
+    title_label.place(x=100, y=20)
 
     # Sous-titre (slogan) sous le titre principal
     subtitle_label = tk.Label(
