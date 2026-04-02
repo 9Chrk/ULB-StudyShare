@@ -9,7 +9,7 @@ def configure_root(root: tk.Tk) -> None:
     
     root.title("ULB StudyShare")
     root.configure(bg="#1a1a2e")
-    _center_window(root, width=500, height=600)
+    center_window(root, width=500, height=600)
 
     default_font = font.nametofont("TkDefaultFont")
     default_font.configure(family="Segoe UI", size=10)
@@ -22,10 +22,11 @@ def configure_root(root: tk.Tk) -> None:
 
 # ---------- FONCTIONS UTILITAIRES ---------
 
-def _center_window(root: tk.Tk, width: int, height: int) -> None:
+def center_window(root: tk.Tk, width: int, height: int) -> None:
     """Centre la fenêtre sur l'écran en fonction de la taille donnée."""
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     offset_x = (screen_width - width) // 2
     offset_y = (screen_height - height) // 2
     root.geometry(f"{width}x{height}+{offset_x}+{offset_y}")
+    root.resizable(False, False)
