@@ -2,6 +2,8 @@
 
 import tkinter as tk
 
+from gui.ui_helpers import get_asset_path
+
 
 class Sidebar(tk.Frame):
     """Barre latérale avec boutons de navigation et état actif."""
@@ -13,14 +15,14 @@ class Sidebar(tk.Frame):
                  **kwargs,
     ):
         super().__init__(master, bg=bg, **kwargs)
-        # Callbacks et styles
-        self.on_select = on_select
-        self.active_fg = active_fg
-        self.inactive_fg = inactive_fg
         
-        # Data des boutons
+        # Data et callbacks
         self.buttons = {}
-        self.exit_btn = None
+        self.logo_image = None
+        self.on_select = on_select
+        
+        # Offset pour les boutons de menu
+        self.start_row = 2
         self.exit_row = 0
         
         # Largeur fixe de la sidebar
@@ -29,20 +31,46 @@ class Sidebar(tk.Frame):
         self.grid_columnconfigure(0, weight=1)  # Permet aux boutons de s'étirer horizontalement
         
         # Style
+        self.active_fg = active_fg
+        self.inactive_fg = inactive_fg
         self.active_background = "#1B1B33"
         self.exit_btn_color = "#5B100F"
+
+        # Header branding
+        self.build_header()
+
+    
+    # --------- CONSTRUCTION DE L'EN-TÊTE DE MARQUE ----------
+
+    def build_header(self) -> None:
+        """Construit l'en-tête de marque en haut de la sidebar."""
+        brand_frame = tk.Frame(self, bg=self["bg"])
+        brand_frame.grid(row=0, column=0, sticky="ew", padx=20, pady=(18, 14))
+
+        # Logo ULB 
+        try:
+            self.logo_image = tk.PhotoImage(file=str(get_asset_path("assets", "images", "ulb_logo.png"))).subsample(12, 12)
+            logo_label = tk.Label(brand_frame, image=self.logo_image, bg=self["bg"])
+            logo_label.pack(side="left")
+            
+        # (fallback silencieux si l'asset n'est pas disponible) 
+        except tk.TclError:
+            pass
+        
+        # Titre de l'application à côté du logo
+        title_label = tk.Label(brand_frame, text="StudyShare", font=("Segoe UI", 16, "bold"), bg=self["bg"], fg="white")
+        title_label.pack(side="left", padx=(10, 0))
+        
+        # Séparateur visuel
+        top_separator = tk.Frame(self, bg="#2A2A45", height=1)
+        top_separator.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 10))
 
 
     # ---------- CONFIGURATION DES ENTRÉES DE MENU ----------
 
     def set_items(self, items: dict) -> None:
         """Crée les boutons de navigation à partir d'un dict {view_name: label}."""
-        # Nettoyer les anciens widgets si on reconfigure le menu (sauf exit_btn)
-        for child in self.winfo_children():
-            if child != self.exit_btn:
-                child.destroy()
-        self.buttons.clear()
-
+        
         for index, (view_name, label) in enumerate(items.items()):
             btn = tk.Button(
                 self,
@@ -59,31 +87,32 @@ class Sidebar(tk.Frame):
                 cursor="hand2",
                 highlightthickness=0,
             )
-            btn.grid(row=index, column=0, sticky="ew", pady=(85 if index == 0 else 5, 0))
+            row = self.start_row + index
+            btn.grid(row=row, column=0, sticky="ew", pady=(10 if index == 0 else 5, 0))
             btn.configure(command=lambda vn=view_name: self._on_click(vn))
-            self.grid_rowconfigure(index, weight=0)
-
+            self.grid_rowconfigure(row, weight=0)
+            
+            # Mémoriser le bouton pour la gestion de l'état actif
             self.buttons[view_name] = btn
         
         # Mémoriser la dernière ligne utilisée pour placer le bouton Exit en bas
-        self.exit_row = len(items)
+        self.exit_row = self.start_row + len(items)
 
 
     # ---------- BOUTON EXIT ----------
     
     def add_exit_button(self, on_exit_callback) -> None:
         """Ajoute un bouton Exit en bas de la sidebar."""
-       
+        
         # Utiliser une ligne flexible pour pousser Exit en bas de la sidebar
-        spacer_row = self.exit_row
-        self.grid_rowconfigure(spacer_row, weight=1)
+        self.grid_rowconfigure(self.exit_row, weight=1)
 
-        # Séparateur visuel (ligne grise)
-        separator = tk.Frame(self, bg="#333", height=1)
-        separator.grid(row=spacer_row + 1, column=0, sticky="ew", pady=(20, 10), padx=20)
+        # Séparateur visuel
+        exit_separator = tk.Frame(self, bg="#333", height=1)
+        exit_separator.grid(row=self.exit_row + 1, column=0, sticky="ew", pady=(20, 10), padx=20)
         
         # Bouton Exit
-        self.exit_btn = tk.Button(
+        exit_btn = tk.Button(
             self,
             text="Exit",
             font=("Segoe UI", 11, "bold"),
@@ -99,9 +128,9 @@ class Sidebar(tk.Frame):
             highlightthickness=0,
             command=on_exit_callback,
         )
-        self.exit_btn.grid(row=spacer_row + 2, column=0, sticky="ew", pady=(0, 16))
-        self.grid_rowconfigure(spacer_row + 1, weight=0)
-        self.grid_rowconfigure(spacer_row + 2, weight=0)
+        exit_btn.grid(row=self.exit_row + 2, column=0, sticky="ew", pady=(0, 16))
+        self.grid_rowconfigure(self.exit_row + 1, weight=0)
+        self.grid_rowconfigure(self.exit_row + 2, weight=0)
 
 
     # ---------- GESTION DE L'ÉTAT ACTIF ----------
