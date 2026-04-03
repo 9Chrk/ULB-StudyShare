@@ -1,10 +1,10 @@
-"""Vue simple de profil utilisateur (post-login)."""
+"""Simple post-login Statistics view."""
 
 import tkinter as tk
 
 
-class ProfileView(tk.Frame):
-    """Vue Profile pour tester la navigation via la sidebar."""
+class StatisticsView(tk.Frame):
+    """Simple Statistics page for sidebar navigation."""
 
     def __init__(self, root, app_controller, bg: str = "#1a1a2e", **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
@@ -12,7 +12,7 @@ class ProfileView(tk.Frame):
 
         title = tk.Label(
             self,
-            text="Profile",
+            text="Statistics",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg="white",
@@ -21,7 +21,7 @@ class ProfileView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text="View and edit your profile information.",
+            text="Track your learning activity.",
             font=("Segoe UI", 12),
             bg=bg,
             fg="#B0BEC5",

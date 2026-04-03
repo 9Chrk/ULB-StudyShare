@@ -38,7 +38,6 @@ class AuthController:
 
         if is_ok:
             user_entry.delete(0, "end")
-            messages.show_info(self.root, "Login successful!")
             self.app_controller.show_workspace()
         else:
             messages.show_error(self.root, message)

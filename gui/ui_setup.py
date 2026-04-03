@@ -14,7 +14,7 @@ def configure_root(root: tk.Tk) -> None:
     window_icon = tk.PhotoImage(file=str(get_asset_path("assets", "images", "ulb_logo.png")))
     root._window_icon = window_icon
     root.iconphoto(True, window_icon)
-    center_window(root, width=1280, height=720, resizable=False)
+    center_window(root, width=500, height=600, resizable=False)
     
     # Configurer la police par défaut pour toute l'application
     default_font = font.nametofont("TkDefaultFont")

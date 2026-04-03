@@ -22,7 +22,7 @@ class DashboardView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text="Bienvenue sur ULB StudyShare",
+            text="Welcome to ULB StudyShare",
             font=("Segoe UI", 12),
             bg="#1a1a2e",
             fg="#B0BEC5",
