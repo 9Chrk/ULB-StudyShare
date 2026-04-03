@@ -6,17 +6,14 @@ import tkinter as tk
 class Sidebar(tk.Frame):
     """Barre latérale avec boutons de navigation et état actif."""
 
-    def __init__(
-        self,
-        master,
-        on_select,
-        bg: str = "#1a1a2e",
-        active_fg: str = "#1DE9B6",
-        inactive_fg: str = "white",
-        **kwargs,
+    def __init__(self, master, on_select, 
+                 bg: str = "#141429", 
+                 active_fg: str = "#1DE9B6",
+                 inactive_fg: str = "white",
+                 **kwargs,
     ):
         super().__init__(master, bg=bg, **kwargs)
-
+        
         self.on_select = on_select
         self.active_fg = active_fg
         self.inactive_fg = inactive_fg

@@ -10,13 +10,10 @@ class WorkspaceController:
     def __init__(self, root, app_controller):
         self.root = root
         self.app_controller = app_controller
-        self._workspace = None
+        self.workspace = None
 
     def show_workspace(self):
         """Affiche l'espace de travail avec sidebar + contenu."""
-        # On nettoie les anciennes frames (login) une seule fois
         clear_frames(self.root)
-
-        # Crée et affiche la vue principale de workspace
-        self._workspace = WorkspaceView(self.root, self.app_controller)
-        self._workspace.pack(fill="both", expand=True)
+        self.workspace = WorkspaceView(self.root, self.app_controller)
+        self.workspace.pack(fill="both", expand=True)

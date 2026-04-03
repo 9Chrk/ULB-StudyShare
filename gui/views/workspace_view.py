@@ -14,29 +14,20 @@ class WorkspaceView(tk.Frame):
     def __init__(self, root: tk.Tk, app_controller, **kwargs):
         super().__init__(master=root, bg="#1a1a2e", **kwargs)
 
+        # Initialisation des attributs
         self.root = root
         self.app_controller = app_controller
-        self._views = {}
+        self.views = {}
 
-        # Layout global : 2 colonnes (sidebar fixe + contenu)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        # Layout global : 2 colonnes (sidebar + contenu)
 
         # Sidebar à gauche
-        self.sidebar = Sidebar(
-            master=self,
-            on_select=self.show_view,
-            bg="#141429",
-            active_fg="#1DE9B6",
-            inactive_fg="white",
-        )
+        self.sidebar = Sidebar(master=self, on_select=self.show_view, active_fg="#1DE9B6", inactive_fg="white")
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
         # Zone de contenu à droite
         self.content_area = tk.Frame(self, bg="#1a1a2e")
-        self.content_area.grid(row=0, column=1, sticky="nsew")
-        self.content_area.grid_rowconfigure(0, weight=1)
-        self.content_area.grid_columnconfigure(0, weight=1)
+        self.content_area.grid(row=0, column=1)
 
         # Initialiser les vues et la sidebar
         self._create_views()
@@ -44,6 +35,22 @@ class WorkspaceView(tk.Frame):
 
         # Vue par défaut
         self.show_view("dashboard")
+
+    
+    # ---------- NAVIGATION ENTRE VUES ----------
+
+    def show_view(self, view_name: str) -> None:
+        """Affiche la vue demandée via tkraise sans reconstruire les widgets."""
+        frame = self.views.get(view_name)
+        if frame is None:
+            return
+
+        # Mettre à jour l'état des boutons de la sidebar
+        self.sidebar.set_active(view_name)
+
+        # Afficher la vue dans la zone de contenu
+        frame.tkraise()
+
 
     # ---------- INITIALISATION DES VUES ----------
 
@@ -62,8 +69,8 @@ class WorkspaceView(tk.Frame):
 
         for name, ViewClass in views_config.items():
             frame = ViewClass(self.content_area, self.app_controller, bg="#1a1a2e")
-            frame.grid(row=0, column=0, sticky="nsew")
-            self._views[name] = frame
+            frame.grid(row=0, column=0)
+            self.views[name] = frame
 
     def _configure_sidebar_items(self) -> None:
         """Configure les entrées de navigation de la sidebar."""
@@ -74,17 +81,3 @@ class WorkspaceView(tk.Frame):
             # "leaderboard": "Leaderboard",
         }
         self.sidebar.set_items(items)
-
-    # ---------- NAVIGATION ENTRE VUES ----------
-
-    def show_view(self, view_name: str) -> None:
-        """Affiche la vue demandée via tkraise sans reconstruire les widgets."""
-        frame = self._views.get(view_name)
-        if frame is None:
-            return
-
-        # Mettre à jour l'état des boutons de la sidebar
-        self.sidebar.set_active(view_name)
-
-        # Afficher la vue dans la zone de contenu
-        frame.tkraise()
