@@ -89,7 +89,7 @@ class Sidebar(tk.Frame):
             )
             row = self.start_row + index
             btn.grid(row=row, column=0, sticky="ew", pady=(10 if index == 0 else 5, 0))
-            btn.configure(command=lambda vn=view_name: self._on_click(vn))
+            btn.configure(command=lambda vn=view_name: self.on_click(vn))
             self.grid_rowconfigure(row, weight=0)
             
             # Mémoriser le bouton pour la gestion de l'état actif
@@ -135,7 +135,7 @@ class Sidebar(tk.Frame):
 
     # ---------- GESTION DE L'ÉTAT ACTIF ----------
 
-    def _on_click(self, view_name: str) -> None:
+    def on_click(self, view_name: str) -> None:
         """Callback interne lorsqu'un bouton est cliqué."""
         self.set_active(view_name)
         if callable(self.on_select):

@@ -36,11 +36,11 @@ class WorkspaceView(tk.Frame):
         self.content_area.grid_columnconfigure(0, weight=1)
 
         # Initialiser les vues et la sidebar
-        self._create_views()
-        self._configure_sidebar_items()
+        self.create_views()
+        self.configure_sidebar_items()
         
         # Ajouter le bouton Exit en bas
-        self.sidebar.add_exit_button(on_exit_callback=self._on_exit)
+        self.sidebar.add_exit_button(on_exit_callback=self.on_exit)
 
         # Vue par défaut
         self.show_view("dashboard")
@@ -48,7 +48,7 @@ class WorkspaceView(tk.Frame):
     
     # ---------- NAVIGATION ENTRE VUES ----------
 
-    def _on_exit(self) -> None:
+    def on_exit(self) -> None:
         """Quitter l'espace de travail et revenir au login."""
         self.destroy()
         center_window(self.root, width=500, height=600, resizable=False)
@@ -69,7 +69,7 @@ class WorkspaceView(tk.Frame):
 
     # ---------- INITIALISATION DES VUES ----------
 
-    def _create_views(self) -> None:
+    def create_views(self) -> None:
         """Instancie toutes les vues de l'application dans la zone de contenu."""
         # Imports locaux pour éviter les imports circulaires
         from gui.views.dashboard_view   import DashboardView
@@ -95,7 +95,7 @@ class WorkspaceView(tk.Frame):
             frame.grid(row=0, column=0, sticky="nsew")
             self.views[name] = frame
 
-    def _configure_sidebar_items(self) -> None:
+    def configure_sidebar_items(self) -> None:
         """Configure les entrées de navigation de la sidebar."""
         items = {
             "dashboard": "Dashboard",
