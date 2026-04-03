@@ -1,56 +1,74 @@
 """Validation des entrées utilisateur pour l'authentification."""
 
 import re
-
-############### CONSTANTES DE VALIDATION #################
-# Limites simples pour éviter les entrées trop longues dans la db
-USERNAME_MAX_LENGTH = 50
-EMAIL_MAX_LENGTH = 255
-PASSWORD_MAX_LENGTH = 255
-# Regex basique, exemple de validation d'email: <>@<>.<>
-EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-##########################################################
-
-
-def _is_blank(value: str) -> bool:
-    """Renvoie True si la chaîne est vide ou ne contient que des espaces."""
-    return not value or not value.strip()
+from core.constants import USERNAME_MAX_LENGTH, PASSWORD_MAX_LENGTH, EMAIL_MAX_LENGTH, EMAIL_REGEX
 
 
 def validate_login_input(username: str, password: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
     if _is_blank(username) or _is_blank(password):
         return False, "Username and password are required."
+    
+    # data cleanup
+    username = username.strip()
+    password = password.strip()
+    
     # Les champs ne peuvent pas dépasser les longueurs maximales
-    if len(username.strip()) > USERNAME_MAX_LENGTH:
-        return False, f"Username cannot exceed {USERNAME_MAX_LENGTH} characters."
-    # idem
-    if len(password) > PASSWORD_MAX_LENGTH:
-        return False, f"Password cannot exceed {PASSWORD_MAX_LENGTH} characters."
+    test_cases = [
+        (username, USERNAME_MAX_LENGTH, "Username"),
+        (password, PASSWORD_MAX_LENGTH, "Password")
+    ]
+    
+    # Validation de la longueur de chaque champ
+    for value, max_length, field_name in test_cases:
+        if not _is_valid_length(value, max_length):
+            return False, _message_length_exceeded(field_name, max_length)
 
-    return True, ""
+    return True, "Validation successful."
 
 
 def validate_registration_input(username: str, password: str, email: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
-    if _is_blank(username) or _is_blank(email) or _is_blank(password):
-        return False, "Tous les champs sont obligatoires."
+    if _is_blank(email):
+        return False, "Email is required."
 
-    username = username.strip()
+    # Réutilise la logique de validation de connexion pour username/password
+    is_valid_login, login_message = validate_login_input(username, password)
+    if not is_valid_login:
+        return False, login_message
+
+    # data cleanup
     email = email.strip()
-
-    # Les champs ne peuvent pas dépasser les longueurs maximales
-    if len(username) > USERNAME_MAX_LENGTH:
-        return False, f"Username cannot exceed {USERNAME_MAX_LENGTH} characters."
-
-    if len(email) > EMAIL_MAX_LENGTH:
-        return False, f"Email cannot exceed {EMAIL_MAX_LENGTH} characters."
-
-    if len(password) > PASSWORD_MAX_LENGTH:
-        return False, f"Password cannot exceed {PASSWORD_MAX_LENGTH} characters."
+    
+    # Validation de la longueur uniquement pour l'email (username/password déjà vérifiés)
+    if not _is_valid_length(email, EMAIL_MAX_LENGTH):
+        return False, _message_length_exceeded("Email", EMAIL_MAX_LENGTH)
 
     # Le format de l'email doit être valide: <>@<>.<>
-    if not EMAIL_REGEX.match(email):
+    if not _is_valid_email(email):
         return False, "Invalid email format."
 
-    return True, ""
+    return True, "Validation successful."
+
+
+
+# --- Fonctions utilitaires privées pour la validation ---
+
+def _is_blank(value: str) -> bool:
+    """Renvoie True si la chaîne est vide ou ne contient que des espaces."""
+    return not value or not value.strip()
+
+
+def _is_valid_email(email: str) -> bool:
+    """Vérifie si l'email correspond au format attendu."""
+    return EMAIL_REGEX.match(email) is not None
+
+
+def _is_valid_length(value: str, max_length: int) -> bool:
+    """Vérifie si la chaîne ne dépasse pas la longueur maximale."""
+    return len(value.strip()) <= max_length
+
+
+def _message_length_exceeded(field_name: str, max_length: int) -> str:
+    """Génère un message d'erreur pour les champs dépassant la longueur maximale."""
+    return f"{field_name} cannot exceed {max_length} characters."
