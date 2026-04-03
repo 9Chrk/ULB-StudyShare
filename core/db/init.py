@@ -24,7 +24,8 @@ def execute_sql_script(filename: str) -> None:
     cursor.execute(script)
     while cursor.nextset():
         pass
-
+    
+    # Commit des changements et fermeture de la connexion
     connection.commit()
     cursor.close()
     connection.close()
