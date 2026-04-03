@@ -13,7 +13,8 @@ class WorkspaceView(tk.Frame):
     """
 
     def __init__(self, root: tk.Tk, app_controller, **kwargs):
-        super().__init__(master=root, bg="#1a1a2e", **kwargs)
+        self.content_bg = "#f3f4f6"
+        super().__init__(master=root, bg=self.content_bg, **kwargs)
 
         # Initialisation des attributs
         self.root = root
@@ -29,7 +30,7 @@ class WorkspaceView(tk.Frame):
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
         # Zone de contenu à droite
-        self.content_area = tk.Frame(self, bg="#1a1a2e")
+        self.content_area = tk.Frame(self, bg=self.content_bg)
         self.content_area.grid(row=0, column=1, sticky="nsew")
         self.content_area.grid_rowconfigure(0, weight=1)
         self.content_area.grid_columnconfigure(0, weight=1)
@@ -90,7 +91,7 @@ class WorkspaceView(tk.Frame):
         }
 
         for name, ViewClass in views_config.items():
-            frame = ViewClass(self.content_area, self.app_controller, bg="#1a1a2e")
+            frame = ViewClass(self.content_area, self.app_controller, bg=self.content_bg)
             frame.grid(row=0, column=0, sticky="nsew")
             self.views[name] = frame
 

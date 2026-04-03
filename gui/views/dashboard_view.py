@@ -6,7 +6,7 @@ import tkinter as tk
 class DashboardView(tk.Frame):
     """Vue Dashboard simple pour illustrer le layout principal."""
 
-    def __init__(self, root, app_controller, bg: str = "#1a1a2e", **kwargs):
+    def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -15,8 +15,8 @@ class DashboardView(tk.Frame):
             self,
             text="Dashboard",
             font=("Segoe UI", 20, "bold"),
-            bg="#1a1a2e",
-            fg="white",
+            bg=bg,
+            fg="#111827",
         )
         title.pack(anchor="nw", padx=24, pady=(24, 8))
 
@@ -24,7 +24,7 @@ class DashboardView(tk.Frame):
             self,
             text="Welcome to ULB StudyShare",
             font=("Segoe UI", 12),
-            bg="#1a1a2e",
-            fg="#B0BEC5",
+            bg=bg,
+            fg="#6b7280",
         )
         subtitle.pack(anchor="nw", padx=24)
