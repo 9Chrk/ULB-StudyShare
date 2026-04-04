@@ -51,7 +51,6 @@ class WorkspaceView(tk.Frame):
     def on_exit(self) -> None:
         """Quitter l'espace de travail et revenir au login."""
         self.destroy()
-        center_window(self.root, width=500, height=600, resizable=False)
         self.app_controller.show_login()
 
     def show_view(self, view_name: str) -> None:

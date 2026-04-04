@@ -1,6 +1,7 @@
 """Contrôleur responsable de la logique d'authentification côté GUI."""
 
 from core.auth import service
+from gui.transitions import with_alpha_transition
 import gui.messages as messages
 import gui.views.auth.login_view as login_view
 import gui.views.auth.register_view as register_view
@@ -38,7 +39,7 @@ class AuthController:
 
         if is_ok:
             user_entry.delete(0, "end")
-            self.app_controller.show_workspace()
+            with_alpha_transition(self.root, self.app_controller.show_workspace)
         else:
             messages.show_error(self.root, message)
 

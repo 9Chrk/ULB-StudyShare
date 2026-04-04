@@ -2,6 +2,7 @@
 
 from tkinter import font, ttk
 
+from gui.transitions import with_alpha_transition
 from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
 
@@ -17,7 +18,7 @@ class AppController:
         self.workspace_controller = WorkspaceController(root, self)
         
         # point d'entrée de l'application
-        self.show_login()
+        with_alpha_transition(self.root, self.show_login)
         
         
     # ---------- FONCTIONS DE NAVIGATION ENTRE VUES ---------

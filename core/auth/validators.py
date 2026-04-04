@@ -1,12 +1,11 @@
 """Validation des entrées utilisateur pour l'authentification."""
 
-import re
 from core.constants import USERNAME_MAX_LENGTH, PASSWORD_MAX_LENGTH, EMAIL_MAX_LENGTH, EMAIL_REGEX
 
 
 def validate_login_input(username: str, password: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
-    if _is_blank(username) or _is_blank(password):
+    if is_blank(username) or is_blank(password):
         return False, "Username and password are required."
     
     # data cleanup
@@ -21,15 +20,15 @@ def validate_login_input(username: str, password: str) -> tuple[bool, str]:
     
     # Validation de la longueur de chaque champ
     for value, max_length, field_name in test_cases:
-        if not _is_valid_length(value, max_length):
-            return False, _message_length_exceeded(field_name, max_length)
+        if not is_valid_length(value, max_length):
+            return False, message_length_exceeded(field_name, max_length)
 
     return True, "Validation successful."
 
 
 def validate_registration_input(username: str, password: str, email: str) -> tuple[bool, str]:
     # Les champs ne peuvent pas être vides
-    if _is_blank(email):
+    if is_blank(email):
         return False, "Email is required."
 
     # Réutilise la logique de validation de connexion pour username/password
@@ -41,34 +40,34 @@ def validate_registration_input(username: str, password: str, email: str) -> tup
     email = email.strip()
     
     # Validation de la longueur uniquement pour l'email (username/password déjà vérifiés)
-    if not _is_valid_length(email, EMAIL_MAX_LENGTH):
-        return False, _message_length_exceeded("Email", EMAIL_MAX_LENGTH)
+    if not is_valid_length(email, EMAIL_MAX_LENGTH):
+        return False, message_length_exceeded("Email", EMAIL_MAX_LENGTH)
 
     # Le format de l'email doit être valide: <>@<>.<>
-    if not _is_valid_email(email):
+    if not is_valid_email(email):
         return False, "Invalid email format."
 
     return True, "Validation successful."
 
 
 
-# --- Fonctions utilitaires privées pour la validation ---
+# ---------- FONCTIONS UTILITAIRES DE VALIDATION ----------
 
-def _is_blank(value: str) -> bool:
+def is_blank(value: str) -> bool:
     """Renvoie True si la chaîne est vide ou ne contient que des espaces."""
     return not value or not value.strip()
 
 
-def _is_valid_email(email: str) -> bool:
+def is_valid_email(email: str) -> bool:
     """Vérifie si l'email correspond au format attendu."""
     return EMAIL_REGEX.match(email) is not None
 
 
-def _is_valid_length(value: str, max_length: int) -> bool:
+def is_valid_length(value: str, max_length: int) -> bool:
     """Vérifie si la chaîne ne dépasse pas la longueur maximale."""
     return len(value.strip()) <= max_length
 
 
-def _message_length_exceeded(field_name: str, max_length: int) -> str:
+def message_length_exceeded(field_name: str, max_length: int) -> str:
     """Génère un message d'erreur pour les champs dépassant la longueur maximale."""
     return f"{field_name} cannot exceed {max_length} characters."
