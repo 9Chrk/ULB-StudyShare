@@ -18,6 +18,7 @@ class Sidebar(tk.Frame):
         
         # Data et callbacks
         self.buttons = {}
+        self.icons = {}
         self.logo_image = None
         self.on_select = on_select
         
@@ -99,10 +100,10 @@ class Sidebar(tk.Frame):
         self.exit_row = self.start_row + len(items)
 
 
-    # ---------- BOUTON EXIT ----------
+    # ---------- BOUTON LOG OUT ----------
     
     def add_exit_button(self, on_exit_callback) -> None:
-        """Ajoute un bouton Exit en bas de la sidebar."""
+        """Ajoute un bouton Log out en bas de la sidebar."""
         
         # Utiliser une ligne flexible pour pousser Exit en bas de la sidebar
         self.grid_rowconfigure(self.exit_row, weight=1)
@@ -111,10 +112,10 @@ class Sidebar(tk.Frame):
         exit_separator = tk.Frame(self, bg="#333", height=1)
         exit_separator.grid(row=self.exit_row + 1, column=0, sticky="ew", pady=(20, 10), padx=20)
         
-        # Bouton Exit
+        # Bouton Log out
         exit_btn = tk.Button(
             self,
-            text="Exit",
+            text="Log out",
             font=("Segoe UI", 11, "bold"),
             bg=self["bg"],
             fg="white",
