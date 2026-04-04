@@ -21,6 +21,7 @@ class Sidebar(tk.Frame):
         # Data et callbacks
         self.buttons: Dict[str, tk.Button] = {}
         self.icons: Dict[str, Dict[str, Optional[tk.PhotoImage]]] = {}
+        self.indicators: Dict[str, tk.Frame] = {}
         self.logout_icon: Optional[tk.PhotoImage] = None
         self.logo_image = None
         self.on_select = on_select
@@ -32,7 +33,10 @@ class Sidebar(tk.Frame):
         # Largeur fixe de la sidebar
         self.configure(bg=bg, width=250)
         self.grid_propagate(False)
-        self.grid_columnconfigure(0, weight=1)
+        
+        # Colonne 0 = indicateur, colonne 1 = contenu
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_columnconfigure(1, weight=1)
 
         # Style
         self.active_fg = active_fg
@@ -49,7 +53,7 @@ class Sidebar(tk.Frame):
     def build_header(self) -> None:
         """Construit l'entete de marque en haut de la sidebar."""
         brand_frame = tk.Frame(self, bg=self["bg"])
-        brand_frame.grid(row=0, column=0, sticky="ew", padx=20, pady=(18, 14))
+        brand_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(18, 14))
 
         # Logo ULB
         try:
@@ -75,7 +79,7 @@ class Sidebar(tk.Frame):
 
         # Separateur visuel
         top_separator = tk.Frame(self, bg="#2A2A45", height=1)
-        top_separator.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 10))
+        top_separator.grid(row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10))
 
 
     # ---------- CONFIGURATION DES ENTREES DE MENU ----------
@@ -83,6 +87,13 @@ class Sidebar(tk.Frame):
     def set_items(self, items: Dict[str, str]) -> None:
         """Cree les boutons de navigation a partir d'un dict {view_name: label}."""
         for index, (view_name, label) in enumerate(items.items()):
+            row = self.start_row + index
+            pad_y = (10 if index == 0 else 5, 0)
+
+            # Indicateur vertical a gauche du bouton
+            indicator = tk.Frame(self, bg=self["bg"], width=3)
+            indicator.grid(row=row, column=0, sticky="ns", pady=pad_y)
+
             btn = tk.Button(
                 self,
                 text=label,
@@ -99,12 +110,12 @@ class Sidebar(tk.Frame):
                 highlightthickness=0,
             )
             # Placer le bouton dans la grille
-            row = self.start_row + index
-            btn.grid(row=row, column=0, sticky="ew", pady=(10 if index == 0 else 5, 0))
+            btn.grid(row=row, column=1, sticky="ew", pady=pad_y)
             btn.configure(command=lambda vn=view_name: self.on_click(vn))
             self.grid_rowconfigure(row, weight=0)
 
             self.buttons[view_name] = btn
+            self.indicators[view_name] = indicator
 
         # Derniere ligne utilisee pour placer le bouton Log out en bas
         self.exit_row = self.start_row + len(items)
@@ -119,7 +130,7 @@ class Sidebar(tk.Frame):
 
         # Separateur visuel
         exit_separator = tk.Frame(self, bg="#333", height=1)
-        exit_separator.grid(row=self.exit_row + 1, column=0, sticky="ew", pady=(20, 10), padx=20)
+        exit_separator.grid(row=self.exit_row + 1, column=0, columnspan=2, sticky="ew", pady=(20, 10), padx=20)
 
         # Bouton Log out
         exit_btn = tk.Button(
@@ -146,7 +157,7 @@ class Sidebar(tk.Frame):
             exit_btn.configure(image=icon, compound="left", padx=16)
 
         # Placer le bouton Log out en bas de la sidebar
-        exit_btn.grid(row=self.exit_row + 2, column=0, sticky="ew", pady=(0, 16))
+        exit_btn.grid(row=self.exit_row + 2, column=0, columnspan=2, sticky="ew", pady=(0, 16))
         self.grid_rowconfigure(self.exit_row + 1, weight=0)
         self.grid_rowconfigure(self.exit_row + 2, weight=0)
         
@@ -163,12 +174,17 @@ class Sidebar(tk.Frame):
         """Met a jour la couleur du texte et les icones des boutons."""
         for name, btn in self.buttons.items():
             is_active = name == view_name
+            indicator = self.indicators.get(name)
 
-            # Couleurs
+            # Indicateur vertical et couleur du texte selon l'etat actif/inactif
             if is_active:
                 btn.configure(fg=self.active_fg, bg=self.active_background)
+                if indicator is not None:
+                    indicator.configure(bg=self.active_fg)
             else:
                 btn.configure(fg=self.inactive_fg, bg=self["bg"])
+                if indicator is not None:
+                    indicator.configure(bg=self["bg"])
 
             # Charger les icones si necessaire
             icon_set = self.icons.get(name)
@@ -179,6 +195,7 @@ class Sidebar(tk.Frame):
                 }
                 self.icons[name] = icon_set
 
+            # Choisir l'icone a afficher selon l'etat actif/inactif
             img = icon_set.get("active") if is_active and icon_set.get("active") is not None else icon_set.get("inactive")
             if img is not None:
                 btn.configure(image=img, compound="left", padx=16)
