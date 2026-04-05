@@ -1,6 +1,6 @@
 """Contrôleur responsable de la logique d'authentification côté GUI."""
 
-from core.auth import service
+from core.services import auth_service
 from gui.transitions import with_alpha_transition
 import gui.messages as messages
 import gui.views.auth.login_view as login_view
@@ -35,7 +35,7 @@ class AuthController:
         password = password_entry.get()
 
         password_entry.delete(0, "end")
-        is_ok, message, user_id = service.check(username, password)
+        is_ok, message, user_id = auth_service.check(username, password)
 
         if is_ok:
             user_entry.delete(0, "end")
@@ -57,7 +57,7 @@ class AuthController:
             messages.show_error(self.root, "Passwords do not match.")
             return
 
-        is_ok, message = service.add(username, password, email)
+        is_ok, message = auth_service.add(username, password, email)
         
         if is_ok:
             user_entry.delete(0, "end")

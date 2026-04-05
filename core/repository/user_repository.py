@@ -1,7 +1,11 @@
 """Requêtes SQL liées à l'entité Utilisateur."""
 
+from typing import Optional
 
-def get_user_id_with_credentials(cursor, username: str, password: str) -> int | None:
+from core.models.user import UserInfo
+
+
+def get_user_id_with_credentials(cursor, username: str, password: str) -> Optional[int]:
     """Renvoie l'ID d'un utilisateur, ou None."""
     cursor.execute(
         "SELECT idUtilisateur FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
@@ -28,4 +32,23 @@ def insert_user(cursor, username: str, email: str, password: str) -> None:
         VALUES (%s, %s, %s, CURRENT_DATE(), 1, 0)
         """,
         (username, email, password),
+    )
+
+
+def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
+    """Renvoie les informations de l'utilisateur, ou None si absent."""
+    cursor.execute(
+        "SELECT nomUtilisateur, email, dateInscription, niveau, nombrePoints FROM Utilisateur WHERE idUtilisateur = %s",
+        (user_id,),
+    )
+    row = cursor.fetchone()
+    if row is None:
+        return None
+
+    return UserInfo(
+        username=row[0],
+        email=row[1],
+        registration_date=row[2],
+        level=row[3],
+        points=row[4],
     )
