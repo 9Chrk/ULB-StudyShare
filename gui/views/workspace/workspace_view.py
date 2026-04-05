@@ -71,13 +71,13 @@ class WorkspaceView(tk.Frame):
     def create_views(self) -> None:
         """Instancie toutes les vues de l'application dans la zone de contenu."""
         # Imports locaux pour éviter les imports circulaires
-        from gui.views.dashboard_view   import DashboardView
-        from gui.views.explorer_view    import ExplorerView
-        from gui.views.leaderboard_view import LeaderboardView
-        from gui.views.my_library_view  import MyLibraryView
-        from gui.views.profile_view     import ProfileView
-        from gui.views.shop_view        import ShopView
-        from gui.views.statistics_view  import StatisticsView
+        from gui.views.workspace.dashboard_view   import DashboardView
+        from gui.views.workspace.explorer_view    import ExplorerView
+        from gui.views.workspace.leaderboard_view import LeaderboardView
+        from gui.views.workspace.my_library_view  import MyLibraryView
+        from gui.views.workspace.profile_view     import ProfileView
+        from gui.views.workspace.shop_view        import ShopView
+        from gui.views.workspace.statistics_view  import StatisticsView
 
         views_config = {
             "dashboard": DashboardView,

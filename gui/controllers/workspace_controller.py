@@ -1,7 +1,7 @@
 """Contrôleur de l'espace de travail post-login (WorkspaceView + sidebar)."""
 
 from gui.ui_helpers import clear_frames
-from gui.views.workspace_view import WorkspaceView
+from gui.views.workspace.workspace_view import WorkspaceView
 from gui.ui_helpers import center_window
 
 
