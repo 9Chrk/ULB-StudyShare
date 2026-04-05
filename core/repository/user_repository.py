@@ -1,13 +1,14 @@
 """Requêtes SQL liées à l'entité Utilisateur."""
 
 
-def user_exists_with_credentials(cursor, username: str, password: str) -> bool:
-    """Renvoie True si un utilisateur correspond aux identifiants fournis."""
+def get_user_id_with_credentials(cursor, username: str, password: str) -> int | None:
+    """Renvoie l'ID d'un utilisateur, ou None."""
     cursor.execute(
-        "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
+        "SELECT idUtilisateur FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
         (username, password),
     )
-    return cursor.fetchone() is not None
+    row = cursor.fetchone()
+    return row[0] if row is not None else None
 
 
 def username_or_email_exists(cursor, username: str, email: str) -> bool:

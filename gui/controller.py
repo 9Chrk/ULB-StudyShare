@@ -12,6 +12,9 @@ class AppController:
     
     def __init__(self, root):
         self.root = root
+        
+        # utilisateur connecté
+        self.current_user_id = None
 
         # instances des contrôleurs
         self.auth_controller = AuthController(root, self)

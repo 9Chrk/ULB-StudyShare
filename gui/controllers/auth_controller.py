@@ -35,10 +35,11 @@ class AuthController:
         password = password_entry.get()
 
         password_entry.delete(0, "end")
-        is_ok, message = service.check(username, password)
+        is_ok, message, user_id = service.check(username, password)
 
         if is_ok:
             user_entry.delete(0, "end")
+            self.app_controller.current_user_id = user_id
             with_alpha_transition(self.root, self.app_controller.show_workspace)
         else:
             messages.show_error(self.root, message)

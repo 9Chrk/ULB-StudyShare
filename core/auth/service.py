@@ -4,26 +4,26 @@ import mysql.connector
 
 from core.db.manager import DBManager
 from core.auth.validators import validate_login_input, validate_registration_input
-from core.repository.user_repository import user_exists_with_credentials, username_or_email_exists, insert_user
+from core.repository.user_repository import get_user_id_with_credentials, username_or_email_exists, insert_user
 
 
-def check(username: str, password: str) -> tuple[bool, str]:
+def check(username: str, password: str) -> tuple[bool, str, int | None]:
     """Vérifie les identifiants de connexion fournis par l'utilisateur."""
     # 1) Validation côté applicatif (longueur, champs vides, etc.)
     is_valid, error = validate_login_input(username, password)
     
     if not is_valid:
-        return False, error
+        return False, error, None
 
-    # 2) Vérification de l'existence de l'utilisateur en base de données
+    # 2) Récupération de l'ID utilisateur en base
     with DBManager() as cursor:
-        user_exists = user_exists_with_credentials(cursor, username.strip(), password)
+        user_id = get_user_id_with_credentials(cursor, username.strip(), password)
 
     # 3) Aucun enregistrement trouvé : on renvoie un message d'erreur générique
-    if not user_exists:
-        return False, "Incorrect username or password."
+    if not user_id:
+        return False, "Incorrect username or password.", None
 
-    return True, ""
+    return True, "Success", user_id
 
 
 def add(username: str, password: str, email: str) -> tuple[bool, str]:
@@ -48,7 +48,7 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
             # 3) Insérer le nouvel utilisateur
             insert_user(cursor, username, email, password)
             
-        return True, ""
+        return True, "Account created successfully."
     
     except mysql.connector.Error:
         return False, "Unable to create the account at the moment."
