@@ -4,6 +4,7 @@ import mysql.connector
 
 from core.db.manager import DBManager
 from core.auth.validators import validate_login_input, validate_registration_input
+from core.repository.user_repository import user_exists_with_credentials, username_or_email_exists, insert_user
 
 
 def check(username: str, password: str) -> tuple[bool, str]:
@@ -16,11 +17,7 @@ def check(username: str, password: str) -> tuple[bool, str]:
 
     # 2) Vérification de l'existence de l'utilisateur en base de données
     with DBManager() as cursor:
-        cursor.execute(
-            "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
-            (username.strip(), password),
-        )
-        user_exists = cursor.fetchone() is not None
+        user_exists = user_exists_with_credentials(cursor, username.strip(), password)
 
     # 3) Aucun enregistrement trouvé : on renvoie un message d'erreur générique
     if not user_exists:
@@ -43,23 +40,14 @@ def add(username: str, password: str, email: str) -> tuple[bool, str]:
     try:
         # 2) Vérifier que le nom d'utilisateur ou l'email ne sont pas déjà utilisés
         with DBManager() as cursor:
-            cursor.execute(
-                "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s OR email = %s",
-                (username, email),
-            )
-            user_or_email_exists = cursor.fetchone() is not None
+            user_or_email_exists = username_or_email_exists(cursor, username, email)
 
             if user_or_email_exists:
                 return False, "Username or email already exists."
 
             # 3) Insérer le nouvel utilisateur
-            cursor.execute(
-                """
-                INSERT INTO Utilisateur (nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
-                VALUES (%s, %s, %s, CURRENT_DATE(), 1, 0)
-                """,
-                (username, email, password),
-            )
+            insert_user(cursor, username, email, password)
+            
         return True, ""
     
     except mysql.connector.Error:
