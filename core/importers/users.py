@@ -10,10 +10,11 @@ def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, 
     user_map: dict[str, int] = {}
 
     for user in users:
+        user_id = bounded_int(user.get("id"), default=0, minimum=1)
         username = clean_text(user.get("nomUtilisateur"))
         email = clean_text(user.get("email"))
 
-        if not username or not email:
+        if not user_id or not username or not email:
             stats["skipped"] += 1
             continue
 
@@ -24,22 +25,13 @@ def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, 
         try:
             cursor.execute(
                 """
-                INSERT INTO Utilisateur (nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO Utilisateur (idUtilisateur, nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """,
-                (username, email, username, date_inscription, level, points),
+                (user_id, username, email, username, date_inscription, level, points),
             )
 
-            cursor.execute(
-                "SELECT idUtilisateur FROM Utilisateur WHERE nomUtilisateur = %s",
-                (username,),
-            )
-            row_id = cursor.fetchone()
-            if row_id is None:
-                stats["skipped"] += 1
-                continue
-
-            user_map[username] = row_id[0]
+            user_map[username] = user_id
             stats["users"] += 1
         except mysql.connector.Error:
             stats["skipped"] += 1
