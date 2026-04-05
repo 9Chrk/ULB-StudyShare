@@ -15,34 +15,24 @@ def import_objects(cursor, objects: list[dict], stats: dict[str, int]) -> dict[s
     }
 
     for row in objects:
+        object_id = bounded_int(row.get("id"), default=0, minimum=1)
         name = clean_text(row.get("nom"))
         object_type = clean_text(row.get("type")).lower()
         description = clean_text(row.get("description")) or "Objet importé"
         points = bounded_int(row.get("prix"), default=1, minimum=1)
 
-        if not name or object_type not in {"badge", "titre", "theme", "cosmetique"}:
+        if not object_id or not name or object_type not in {"badge", "titre", "theme", "cosmetique"}:
             stats["skipped"] += 1
             continue
 
         try:
             cursor.execute(
                 """
-                INSERT INTO ObjetCosmetique (nomObjet, description, prixPoints)
-                VALUES (%s, %s, %s)
+                INSERT INTO ObjetCosmetique (idObjet, nomObjet, description, prixPoints)
+                VALUES (%s, %s, %s, %s)
                 """,
-                (name, description, points),
+                (object_id, name, description, points),
             )
-
-            cursor.execute(
-                "SELECT idObjet FROM ObjetCosmetique WHERE nomObjet = %s",
-                (name,),
-            )
-            row_id = cursor.fetchone()
-            if row_id is None:
-                stats["skipped"] += 1
-                continue
-
-            object_id = row_id[0]
             object_map[name] = (object_id, object_type)
 
             subtype_table = subtype_tables.get(object_type)
