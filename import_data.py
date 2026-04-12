@@ -3,7 +3,7 @@
 import mysql.connector
 
 from core.db.init import execute_sql_script
-from core.importers import import_data
+from core.importers.service import import_data
 
 
 def print_stats(stats: dict[str, int]) -> None:
