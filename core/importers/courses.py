@@ -1,4 +1,4 @@
-"""Import des cours et de leur année académique."""
+"""Import des cours et de leur rattachement a une année académique."""
 
 import mysql.connector
 
@@ -6,7 +6,16 @@ from core.importers.utils import clean_text
 
 
 def import_courses(cursor, courses: list[dict[str, str]], stats: dict[str, int]) -> set[str]:
-    """Insère les cours CSV et renvoie les codes de cours valides."""
+    """Insère les cours CSV valides.
+
+    Args:
+        cursor: curseur SQL actif.
+        courses: lignes parsées du fichier 'cours.csv'.
+        stats: accumulateur de compteurs d'import.
+
+    Returns:
+        set[str]: codes de cours effectivement insérés.
+    """
     course_codes: set[str] = set()
 
     for row in courses:
@@ -14,6 +23,7 @@ def import_courses(cursor, courses: list[dict[str, str]], stats: dict[str, int])
         name = clean_text(row.get("nom"))
         faculty = clean_text(row.get("faculte"))
 
+        # On ignore les lignes incompletes avant insert SQL.
         if not code or not name or not faculty:
             stats["skipped"] += 1
             continue
@@ -34,14 +44,18 @@ def import_courses(cursor, courses: list[dict[str, str]], stats: dict[str, int])
     return course_codes
 
 
-def import_course_year_links(
-    cursor,
+def import_course_year_links(cursor,
     course_codes: set[str],
     year_code: str,
     year_label: str,
     stats: dict[str, int],
-) -> None:
-    """Crée l'année académique et associe tous les cours à cette année."""
+    ) -> None:
+
+    """Cree l'année académique cible puis associe tous les cours importés.
+
+    Cette fonction se base sur les 'course_codes' retournés par
+    'import_courses' pour remplir 'EstDonnePendant'.
+    """
     try:
         cursor.execute(
             """

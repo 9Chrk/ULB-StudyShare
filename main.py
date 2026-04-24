@@ -1,11 +1,60 @@
-"""Point d'entrée de l'application : init DB puis lancement de la GUI."""
+"""Point d'entree principal: GUI toujours, import optionnel avec --init."""
+
+import sys
+import mysql.connector
 
 from core.db.init import execute_sql_script
+from core.importers.service import import_data
 from gui.app import run
 
 
-def main() -> None:
+def print_import_stats(stats: dict[str, int]) -> None:
+    print("Import terminé.\n")
+    print("-------- Statistiques --------")
+
+    lines = [
+        ("Cours", stats["courses"]),
+        ("Liens cours/année", stats["course_year_links"]),
+        ("Objets", stats["objects"]),
+        ("Utilisateurs", stats["users"]),
+        ("Résumés", stats["resumes"]),
+        ("Objets possédés", stats["possessions"]),
+        ("Objets actifs appliqués", stats["active_objects"]),
+        ("Évaluations", stats["evaluations"]),
+        ("Lignes ignorées", stats["skipped"]),
+    ]
+
+    width = max(len(label) for label, _ in lines)
+    for label, count in lines:
+        print(f"- {label:<{width}} : {count}")
+
+    print("------------------------------\n")
+
+
+def run_import_mode() -> None:
+    stats = import_data()
+    print_import_stats(stats)
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = argv if argv is not None else sys.argv
+    options = [arg.strip().lower() for arg in args[1:]]
+
+    init_requested = "--init" in options
+    unknown_options = [option for option in options if option != "--init"]
+
+    if unknown_options:
+        print("Usage: python3 main.py [--init]")
+        return
+
     execute_sql_script("schema.sql")
+
+    if init_requested:
+        try:
+            run_import_mode()
+        except mysql.connector.Error as error:
+            print("Erreur MySQL pendant l'import:", error)
+
     run()
 
 

@@ -1,12 +1,17 @@
-"""Import des utilisateurs et possessions."""
+"""Import des utilisateurs, objets possédés et objets actifs."""
 
+from datetime import date
 import mysql.connector
 
 from core.importers.utils import as_list, bounded_int, clean_text
 
 
 def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, int]:
-    """Insère les utilisateurs et renvoie un index nomUtilisateur -> idUtilisateur."""
+    """Insère les utilisateurs et construit un index ``nom -> id``.
+
+    L'import remplit un mot de passe placeholder (nom d'utilisateur) pour
+    garantir une valeur non nulle lors de l'initialisation.
+    """
     user_map: dict[str, int] = {}
 
     for user in users:
@@ -19,6 +24,13 @@ def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, 
             continue
 
         date_inscription = clean_text(user.get("dateInscription"))
+
+        try:
+            date_inscription = date.fromisoformat(date_inscription).strftime("%Y-%m-%d")
+        except ValueError:
+            # Fallback robuste pour éviter les erreurs SQL sur DATE NOT NULL.
+            date_inscription = date.today().strftime("%Y-%m-%d")
+
         level = bounded_int(user.get("niveau"), default=1, minimum=1)
         points = bounded_int(user.get("points"), default=0, minimum=0)
 
@@ -46,7 +58,7 @@ def import_possessions(
     object_map: dict[str, tuple[int, str]],
     stats: dict[str, int],
 ) -> None:
-    """Insère les objets achetés (Possede)."""
+    """Insère les possessions d'objets cosmétiques dans 'Possede'."""
     for user in users:
         username = clean_text(user.get("nomUtilisateur"))
         user_id = user_map.get(username)
@@ -87,7 +99,11 @@ def apply_active_objects(
     object_map: dict[str, tuple[int, str]],
     stats: dict[str, int],
 ) -> None:
-    """Applique badge/titre/thème actifs si l'utilisateur possède bien l'objet."""
+    """Applique les objets actifs utilisateur (badge, titre, theme).
+
+    La possession est verifiee avant update pour rester coherente avec les
+    regles metier enforcees par trigger SQL.
+    """
     active_specs = (
         ("badgeActif", "idBadgeActif", "badge"),
         ("titreActif", "idTitreActif", "titre"),
@@ -115,6 +131,7 @@ def apply_active_objects(
                 stats["skipped"] += 1
                 continue
 
+            # Verification explicite cote import avant l'UPDATE final.
             cursor.execute(
                 "SELECT 1 FROM Possede WHERE idUtilisateur = %s AND idObjet = %s",
                 (user_id, object_id),

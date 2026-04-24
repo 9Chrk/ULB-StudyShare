@@ -1,4 +1,6 @@
-"""Import des résumés."""
+"""Import des resumes depuis la source utilisateurs XML."""
+
+from typing import Optional
 
 import mysql.connector
 
@@ -13,7 +15,11 @@ def import_resumes(
     year_code: str,
     stats: dict[str, int],
 ) -> dict[tuple[str, str, str], int]:
-    """Insère les résumés et renvoie un index (auteur, cours, titre) -> idResume."""
+    """Insère les resumes puis retourne un index metier pour les evaluations.
+
+    Returns:
+        dict[tuple[str, str, str], int]: (auteur, cours, titre) -> idResume.
+    """
     resume_map: dict[tuple[str, str, str], int] = {}
 
     for user in users:
@@ -36,6 +42,7 @@ def import_resumes(
             date_publication = sql_datetime_or_now(resume.get("datePublication"))
             description = f"Résumé importé pour {code_cours}."
 
+            # On conserve uniquement les resumes references par un cours connu.
             if not code_cours or not title or code_cours not in course_codes:
                 stats["skipped"] += 1
                 continue
@@ -51,6 +58,7 @@ def import_resumes(
 
                 resume_id = cursor.lastrowid
                 if not resume_id:
+                    # Fallback défensif si le last row id n'est pas disponible.
                     resume_id = find_resume_id(cursor, user_id, code_cours, title)
 
                 if resume_id is not None:
@@ -64,8 +72,8 @@ def import_resumes(
     return resume_map
 
 
-def find_resume_id(cursor, user_id: int, code_cours: str, title: str) -> int | None:
-    """Recherche l'ID d'un résumé existant via une clé métier simple."""
+def find_resume_id(cursor, user_id: int, code_cours: str, title: str) -> Optional[int]:
+    """Recherche l'ID d'un resume existant via une cle metier simple."""
     cursor.execute(
         """
         SELECT idResume

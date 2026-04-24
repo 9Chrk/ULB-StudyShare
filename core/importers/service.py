@@ -1,4 +1,10 @@
-"""Orchestrateur d'import : parseurs -> insertion SQL."""
+"""Orchestrateur d'import des donnees fichiers vers la base SQL.
+
+Ce module centralise le pipeline complet :
+1) lecture CSV/XML/JSON,
+2) reset des tables cible,
+3) insertion par domaine metier dans un ordre compatible FK/triggers.
+"""
 
 from core.db.manager import DBManager
 from core.importers.courses import import_course_year_links, import_courses
@@ -30,7 +36,11 @@ RESET_TABLES = [
 
 
 def reset_import_tables(cursor) -> None:
-    """Vide les tables utilisées par l'import pour repartir d'un état propre."""
+    """Vide les tables importees pour repartir d'un état propre.
+
+    L'ordre est explicite via 'RESET_TABLES'. Les contraintes FK sont
+    désactivées temporairement pour permettre le 'TRUNCATE' en chaine.
+    """
     cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
     try:
         for table_name in RESET_TABLES:
@@ -45,7 +55,11 @@ def import_data(
     users_path: str = "data/utilisateurs",
     evaluations_path: str = "data/commentaires.json",
 ) -> dict[str, int]:
-    """Importe les fichiers data dans la base SQL et retourne un petit résumé."""
+    """Importe les fichiers 'data' dans SQL et retourne les statistiques.
+
+    Returns:
+        dict[str, int]: compteurs d'insertion et de lignes ignorees.
+    """
     stats = {
         "courses": 0,
         "course_year_links": 0,
@@ -58,6 +72,7 @@ def import_data(
         "skipped": 0,
     }
 
+    # Parsing des sources une seule fois avant écriture SQL.
     courses = csv_to_dict(courses_path)
     objects = xml_to_dict(objects_path)
     users = xml_to_dict(users_path)
@@ -66,12 +81,14 @@ def import_data(
     with DBManager() as cursor:
         reset_import_tables(cursor)
 
+        # Import des references (cours + année) avant les entités dépendantes.
         course_codes = import_courses(cursor, courses, stats)
         import_course_year_links(cursor, course_codes, DEFAULT_YEAR_CODE, DEFAULT_YEAR_LABEL, stats)
 
         object_map = import_objects(cursor, objects, stats)
         user_map = import_users(cursor, users, stats)
 
+        # Les resumes/possessions/activations/evaluations dependent des maps precedentes.
         resume_map = import_resumes(cursor, users, user_map, course_codes, DEFAULT_YEAR_CODE, stats)
         import_possessions(cursor, users, user_map, object_map, stats)
         apply_active_objects(cursor, users, user_map, object_map, stats)
