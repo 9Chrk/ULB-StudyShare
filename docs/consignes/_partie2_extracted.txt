@@ -1,0 +1,90 @@
+INFOH303 – Projet de Base de Données
+Plateforme de Partage de Résumés de Cours – Partie
+2
+Année académique : 2025–2026
+1 Projet
+On vous demande de développer une application (interface en ligne de commande
+ou interface graphique) permettant d’interagir avec la base de données conçue lors de la
+Partie 1.
+Cette application devra permettre au minimum les opérations suivantes :
+Gestion des utilisateurs
+— Inscription d’un utilisateur (nom d’utilisateur, email, etc.).
+— Connexion à un compte existant.
+— Consultation du profil (points, niveau, titre actif).
+Gestion des cours
+— Consultation de la liste des cours.
+— Ajout de nouveaux cours (si autorisé).
+Gestion des résumés
+— Publication d’un résumé associé à un cours.
+— Consultation des résumés d’un cours.
+— Modification ou suppression de ses propres résumés.
+— Évaluation (note et/ou commentaire) d’un résumé.
+Système de points
+— Attribution automatique de points lors de certaines actions (publication, évaluation,
+etc.).
+— Consultation du solde de points.
+— Historique des transactions de points.
+1
+Leaderboard
+— Affichage du classement des utilisateurs selon leurs points.
+Boutique et éléments cosmétiques
+— Consultation du catalogue d’objets cosmétiques.
+— Achat d’objets avec des points.
+— Consultation des objets possédés.
+— Activation d’un badge ou titre.
+Votre application devra garantir la cohérence des données en s’appuyant autant que
+possible sur le système de gestion de base de données (contraintes d’intégrité, clés étran-
+gères, etc.).
+Vous pouvez ajouter des fonctionnalités supplémentaires, par exemple :
+— Système de commentaires avancé
+— Système de signalement/modération
+— Résumés versionnés
+— Système de récompenses spéciales (bonus, achievements)
+2 Création
+À partir de votre modèle relationnel, vous devez produire un script SQL DDL permet-
+tant de créer :
+— Toutes les tables
+— Les contraintes d’intégrité (PK, FK, UNIQUE, CHECK)
+— Les index pertinents
+3 Initialisation
+Vous devez fournir un script d’initialisation permettant d’insérer un jeu de données
+réaliste (qui vous est fourni) afin de tester votre application :
+— Plusieurs utilisateurs
+— Plusieurs cours
+— Plusieurs résumés avec évaluations
+— Des objets cosmétiques
+— Des transactions de points
+4 Requêtes
+En plus des requêtes nécessaires au fonctionnement de votre application, vous devez
+implémenter les requêtes suivantes. Si possible, exprimez-les en SQL, algèbre relationnelle
+et calcul tuple. Si ce n’est pas possible, justifiez pourquoi.
+Il doit être possible de visualiser les résultats dans votre application.
+2
+1. Les 10 utilisateurs ayant le plus de points.
+2. Les utilisateurs ayant publié des résumés dans au moins 3 cours différents.
+3. Le cours ayant le plus de résumés publiés.
+4. Les résumés les mieux notés (note moyenne maximale) pour chaque cours.
+5. Les utilisateurs n’ayant jamais publié de résumé.
+6. L’objet cosmétique le plus acheté.
+7. Les utilisateurs ayant dépensé plus de points qu’ils n’en ont disponibles.
+8. Le nombre moyen de résumés publiés par utilisateur.
+5 Délivrables
+Vous devez soumettre :
+— Les documents de la Partie 1 mis à jour si nécessaire.
+— Un jeu de slides (PDF) présentant :
+— L’architecture de votre application
+— Vos choix techniques
+— Les requêtes demandées et leur explication
+— Une archive contenant :
+— Scripts SQL (création + initialisation)
+— Code source de l’application
+— Instructions d’exécution
+6 Informations pratiques
+— Le projet doit être réalisé en groupes de quatre étudiants.
+— Vous devez conserver le même groupe que pour la Partie 1.
+— La date limite de remise est fixée au dimanche 31/05/2026.
+— Une défense orale sera organisée (présentation de 5 minutes suivie de questions).
+— Le projet (Partie 1 et Partie 2) compte pour 25% de la note finale.
+Sauf mention contraire, vous êtes libres de choisir les technologies utilisées (Post-
+greSQL, MySQL, Python, Java, etc.). SQLite est interdit.
+3
