@@ -4,7 +4,7 @@ from typing import Optional
 
 import mysql.connector
 
-from core.importers.utils import as_list, clean_text, sql_datetime_or_now
+from core.importers.utils import as_list, clean_text, sql_date_or_today
 
 
 def import_resumes(
@@ -39,7 +39,7 @@ def import_resumes(
 
             code_cours = clean_text(resume.get("cours"))
             title = clean_text(resume.get("titre"))
-            date_publication = sql_datetime_or_now(resume.get("datePublication"))
+            date_publication = sql_date_or_today(resume.get("datePublication"))
             description = f"Résumé importé pour {code_cours}."
 
             # On conserve uniquement les resumes references par un cours connu.

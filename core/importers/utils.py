@@ -39,6 +39,25 @@ def bounded_int(value: object, default: int, minimum: int, maximum: Optional[int
     return number
 
 
+def sql_date_or_today(value: object) -> str:
+    """Retourne une date SQL valide (YYYY-MM-DD), sinon la date du jour."""
+    text = clean_text(value)
+
+    if not text:
+        return date.today().isoformat()
+
+    candidate = text[:10]
+    try:
+        return date.fromisoformat(candidate).isoformat()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.fromisoformat(text).date().isoformat()
+    except ValueError:
+        return date.today().isoformat()
+
+
 def sql_datetime_or_now(value: object) -> str:
     """Retourne un datetime SQL valide, sinon la date/heure courante."""
     text = clean_text(value)

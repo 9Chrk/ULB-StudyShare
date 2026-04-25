@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Resume (
     idResume         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titre            VARCHAR(200) NOT NULL,
     description      TEXT NOT NULL,
-    datePublication  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    datePublication  DATE NOT NULL DEFAULT (CURRENT_DATE),
     version          INT UNSIGNED NOT NULL DEFAULT 1,
     visibilite       ENUM('publique','privee') NOT NULL DEFAULT 'publique',
     idUtilisateur    INT UNSIGNED NOT NULL,
