@@ -1,17 +1,20 @@
 """Requêtes SQL liées au leaderboard."""
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 
-def get_top_users(cursor, limit: int = 10) -> List[Tuple]:
+def get_top_users(cursor, limit: Optional[int] = None) -> List[Tuple]:
     """Renvoie les utilisateurs classés par points décroissants."""
-    cursor.execute(
-        """
+    query = """
         SELECT nomUtilisateur, nombrePoints, niveau
         FROM Utilisateur
         ORDER BY nombrePoints DESC
-        LIMIT %s
-        """,
-        (limit,)
-    )
+    """
+
+    if limit is not None:
+        query += " LIMIT %s"
+        cursor.execute(query, (limit,))
+    else:
+        cursor.execute(query)
+
     return cursor.fetchall()

@@ -61,7 +61,7 @@ class AppController:
     def get_leaderboard_data(self) -> dict:
         from core.services import leaderboard_service
         return {
-            "user_id": self.current_user_id,
+            "username": user_service.get_current_username(self.current_user_id),
             "leaderboard": leaderboard_service.get_leaderboard(),
         }
         

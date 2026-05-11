@@ -21,35 +21,78 @@ class LeaderboardView(tk.Frame):
 
         tk.Label(
             self,
-            text="Top 10 des utilisateurs par points",
+            text="See top contributors in the community.",
             font=("Segoe UI", 12),
             bg=bg, fg="#6b7280",
         ).pack(anchor="nw", padx=24, pady=(0, 16))
 
-        # Tableau
+        # Tableau avec scrollbar
         frame = tk.Frame(self, bg=bg)
-        frame.pack(fill="both", expand=True, padx=24)
+        frame.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         columns = ("rang", "username", "points", "niveau")
-        tree = ttk.Treeview(frame, columns=columns, show="headings", height=10)
+        tree = ttk.Treeview(frame, columns=columns, show="headings", height=12)
 
-        tree.heading("rang",     text="Rang")
-        tree.heading("username", text="Utilisateur")
+        tree.heading("rang",     text="Rank")
+        tree.heading("username", text="Player")
         tree.heading("points",   text="Points")
-        tree.heading("niveau",   text="Niveau")
+        tree.heading("niveau",   text="Level")
 
-        tree.column("rang",     width=60,  anchor="center")
-        tree.column("username", width=200, anchor="w")
-        tree.column("points",   width=100, anchor="center")
-        tree.column("niveau",   width=80,  anchor="center")
+        tree.column("rang",     width=50,  anchor="center")
+        tree.column("username", width=150, anchor="w")
+        tree.column("points",   width=80,  anchor="center")
+        tree.column("niveau",   width=60,  anchor="center")
+
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
 
         # Remplissage
-        current_user = data.get("user_id")
-        for i, (username, points, niveau) in enumerate(data["leaderboard"], start=1):
+        current_user = data.get("username")
+        leaderboard = data["leaderboard"]
+
+        current_user_rank = None
+        for i, (username, points, niveau) in enumerate(leaderboard, start=1):
             tag = "current" if username == current_user else ""
+            if username == current_user:
+                current_user_rank = i
             tree.insert("", "end",
                         values=(i, username, points, niveau),
                         tags=(tag,))
 
-        tree.tag_configure("current", background="#d1fae5")  # vert clair pour l'utilisateur courant
-        tree.pack(fill="both", expand=True)
+        tree.tag_configure("current", background="#d1fae5")
+
+        scrollbar.pack(side="right", fill="y")
+        tree.pack(side="left", fill="both", expand=True)
+
+        # Espace vide
+        tk.Frame(self, bg=bg, height=12).pack(fill="x")
+
+        # Panel position utilisateur (en bas)
+        user_panel = tk.Frame(self, bg="#fff", relief="solid", borderwidth=1)
+        user_panel.pack(fill="x", padx=24, pady=(0, 24))
+
+        content_frame = tk.Frame(user_panel, bg="#fff")
+        content_frame.pack(fill="both", expand=True, padx=12, pady=12)
+
+        tk.Label(
+            content_frame,
+            text="Your Position",
+            font=("Segoe UI", 11, "bold"),
+            bg="#fff", fg="#6b7280",
+        ).pack(anchor="w")
+
+        if current_user_rank:
+            position_text = f"Rank #{current_user_rank} - {current_user}"
+        else:
+            position_text = f"Not ranked - {current_user}"
+
+        tk.Label(
+            content_frame,
+            text=position_text,
+            font=("Segoe UI", 13, "bold"),
+            bg="#fff", fg="#10b981",
+        ).pack(anchor="w", pady=(4, 0))
+
+
+
