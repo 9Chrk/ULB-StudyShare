@@ -157,18 +157,12 @@ CREATE TABLE IF NOT EXISTS Possede (
 
 /* ------------------------------ GARDE-FOU - TRIGGERS MÉTIER ------------------------------ */
 
--- ⚠️ ATTENTION : CETTE SECTION EST GÉNÉRÉ PAR IA
--- Les triggers suivants sont essentiels pour garantir l'intégrité métier de la base de données. 
--- Toute modification doit être effectuée avec précaution et en comprenant bien les règles métier qu'ils appliquent.
-
 DROP TRIGGER IF EXISTS trg_badge_exclusif_ins;
 DROP TRIGGER IF EXISTS trg_titre_exclusif_ins;
 DROP TRIGGER IF EXISTS trg_theme_exclusif_ins;
 DROP TRIGGER IF EXISTS trg_evalue_verifs_ins;
 DROP TRIGGER IF EXISTS trg_possede_date_ins;
 DROP TRIGGER IF EXISTS trg_utilisateur_objets_actifs_upd;
-
-DELIMITER $$
 
 /* Exclusivité d'un objet cosmétique : badge OU titre OU thème (jamais plusieurs). */
 CREATE TRIGGER trg_badge_exclusif_ins
@@ -179,7 +173,7 @@ BEGIN
        OR EXISTS (SELECT 1 FROM ThemeProfil WHERE idObjet = NEW.idObjet) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
     END IF;
-END$$
+END;
 
 CREATE TRIGGER trg_titre_exclusif_ins
 BEFORE INSERT ON Titre
@@ -189,7 +183,7 @@ BEGIN
        OR EXISTS (SELECT 1 FROM ThemeProfil WHERE idObjet = NEW.idObjet) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
     END IF;
-END$$
+END;
 
 CREATE TRIGGER trg_theme_exclusif_ins
 BEFORE INSERT ON ThemeProfil
@@ -199,7 +193,7 @@ BEGIN
        OR EXISTS (SELECT 1 FROM Titre WHERE idObjet = NEW.idObjet) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
     END IF;
-END$$
+END;
 
 /* Une évaluation doit être postérieure (ou égale) à la publication et interdiction d'auto-évaluation. */
 CREATE TRIGGER trg_evalue_verifs_ins
@@ -221,7 +215,7 @@ BEGIN
     IF NEW.idUtilisateur = v_auteur THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un utilisateur ne peut pas evaluer son propre resume.';
     END IF;
-END$$
+END;
 
 /* La date d'achat ne peut pas précéder la date d'inscription. */
 CREATE TRIGGER trg_possede_date_ins
@@ -238,7 +232,7 @@ BEGIN
     IF DATE(NEW.dateAchat) < v_date_inscription THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date achat < date inscription.';
     END IF;
-END$$
+END;
 
 /* Activation d'objet possible uniquement s'il est possédé par l'utilisateur. */
 CREATE TRIGGER trg_utilisateur_objets_actifs_upd
@@ -268,6 +262,4 @@ BEGIN
     ) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Theme actif non possede par l utilisateur.';
     END IF;
-END$$
-
-DELIMITER ;
+END;
