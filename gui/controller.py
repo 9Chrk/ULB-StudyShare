@@ -70,10 +70,11 @@ class AppController:
             
         }
         
-    def get_profile_data(self) -> dict:
+    def get_profile_data(self) -> dict:       
         return {
-            
-        }
+            "user_id": self.current_user_id,
+            "profile": user_service.get_user_profile(self.current_user_id),
+    }
         
     def get_shop_data(self) -> dict:
         return {

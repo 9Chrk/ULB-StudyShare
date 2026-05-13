@@ -14,3 +14,11 @@ def get_current_username(user_id: Optional[int]) -> str:
     with DBManager() as cursor:
         user_info = get_user_info(cursor, user_id)
         return user_info.username if user_info else "Guest"
+
+
+def get_user_profile(user_id: Optional[int]):
+    """Renvoie les infos complètes du profil, ou None."""
+    if not user_id:
+        return None
+    with DBManager() as cursor:
+        return get_user_info(cursor, user_id)
