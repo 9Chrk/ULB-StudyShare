@@ -6,7 +6,7 @@ from gui.transitions import with_alpha_transition
 from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
 from core.services import user_service
-
+from core.services import shop_service
 
 class AppController:
     """Contrôle la navigation entre les écrans."""
@@ -74,11 +74,11 @@ class AppController:
     }
         
     def get_shop_data(self) -> dict:
-        return {
-            
-        }
-    
-    def get_statistics_data(self) -> dict:
+        data = shop_service.get_shop_data(self.current_user_id)
+        data["user_id"] = self.current_user_id
+        return data
+   
+def get_statistics_data(self) -> dict:
         return {
             
         }
