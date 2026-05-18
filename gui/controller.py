@@ -48,10 +48,7 @@ class AppController:
     """
     
     def get_dashboard_data(self) -> dict:
-        return {
-            "user_id": self.current_user_id,
-            "username": user_service.get_current_username(self.current_user_id),
-        }
+        return user_service.get_dashboard_info(self.current_user_id)
         
     def get_explorer_data(self) -> dict:
         return {

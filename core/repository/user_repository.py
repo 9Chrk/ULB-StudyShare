@@ -1,12 +1,9 @@
 """Requêtes SQL liées à l'entité Utilisateur."""
-
-from typing import Optional
-
+from typing import Optional, List, Tuple
 from core.models.user import UserInfo
 
 
 def get_user_id_with_credentials(cursor, username: str, password: str) -> Optional[int]:
-    """Renvoie l'ID d'un utilisateur, ou None."""
     cursor.execute(
         "SELECT idUtilisateur FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
         (username, password),
@@ -16,7 +13,6 @@ def get_user_id_with_credentials(cursor, username: str, password: str) -> Option
 
 
 def username_or_email_exists(cursor, username: str, email: str) -> bool:
-    """Renvoie True si le nom d'utilisateur ou l'email existe déjà."""
     cursor.execute(
         "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s OR email = %s",
         (username, email),
@@ -25,7 +21,6 @@ def username_or_email_exists(cursor, username: str, email: str) -> bool:
 
 
 def insert_user(cursor, username: str, email: str, password: str) -> None:
-    """Insère un nouvel utilisateur dans la base."""
     cursor.execute(
         """
         INSERT INTO Utilisateur (nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
@@ -36,7 +31,6 @@ def insert_user(cursor, username: str, email: str, password: str) -> None:
 
 
 def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
-    """Renvoie les informations de l'utilisateur, ou None si absent."""
     cursor.execute(
         "SELECT nomUtilisateur, email, dateInscription, niveau, nombrePoints FROM Utilisateur WHERE idUtilisateur = %s",
         (user_id,),
@@ -44,7 +38,6 @@ def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
     row = cursor.fetchone()
     if row is None:
         return None
-
     return UserInfo(
         username=row[0],
         email=row[1],
@@ -52,3 +45,36 @@ def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
         level=row[3],
         points=row[4],
     )
+
+
+def get_active_title(cursor, user_id: int) -> Optional[str]:
+    cursor.execute(
+        """
+        SELECT oc.nomObjet
+        FROM Utilisateur u
+        JOIN ObjetCosmetique oc ON u.idTitreActif = oc.idObjet
+        WHERE u.idUtilisateur = %s AND u.idTitreActif IS NOT NULL
+        """,
+        (user_id,)
+    )
+    row = cursor.fetchone()
+    return row[0] if row else None
+
+
+def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
+    cursor.execute(
+        """
+        SELECT 'Published' AS type, r.titre, r.datePublication AS date
+        FROM Resume r
+        WHERE r.idUtilisateur = %s
+        UNION ALL
+        SELECT 'Evaluated' AS type, r.titre, e.dateEvaluation AS date
+        FROM Evalue e
+        JOIN Resume r ON e.idResume = r.idResume
+        WHERE e.idUtilisateur = %s
+        ORDER BY date DESC
+        LIMIT 5
+        """,
+        (user_id, user_id)
+    )
+    return cursor.fetchall()
