@@ -75,7 +75,7 @@ class DashboardView(tk.Frame):
             for act_type, titre, date in activity:
                 row = tk.Frame(self, bg="white", padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
-                color = "#10b981" if act_type == "Published" else "#3b82f6"
+                color = "#68ba9f" if act_type == "Published" else "#6995dc"
                 tk.Label(row, text=act_type, font=("Segoe UI", 10, "bold"),
                          bg="white", fg=color, width=10, anchor="w").pack(side="left")
                 tk.Label(row, text=titre, font=("Segoe UI", 10),
