@@ -38,8 +38,8 @@ class DashboardView(tk.Frame):
         cards_frame.pack(anchor="nw", padx=24, pady=24, fill="x")
 
         cards = [
-            ("Points",  str(profile.points),  "#10b981"),
-            ("Level",   str(profile.level),   "#3b82f6"),
+            ("Points",  str(profile.points),  "#000000"),
+            ("Level",   str(profile.level),   "#A1A1A1"),
         ]
 
         for label, value, color in cards:

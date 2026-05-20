@@ -118,8 +118,8 @@ class ShopView(tk.Frame):
             child.destroy()
 
         cards = [
-            ("Points", str(self.data.get("points", 0)), self.COLOR_GREEN),
-            ("Objets possédés", str(len(self.data.get("owned", []))), self.COLOR_BLUE),
+            ("Points", str(self.data.get("points", 0)), "#000000"),
+            ("Objets possédés", str(len(self.data.get("owned", []))), "#A1A1A1"),
         ]
 
         for label, value, color in cards:

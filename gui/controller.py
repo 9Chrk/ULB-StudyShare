@@ -7,6 +7,7 @@ from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
 from core.services import user_service
 from core.services import shop_service
+from core.services import statistics_service
 
 class AppController:
     """Contrôle la navigation entre les écrans."""
@@ -89,7 +90,5 @@ class AppController:
         return {"success": result.success, "message": result.message}
 
     def get_statistics_data(self) -> dict:
-        return {
-            
-        }
+        return statistics_service.get_statistics_data(self.current_user_id)
     
