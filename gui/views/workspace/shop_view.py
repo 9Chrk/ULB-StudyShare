@@ -9,6 +9,21 @@ from gui.messages import show_info
 class ShopView(tk.Frame):
     """Page boutique: catalogue, achat d'objets et activation des objets possédés."""
 
+    COLOR_BG = "#f3f4f6"
+    COLOR_PANEL = "#ffffff"
+    COLOR_TEXT = "#111827"
+    COLOR_MUTED = "#6b7280"
+    COLOR_BORDER = "#e5e7eb"
+    COLOR_BLUE = "#3b82f6"
+    COLOR_BLUE_DARK = "#2563eb"
+    COLOR_GREEN = "#10b981"
+    COLOR_GREEN_DARK = "#059669"
+    COLOR_GREEN_SOFT = "#dcfce7"
+    COLOR_GREEN_TEXT = "#166534"
+    COLOR_NEUTRAL = "#f3f4f6"
+    COLOR_NEUTRAL_TEXT = "#374151"
+    COLOR_ORANGE = "#f59e0b"
+
     def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
@@ -69,27 +84,34 @@ class ShopView(tk.Frame):
         owned_count = len(self.data.get("owned", []))
 
         cards = [
-            ("Points", str(points), "#f59e0b"),
-            ("Objets possédés", str(owned_count), "#10b981"),
+            ("Points", str(points), self.COLOR_GREEN),
+            ("Objets possédés", str(owned_count), self.COLOR_BLUE),
         ]
 
         for label, value, color in cards:
-            card = tk.Frame(self.summary_frame, bg="white", padx=16, pady=12)
+            card = tk.Frame(
+                self.summary_frame,
+                bg=self.COLOR_PANEL,
+                padx=16,
+                pady=12,
+                highlightbackground=self.COLOR_BORDER,
+                highlightthickness=1,
+            )
             card.pack(side="left", padx=(0, 12))
 
             tk.Label(
                 card,
                 text=value,
                 font=("Segoe UI", 18, "bold"),
-                bg="white",
+                bg=self.COLOR_PANEL,
                 fg=color,
             ).pack(anchor="w")
             tk.Label(
                 card,
                 text=label,
                 font=("Segoe UI", 10),
-                bg="white",
-                fg="#6b7280",
+                bg=self.COLOR_PANEL,
+                fg=self.COLOR_MUTED,
             ).pack(anchor="w")
 
     def _render_catalogue(self) -> None:
@@ -105,107 +127,282 @@ class ShopView(tk.Frame):
                 text="Aucun objet disponible pour le moment.",
                 font=("Segoe UI", 11),
                 bg=self.bg,
-                fg="#6b7280",
+                fg=self.COLOR_MUTED,
             ).pack(anchor="w", pady=8)
             return
 
-        for item in catalogue:
-            self._build_item_card(item, owned_ids)
+        sections = self._group_items_by_type(catalogue)
 
-    def _build_item_card(self, item, owned_ids) -> None:
+        top_frame = tk.Frame(self.scroll_frame, bg=self.bg)
+        top_frame.pack(fill="x", expand=False)
+        top_frame.grid_columnconfigure(0, weight=1)
+        top_frame.grid_columnconfigure(1, weight=1)
+        top_frame.grid_columnconfigure(2, weight=1)
+
+        for index, item_type in enumerate(("badge", "titre", "theme")):
+            section = self._build_section(top_frame, item_type, sections.get(item_type, []), owned_ids)
+            section.grid(row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 8, 0 if index == 2 else 8), pady=(0, 16))
+
+        self._build_horizontal_section(self.scroll_frame, "autre", sections.get("autre", []), owned_ids)
+
+    def _group_items_by_type(self, catalogue):
+        sections = {"badge": [], "titre": [], "theme": [], "autre": []}
+        for item in catalogue:
+            if item.item_type in sections:
+                sections[item.item_type].append(item)
+            else:
+                sections["autre"].append(item)
+        return sections
+
+    def _build_section(self, parent, item_type: str, items, owned_ids):
+        section = tk.Frame(
+            parent,
+            bg=self.COLOR_PANEL,
+            padx=14,
+            pady=14,
+            highlightbackground=self.COLOR_BORDER,
+            highlightthickness=1,
+        )
+
+        title, accent, subtitle = self._section_meta(item_type)
+        tk.Label(
+            section,
+            text=title,
+            font=("Segoe UI", 13, "bold"),
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_TEXT,
+        ).pack(anchor="w")
+
+        tk.Label(
+            section,
+            text=subtitle,
+            font=("Segoe UI", 9),
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_MUTED,
+        ).pack(anchor="w", pady=(2, 10))
+
+        items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+        items_frame.pack(fill="both", expand=True)
+
+        if not items:
+            tk.Label(
+                items_frame,
+                text="Aucun objet dans cette catégorie.",
+                font=("Segoe UI", 10),
+                bg=self.COLOR_PANEL,
+                fg=self.COLOR_MUTED,
+                justify="left",
+                wraplength=300,
+            ).pack(anchor="w")
+            return section
+
+        for item in items:
+            self._build_item_card(
+                items_frame,
+                item,
+                owned_ids,
+                accent_color=accent,
+                vertical=True,
+                wraplength=300,
+            )
+
+        return section
+
+    def _build_horizontal_section(self, parent, item_type: str, items, owned_ids) -> None:
+        section = tk.Frame(
+            parent,
+            bg=self.COLOR_PANEL,
+            padx=14,
+            pady=14,
+            highlightbackground=self.COLOR_BORDER,
+            highlightthickness=1,
+        )
+        section.pack(fill="x", pady=(0, 4))
+
+        title, accent, subtitle = self._section_meta(item_type)
+        tk.Label(
+            section,
+            text=title,
+            font=("Segoe UI", 13, "bold"),
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_TEXT,
+        ).pack(anchor="w")
+
+        tk.Label(
+            section,
+            text=subtitle,
+            font=("Segoe UI", 9),
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_MUTED,
+        ).pack(anchor="w", pady=(2, 10))
+
+        items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+        items_frame.pack(fill="x")
+
+        if not items:
+            tk.Label(
+                items_frame,
+                text="Aucun objet dans cette catégorie.",
+                font=("Segoe UI", 10),
+                bg=self.COLOR_PANEL,
+                fg=self.COLOR_MUTED,
+            ).pack(anchor="w")
+            return
+
+        for item in items:
+            self._build_item_card(
+                items_frame,
+                item,
+                owned_ids,
+                accent_color=accent,
+                vertical=False,
+                wraplength=220,
+            )
+
+    def _section_meta(self, item_type: str):
+        if item_type == "badge":
+            return "Badges", self.COLOR_GREEN, "Récompenses visuelles actives ou à acheter."
+        if item_type == "titre":
+            return "Titres", self.COLOR_BLUE, "Titres de profil à débloquer et activer."
+        if item_type == "theme":
+            return "Thèmes", self.COLOR_ORANGE, "Styles visuels du profil à équiper."
+        return "Autres objets", self.COLOR_NEUTRAL_TEXT, "Objets disponibles mais sans activation spéciale."
+
+    def _build_item_card(self, parent, item, owned_ids, accent_color: str, vertical: bool, wraplength: int) -> None:
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type)
 
-        card = tk.Frame(self.scroll_frame, bg="white", padx=16, pady=12)
-        card.pack(fill="x", pady=6)
+        card = tk.Frame(
+            parent,
+            bg=self.COLOR_PANEL,
+            padx=12,
+            pady=12,
+            highlightbackground=self.COLOR_BORDER,
+            highlightthickness=1,
+        )
+        if vertical:
+            card.pack(fill="x", pady=6)
+        else:
+            card.pack(side="left", fill="y", expand=True, padx=(0, 10), pady=6)
 
-        header = tk.Frame(card, bg="white")
+        header = tk.Frame(card, bg=self.COLOR_PANEL)
         header.pack(fill="x")
 
         tk.Label(
             header,
             text=item.name,
             font=("Segoe UI", 12, "bold"),
-            bg="white",
-            fg="#111827",
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_TEXT,
         ).pack(side="left")
 
         tk.Label(
             header,
             text=item.item_type.upper(),
             font=("Segoe UI", 9, "bold"),
-            bg="white",
-            fg="#2563eb",
+            bg=self.COLOR_PANEL,
+            fg=accent_color,
         ).pack(side="right")
 
         tk.Label(
             card,
             text=item.description,
             font=("Segoe UI", 10),
-            bg="white",
-            fg="#6b7280",
-            wraplength=760,
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_MUTED,
+            wraplength=wraplength,
             justify="left",
             anchor="w",
         ).pack(fill="x", pady=(6, 8))
 
-        footer = tk.Frame(card, bg="white")
+        footer = tk.Frame(card, bg=self.COLOR_PANEL)
         footer.pack(fill="x")
 
         tk.Label(
             footer,
             text=f"{item.price_points} pts",
             font=("Segoe UI", 11, "bold"),
-            bg="white",
-            fg="#f59e0b",
+            bg=self.COLOR_PANEL,
+            fg=self.COLOR_GREEN,
         ).pack(side="left")
 
         status_text = "Possédé" if is_owned else "Disponible"
-        status_color = "#10b981" if is_owned else "#6b7280"
+        status_color = self.COLOR_GREEN if is_owned else self.COLOR_MUTED
+        status_bg = self.COLOR_GREEN_SOFT if is_owned else self.COLOR_NEUTRAL
         tk.Label(
             footer,
             text=status_text,
-            font=("Segoe UI", 10, "bold"),
-            bg="white",
+            font=("Segoe UI", 9, "bold"),
+            bg=status_bg,
             fg=status_color,
-        ).pack(side="left", padx=14)
+            padx=8,
+            pady=3,
+        ).pack(side="left", padx=12)
 
-        actions = tk.Frame(footer, bg="white")
+        actions = tk.Frame(footer, bg=self.COLOR_PANEL)
         actions.pack(side="right")
 
         if not is_owned:
-            tk.Button(
+            self._make_action_button(
                 actions,
                 text="Acheter",
-                font=("Segoe UI", 10, "bold"),
-                bg="#141429",
-                fg="white",
-                activebackground="#1B1B33",
-                activeforeground="white",
-                bd=0,
-                padx=12,
-                pady=6,
-                cursor="hand2",
+                kind="buy",
                 command=lambda item_id=item.item_id: self._on_buy(item_id),
             ).pack(side="right")
             return
 
         if item.item_type in ("badge", "titre", "theme"):
-            tk.Button(
-                actions,
-                text="Actif" if is_active else "Activer",
-                font=("Segoe UI", 10, "bold"),
-                bg="#10b981" if is_active else "#e5e7eb",
-                fg="white" if is_active else "#111827",
-                activebackground="#10b981" if is_active else "#d1d5db",
-                activeforeground="white" if is_active else "#111827",
-                bd=0,
-                padx=12,
-                pady=6,
-                cursor="hand2",
-                state="disabled" if is_active else "normal",
-                command=lambda item_id=item.item_id: self._on_activate(item_id),
-            ).pack(side="right")
+            if is_active:
+                tk.Label(
+                    actions,
+                    text="Activé",
+                    font=("Segoe UI", 10, "bold"),
+                    bg=self.COLOR_GREEN_SOFT,
+                    fg=self.COLOR_GREEN_TEXT,
+                    padx=12,
+                    pady=6,
+                ).pack(side="right")
+            else:
+                self._make_action_button(
+                    actions,
+                    text="Activer",
+                    kind="activate",
+                    command=lambda item_id=item.item_id: self._on_activate(item_id),
+                ).pack(side="right")
+            return
+
+        tk.Label(
+            actions,
+            text="Aucune action",
+            font=("Segoe UI", 10, "bold"),
+            bg=self.COLOR_NEUTRAL,
+            fg=self.COLOR_NEUTRAL_TEXT,
+            padx=12,
+            pady=6,
+        ).pack(side="right")
+
+    def _make_action_button(self, parent, text: str, kind: str, command):
+        if kind == "buy":
+            bg = self.COLOR_BLUE_DARK
+            active_bg = self.COLOR_BLUE
+        else:
+            bg = self.COLOR_GREEN_DARK
+            active_bg = self.COLOR_GREEN
+
+        return tk.Button(
+            parent,
+            text=text,
+            font=("Segoe UI", 10, "bold"),
+            bg=bg,
+            fg="white",
+            activebackground=active_bg,
+            activeforeground="white",
+            bd=0,
+            padx=12,
+            pady=6,
+            cursor="hand2",
+            command=command,
+        )
 
     def _is_item_active(self, item_id: int, item_type: str) -> bool:
         if item_type == "badge":
