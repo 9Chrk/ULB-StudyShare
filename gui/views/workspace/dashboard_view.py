@@ -75,11 +75,40 @@ class DashboardView(tk.Frame):
             for act_type, titre, date in activity:
                 row = tk.Frame(self, bg="white", padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
-                color = "#68ba9f" if act_type == "Published" else "#6995dc"
-                tk.Label(row, text=act_type, font=("Segoe UI", 10, "bold"),
-                         bg="white", fg=color, width=10, anchor="w").pack(side="left")
-                tk.Label(row, text=titre, font=("Segoe UI", 10),
-                         bg="white", fg="#111827", anchor="w").pack(side="left", padx=8)
-                tk.Label(row, text=str(date), font=("Segoe UI", 9),
-                         bg="white", fg="#6b7280", anchor="w").pack(side="left")
+                if act_type == "Published":
+                    color = "#68ba9f"
+                elif act_type == "Evaluated":
+                    color = "#6995dc"
+                elif act_type == "Transaction":
+                    color = "#f59e0b"
+                else:
+                    color = "#9ca3af"
+
+                tk.Label(
+                    row,
+                    text=act_type,
+                    font=("Segoe UI", 10, "bold"),
+                    bg="white",
+                    fg=color,
+                    width=10,
+                    anchor="w",
+                ).pack(side="left")
+
+                tk.Label(
+                    row,
+                    text=titre,
+                    font=("Segoe UI", 10),
+                    bg="white",
+                    fg="#111827",
+                    anchor="w",
+                ).pack(side="left", padx=8)
+
+                tk.Label(
+                    row,
+                    text=str(date),
+                    font=("Segoe UI", 9),
+                    bg="white",
+                    fg="#6b7280",
+                    anchor="w",
+                ).pack(side="left")
 

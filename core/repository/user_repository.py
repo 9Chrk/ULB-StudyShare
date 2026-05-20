@@ -64,17 +64,21 @@ def get_active_title(cursor, user_id: int) -> Optional[str]:
 def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
     cursor.execute(
         """
-        SELECT 'Published' AS type, r.titre, r.datePublication AS date
+        SELECT 'Published' AS type, r.titre AS title, r.datePublication AS date
         FROM Resume r
         WHERE r.idUtilisateur = %s
         UNION ALL
-        SELECT 'Evaluated' AS type, r.titre, e.dateEvaluation AS date
+        SELECT 'Evaluated' AS type, r.titre AS title, e.dateEvaluation AS date
         FROM Evalue e
         JOIN Resume r ON e.idResume = r.idResume
         WHERE e.idUtilisateur = %s
+        UNION ALL
+        SELECT 'Transaction' AS type, tp.motif AS title, tp.dateTransaction AS date
+        FROM TransactionPoints tp
+        WHERE tp.idUtilisateur = %s
         ORDER BY date DESC
-        LIMIT 5
+        LIMIT 8
         """,
-        (user_id, user_id)
+        (user_id, user_id, user_id)
     )
     return cursor.fetchall()
