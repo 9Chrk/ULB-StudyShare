@@ -134,16 +134,34 @@ class ShopView(tk.Frame):
         sections = self._group_items_by_type(catalogue)
 
         top_frame = tk.Frame(self.scroll_frame, bg=self.bg)
-        top_frame.pack(fill="x", expand=False)
+        top_frame.pack(fill="x", pady=(0, 16))
         top_frame.grid_columnconfigure(0, weight=1)
         top_frame.grid_columnconfigure(1, weight=1)
         top_frame.grid_columnconfigure(2, weight=1)
 
         for index, item_type in enumerate(("badge", "titre", "theme")):
             section = self._build_section(top_frame, item_type, sections.get(item_type, []), owned_ids)
-            section.grid(row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 8, 0 if index == 2 else 8), pady=(0, 16))
+            section.grid(row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 8, 0 if index == 2 else 8))
 
         self._build_horizontal_section(self.scroll_frame, "autre", sections.get("autre", []), owned_ids)
+
+    def _create_horizontal_scroller(self, parent, height: int):
+        container = tk.Frame(parent, bg=self.bg)
+        canvas = tk.Canvas(container, bg=self.bg, height=height, highlightthickness=0)
+        scrollbar = tk.Scrollbar(container, orient="horizontal", command=canvas.xview)
+        inner = tk.Frame(canvas, bg=self.bg)
+
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+
+        def _update_scrollregion(_event=None):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        inner.bind("<Configure>", _update_scrollregion)
+        canvas.configure(xscrollcommand=scrollbar.set)
+        canvas.pack(side="top", fill="both", expand=True)
+        scrollbar.pack(side="bottom", fill="x")
+
+        return {"container": container, "canvas": canvas, "inner": inner, "scrollbar": scrollbar}
 
     def _group_items_by_type(self, catalogue):
         sections = {"badge": [], "titre": [], "theme": [], "autre": []}
@@ -236,8 +254,15 @@ class ShopView(tk.Frame):
             fg=self.COLOR_MUTED,
         ).pack(anchor="w", pady=(2, 10))
 
-        items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
-        items_frame.pack(fill="x")
+        if item_type == "autre":
+            items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+            items_frame.pack(fill="x")
+            for column in range(3):
+                items_frame.grid_columnconfigure(column, weight=1)
+        else:
+            scroller = self._create_horizontal_scroller(section, height=190)
+            scroller["container"].pack(fill="x")
+            items_frame = scroller["inner"]
 
         if not items:
             tk.Label(
@@ -247,6 +272,23 @@ class ShopView(tk.Frame):
                 bg=self.COLOR_PANEL,
                 fg=self.COLOR_MUTED,
             ).pack(anchor="w")
+            return
+
+        if item_type == "autre":
+            for index, item in enumerate(items):
+                row = index // 3
+                column = index % 3
+                self._build_item_card(
+                    items_frame,
+                    item,
+                    owned_ids,
+                    accent_color=accent,
+                    vertical=True,
+                    wraplength=220,
+                    layout="grid",
+                    row=row,
+                    column=column,
+                )
             return
 
         for item in items:
@@ -268,7 +310,18 @@ class ShopView(tk.Frame):
             return "Thèmes", self.COLOR_ORANGE, "Styles visuels du profil à équiper."
         return "Autres objets", self.COLOR_NEUTRAL_TEXT, "Objets disponibles mais sans activation spéciale."
 
-    def _build_item_card(self, parent, item, owned_ids, accent_color: str, vertical: bool, wraplength: int) -> None:
+    def _build_item_card(
+        self,
+        parent,
+        item,
+        owned_ids,
+        accent_color: str,
+        vertical: bool,
+        wraplength: int,
+        layout: str = "pack",
+        row: int = 0,
+        column: int = 0,
+    ) -> None:
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type)
 
@@ -280,10 +333,13 @@ class ShopView(tk.Frame):
             highlightbackground=self.COLOR_BORDER,
             highlightthickness=1,
         )
-        if vertical:
+        if layout == "grid":
+            card.grid(row=row, column=column, sticky="nsew", padx=6, pady=6)
+        elif vertical:
             card.pack(fill="x", pady=6)
         else:
-            card.pack(side="left", fill="y", expand=True, padx=(0, 10), pady=6)
+            card.configure(width=250)
+            card.pack(side="left", fill="y", padx=(0, 10), pady=6)
 
         header = tk.Frame(card, bg=self.COLOR_PANEL)
         header.pack(fill="x")
@@ -295,14 +351,6 @@ class ShopView(tk.Frame):
             bg=self.COLOR_PANEL,
             fg=self.COLOR_TEXT,
         ).pack(side="left")
-
-        tk.Label(
-            header,
-            text=item.item_type.upper(),
-            font=("Segoe UI", 9, "bold"),
-            bg=self.COLOR_PANEL,
-            fg=accent_color,
-        ).pack(side="right")
 
         tk.Label(
             card,
@@ -321,7 +369,7 @@ class ShopView(tk.Frame):
         tk.Label(
             footer,
             text=f"{item.price_points} pts",
-            font=("Segoe UI", 11, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg=self.COLOR_PANEL,
             fg=self.COLOR_GREEN,
         ).pack(side="left")
@@ -356,11 +404,11 @@ class ShopView(tk.Frame):
                 tk.Label(
                     actions,
                     text="Activé",
-                    font=("Segoe UI", 10, "bold"),
-                    bg=self.COLOR_GREEN_SOFT,
-                    fg=self.COLOR_GREEN_TEXT,
-                    padx=12,
-                    pady=6,
+                    font=("Segoe UI", 9, "bold"),
+                    bg=status_bg,
+                    fg=status_color,
+                    padx=8,
+                    pady=3,
                 ).pack(side="right")
             else:
                 self._make_action_button(
@@ -392,14 +440,15 @@ class ShopView(tk.Frame):
         return tk.Button(
             parent,
             text=text,
-            font=("Segoe UI", 10, "bold"),
+            font=("Segoe UI", 9, "bold"),
             bg=bg,
             fg="white",
             activebackground=active_bg,
             activeforeground="white",
             bd=0,
-            padx=12,
-            pady=6,
+            width=9,
+            padx=10,
+            pady=5,
             cursor="hand2",
             command=command,
         )
