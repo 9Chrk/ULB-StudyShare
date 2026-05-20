@@ -77,8 +77,18 @@ class AppController:
         data = shop_service.get_shop_data(self.current_user_id)
         data["user_id"] = self.current_user_id
         return data
-   
-def get_statistics_data(self) -> dict:
+
+    def buy_shop_item(self, item_id: int) -> dict:
+        """Tente l'achat d'un objet boutique pour l'utilisateur courant."""
+        result = shop_service.buy_item(self.current_user_id, item_id)
+        return {"success": result.success, "message": result.message}
+
+    def activate_shop_item(self, item_id: int) -> dict:
+        """Tente l'activation d'un objet possédé pour l'utilisateur courant."""
+        result = shop_service.activate_owned_item(self.current_user_id, item_id)
+        return {"success": result.success, "message": result.message}
+
+    def get_statistics_data(self) -> dict:
         return {
             
         }
