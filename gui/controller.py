@@ -5,6 +5,8 @@ from tkinter import font, ttk
 from gui.transitions import with_alpha_transition
 from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
+from core.models.leaderboard import LeaderboardData
+from core.models.statistics import StatisticsData
 from core.services import user_service
 from core.services import shop_service
 from core.services import statistics_service
@@ -56,12 +58,12 @@ class AppController:
             
         }
 
-    def get_leaderboard_data(self) -> dict:
+    def get_leaderboard_data(self) -> LeaderboardData:
         from core.services import leaderboard_service
-        return {
-            "username": user_service.get_current_username(self.current_user_id),
-            "leaderboard": leaderboard_service.get_leaderboard(),
-        }
+        return LeaderboardData(
+            current_username=user_service.get_current_username(self.current_user_id),
+            entries=leaderboard_service.get_leaderboard(),
+        )
         
     def get_my_library_data(self) -> dict:
         return {
@@ -89,6 +91,6 @@ class AppController:
         result = shop_service.activate_owned_item(self.current_user_id, item_id)
         return {"success": result.success, "message": result.message}
 
-    def get_statistics_data(self) -> dict:
+    def get_statistics_data(self) -> StatisticsData:
         return statistics_service.get_statistics_data(self.current_user_id)
     

@@ -51,16 +51,16 @@ class LeaderboardView(tk.Frame):
         tree.configure(yscrollcommand=scrollbar.set)
 
         # Remplissage
-        current_user = data.get("username")
-        leaderboard = data["leaderboard"]
+        current_user = data.current_username
+        leaderboard = data.entries
 
         current_user_rank = None
-        for i, (username, points, niveau) in enumerate(leaderboard, start=1):
-            tag = "current" if username == current_user else ""
-            if username == current_user:
+        for i, entry in enumerate(leaderboard, start=1):
+            tag = "current" if entry.username == current_user else ""
+            if entry.username == current_user:
                 current_user_rank = i
             tree.insert("", "end",
-                        values=(i, username, points, niveau),
+                        values=(i, entry.username, entry.points, entry.level),
                         tags=(tag,))
 
         tree.tag_configure("current", background=theme.WORKSPACE_HIGHLIGHT)
