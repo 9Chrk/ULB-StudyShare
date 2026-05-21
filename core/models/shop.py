@@ -26,6 +26,19 @@ class ShopUserState:
 
 
 @dataclass(frozen=True)
+class ShopData:
+    """Donnees necessaires a la vue shop."""
+
+    user_id: Optional[int]
+    catalogue: list[ShopItem]
+    owned: list[int]
+    points: int
+    active_badge_id: Optional[int]
+    active_title_id: Optional[int]
+    active_theme_id: Optional[int]
+
+
+@dataclass(frozen=True)
 class PurchaseResult:
     """Résultat d'une tentative d'achat."""
 

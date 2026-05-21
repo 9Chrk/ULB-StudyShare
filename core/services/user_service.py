@@ -3,6 +3,9 @@
 from typing import Optional
 
 from core.db.manager import DBManager
+from core.models.user import DashboardActivity
+from core.models.user import DashboardData
+from core.models.user import ProfileData
 from core.repository.user_repository import get_user_info
 from core.repository.user_repository import get_active_title, get_recent_activity
 
@@ -24,16 +27,22 @@ def get_user_profile(user_id: Optional[int]):
     with DBManager() as cursor:
         return get_user_info(cursor, user_id)
 
-def get_dashboard_info(user_id: Optional[int]) -> dict:
-    """Renvoie toutes les données nécessaires au dashboard."""
+def get_dashboard_info(user_id: Optional[int]) -> DashboardData:
+    """Renvoie toutes les donnees necessaires au dashboard."""
     if not user_id:
-        return {}
+        return DashboardData(profile=None, active_title=None, recent_activity=[])
+
     with DBManager() as cursor:
         profile = get_user_info(cursor, user_id)
         title = get_active_title(cursor, user_id)
-        activity = get_recent_activity(cursor, user_id)
-        return {
-            "profile": profile,
-            "active_title": title,
-            "recent_activity": activity,
-        }
+        activity_rows = get_recent_activity(cursor, user_id)
+        activity = [
+            DashboardActivity(activity_type=row[0], title=row[1], activity_date=row[2])
+            for row in activity_rows
+        ]
+        return DashboardData(profile=profile, active_title=title, recent_activity=activity)
+
+
+def get_profile_data(user_id: Optional[int]) -> ProfileData:
+    """Renvoie les donnees necessaires a la vue profil."""
+    return ProfileData(user_id=user_id, profile=get_user_profile(user_id))

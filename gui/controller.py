@@ -5,8 +5,13 @@ from tkinter import font, ttk
 from gui.transitions import with_alpha_transition
 from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
+from core.models.shop import ActivationResult
+from core.models.shop import PurchaseResult
+from core.models.shop import ShopData
 from core.models.leaderboard import LeaderboardData
 from core.models.statistics import StatisticsData
+from core.models.user import DashboardData
+from core.models.user import ProfileData
 from core.services import user_service
 from core.services import shop_service
 from core.services import statistics_service
@@ -50,7 +55,7 @@ class AppController:
     Elles font le lien entre les vues et les services métier.
     """
     
-    def get_dashboard_data(self) -> dict:
+    def get_dashboard_data(self) -> DashboardData:
         return user_service.get_dashboard_info(self.current_user_id)
         
     def get_explorer_data(self) -> dict:
@@ -70,26 +75,19 @@ class AppController:
             
         }
         
-    def get_profile_data(self) -> dict:       
-        return {
-            "user_id": self.current_user_id,
-            "profile": user_service.get_user_profile(self.current_user_id),
-    }
+    def get_profile_data(self) -> ProfileData:
+        return user_service.get_profile_data(self.current_user_id)
         
-    def get_shop_data(self) -> dict:
-        data = shop_service.get_shop_data(self.current_user_id)
-        data["user_id"] = self.current_user_id
-        return data
+    def get_shop_data(self) -> ShopData:
+        return shop_service.get_shop_data(self.current_user_id)
 
-    def buy_shop_item(self, item_id: int) -> dict:
+    def buy_shop_item(self, item_id: int) -> PurchaseResult:
         """Tente l'achat d'un objet boutique pour l'utilisateur courant."""
-        result = shop_service.buy_item(self.current_user_id, item_id)
-        return {"success": result.success, "message": result.message}
+        return shop_service.buy_item(self.current_user_id, item_id)
 
-    def activate_shop_item(self, item_id: int) -> dict:
+    def activate_shop_item(self, item_id: int) -> ActivationResult:
         """Tente l'activation d'un objet possédé pour l'utilisateur courant."""
-        result = shop_service.activate_owned_item(self.current_user_id, item_id)
-        return {"success": result.success, "message": result.message}
+        return shop_service.activate_owned_item(self.current_user_id, item_id)
 
     def get_statistics_data(self) -> StatisticsData:
         return statistics_service.get_statistics_data(self.current_user_id)

@@ -2,6 +2,7 @@
 
 import tkinter as tk
 
+from core.models.shop import ShopData
 from gui.messages import show_error
 from gui.messages import show_info
 import gui.views.common.theme as theme
@@ -21,7 +22,15 @@ class ShopView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = {}
+        self.data = ShopData(
+            user_id=None,
+            catalogue=[],
+            owned=[],
+            points=0,
+            active_badge_id=None,
+            active_title_id=None,
+            active_theme_id=None,
+        )
 
         self._make_label("Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT).pack(anchor="nw", padx=24, pady=(24, 8))
         self._make_label("Achetez et activez vos objets cosmétiques.", ("Segoe UI", 12), fg=theme.WORKSPACE_MUTED).pack(anchor="nw", padx=24)
@@ -104,8 +113,8 @@ class ShopView(tk.Frame):
             child.destroy()
 
         cards = [
-            ("Points", str(self.data.get("points", 0)), theme.COLORS.black),
-            ("Objets possédés", str(len(self.data.get("owned", []))), theme.COLORS.gray_500),
+            ("Points", str(self.data.points), theme.COLORS.black),
+            ("Objets possédés", str(len(self.data.owned)), theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
@@ -125,8 +134,8 @@ class ShopView(tk.Frame):
         for child in self.scroll_frame.winfo_children():
             child.destroy()
 
-        catalogue = self.data.get("catalogue", [])
-        owned_ids = set(self.data.get("owned", []))
+        catalogue = self.data.catalogue
+        owned_ids = set(self.data.owned)
 
         if not catalogue:
             self._make_label(
@@ -287,7 +296,7 @@ class ShopView(tk.Frame):
 
     def _is_item_active(self, item_id: int, item_type: str) -> bool:
         key = {"badge": "active_badge_id", "titre": "active_title_id", "theme": "active_theme_id"}.get(item_type)
-        return key is not None and self.data.get(key) == item_id
+        return key is not None and getattr(self.data, key) == item_id
 
     def _on_action(self, kind: str, item_id: int) -> None:
         """Gère achat et activation via un unique handler."""
@@ -298,8 +307,8 @@ class ShopView(tk.Frame):
             result = self.app_controller.activate_shop_item(item_id)
             default_ok, default_err = "Activation effectuée.", "Activation impossible."
 
-        if result.get("success"):
-            show_info(self, result.get("message", default_ok))
+        if result.success:
+            show_info(self, result.message or default_ok)
             self.reload_data()
         else:
-            show_error(self, result.get("message", default_err))
+            show_error(self, result.message or default_err)

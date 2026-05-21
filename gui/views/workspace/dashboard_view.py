@@ -26,14 +26,14 @@ class DashboardView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text=f"Welcome to ULB StudyShare, {data['profile'].username if data.get('profile') else 'Guest'}!",
+            text=f"Welcome to ULB StudyShare, {data.profile.username if data.profile else 'Guest'}!",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
         )
         subtitle.pack(anchor="nw", padx=24)
 
-        profile = self.app_controller.get_profile_data().get("profile")
+        profile = data.profile
         if profile is None:
             return
         cards_frame = tk.Frame(self, bg=bg)
@@ -53,7 +53,7 @@ class DashboardView(tk.Frame):
             tk.Label(card, text=label, font=("Segoe UI", 11),
                      bg=theme.COLORS.white, fg=theme.WORKSPACE_MUTED).pack()
         # Titre actif
-        active_title = data.get("active_title")
+        active_title = data.active_title
         tk.Label(
             self,
             text=f"Active title: {active_title if active_title else 'None'}",
@@ -69,26 +69,26 @@ class DashboardView(tk.Frame):
             bg=bg, fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(0, 8))
 
-        activity = data.get("recent_activity", [])
+        activity = data.recent_activity
         if not activity:
             tk.Label(self, text="No recent activity.", bg=bg, fg=theme.WORKSPACE_MUTED,
                      font=("Segoe UI", 11)).pack(anchor="nw", padx=24)
         else:
-            for act_type, titre, date in activity:
+            for item in activity:
                 row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
-                if act_type == "Published":
+                if item.activity_type == "Published":
                     color = theme.WORKSPACE_GREEN
-                elif act_type == "Evaluated":
+                elif item.activity_type == "Evaluated":
                     color = theme.WORKSPACE_BLUE_LIGHT
-                elif act_type == "Transaction":
+                elif item.activity_type == "Transaction":
                     color = theme.WORKSPACE_ORANGE
                 else:
                     color = theme.WORKSPACE_MUTED
 
                 tk.Label(
                     row,
-                    text=act_type,
+                    text=item.activity_type,
                     font=("Segoe UI", 10, "bold"),
                     bg=theme.COLORS.white,
                     fg=color,
@@ -98,7 +98,7 @@ class DashboardView(tk.Frame):
 
                 tk.Label(
                     row,
-                    text=titre,
+                    text=item.title,
                     font=("Segoe UI", 10),
                     bg=theme.COLORS.white,
                     fg=theme.WORKSPACE_TEXT,
@@ -107,7 +107,7 @@ class DashboardView(tk.Frame):
 
                 tk.Label(
                     row,
-                    text=str(date),
+                    text=str(item.activity_date),
                     font=("Segoe UI", 9),
                     bg=theme.COLORS.white,
                     fg=theme.WORKSPACE_MUTED,

@@ -33,7 +33,7 @@ class ProfileView(tk.Frame):
 
     # Data
         data = self.app_controller.get_profile_data()
-        profile = data.get("profile")
+        profile = data.profile
 
         if profile is None:
             tk.Label(self, text="No profile found.", bg=bg, fg=theme.WORKSPACE_RED).pack(padx=24, pady=16)

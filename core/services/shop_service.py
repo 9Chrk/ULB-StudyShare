@@ -5,6 +5,7 @@ from typing import Optional
 from core.db.manager import DBManager
 from core.models.shop import ActivationResult
 from core.models.shop import PurchaseResult
+from core.models.shop import ShopData
 from core.repository.shop_repository import activate_item
 from core.repository.shop_repository import add_owned_item
 from core.repository.shop_repository import create_spend_transaction
@@ -16,17 +17,18 @@ from core.repository.shop_repository import is_item_owned
 from core.repository.shop_repository import spend_user_points
 
 
-def get_shop_data(user_id: Optional[int]) -> dict:
+def get_shop_data(user_id: Optional[int]) -> ShopData:
     """Renvoie le catalogue, inventaire, points et objets actifs."""
     if not user_id:
-        return {
-            "catalogue": [],
-            "owned": [],
-            "points": 0,
-            "active_badge_id": None,
-            "active_title_id": None,
-            "active_theme_id": None,
-        }
+        return ShopData(
+            user_id=None,
+            catalogue=[],
+            owned=[],
+            points=0,
+            active_badge_id=None,
+            active_title_id=None,
+            active_theme_id=None,
+        )
 
     with DBManager() as cursor:
         catalogue = get_catalogue(cursor)
@@ -34,23 +36,25 @@ def get_shop_data(user_id: Optional[int]) -> dict:
         state = get_user_shop_state(cursor, user_id)
 
         if state is None:
-            return {
-                "catalogue": catalogue,
-                "owned": owned,
-                "points": 0,
-                "active_badge_id": None,
-                "active_title_id": None,
-                "active_theme_id": None,
-            }
+            return ShopData(
+                user_id=user_id,
+                catalogue=catalogue,
+                owned=owned,
+                points=0,
+                active_badge_id=None,
+                active_title_id=None,
+                active_theme_id=None,
+            )
 
-        return {
-            "catalogue": catalogue,
-            "owned": owned,
-            "points": state.points,
-            "active_badge_id": state.active_badge_id,
-            "active_title_id": state.active_title_id,
-            "active_theme_id": state.active_theme_id,
-        }
+        return ShopData(
+            user_id=user_id,
+            catalogue=catalogue,
+            owned=owned,
+            points=state.points,
+            active_badge_id=state.active_badge_id,
+            active_title_id=state.active_title_id,
+            active_theme_id=state.active_theme_id,
+        )
 
 
 def buy_item(user_id: Optional[int], item_id: int) -> PurchaseResult:
