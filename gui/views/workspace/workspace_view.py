@@ -3,7 +3,7 @@
 import tkinter as tk
 
 from gui.views.common.sidebar import Sidebar
-from gui.ui_helpers import center_window
+import gui.views.common.theme as theme
 
 
 class WorkspaceView(tk.Frame):
@@ -13,7 +13,7 @@ class WorkspaceView(tk.Frame):
     """
 
     def __init__(self, root: tk.Tk, app_controller, **kwargs):
-        self.content_bg = "#f3f4f6"
+        self.content_bg = theme.WORKSPACE_BACKGROUND
         super().__init__(master=root, bg=self.content_bg, **kwargs)
 
         # Initialisation des attributs
@@ -26,7 +26,7 @@ class WorkspaceView(tk.Frame):
         self.grid_columnconfigure(1, weight=1)
 
         # Sidebar à gauche
-        self.sidebar = Sidebar(master=self, on_select=self.show_view, active_fg="#1DE9B6", inactive_fg="white")
+        self.sidebar = Sidebar(master=self, on_select=self.show_view, active_fg=theme.SIDEBAR_ACTIVE_TEXT, inactive_fg=theme.SIDEBAR_INACTIVE_TEXT)
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
         # Zone de contenu à droite

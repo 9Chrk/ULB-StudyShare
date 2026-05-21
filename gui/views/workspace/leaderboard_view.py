@@ -1,11 +1,14 @@
 """Simple post-login Leaderboard view."""
+
 import tkinter as tk
 from tkinter import ttk
+
+import gui.views.common.theme as theme
 
 
 class LeaderboardView(tk.Frame):
 
-    def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
+    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -16,14 +19,14 @@ class LeaderboardView(tk.Frame):
             self,
             text="Leaderboard",
             font=("Segoe UI", 20, "bold"),
-            bg=bg, fg="#111827",
+            bg=bg, fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(24, 8))
 
         tk.Label(
             self,
             text="See top contributors in the community.",
             font=("Segoe UI", 12),
-            bg=bg, fg="#6b7280",
+            bg=bg, fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24, pady=(0, 16))
 
         # Tableau avec scrollbar
@@ -60,7 +63,7 @@ class LeaderboardView(tk.Frame):
                         values=(i, username, points, niveau),
                         tags=(tag,))
 
-        tree.tag_configure("current", background="#d1fae5")
+        tree.tag_configure("current", background=theme.WORKSPACE_HIGHLIGHT)
 
         scrollbar.pack(side="right", fill="y")
         tree.pack(side="left", fill="both", expand=True)
@@ -69,17 +72,17 @@ class LeaderboardView(tk.Frame):
         tk.Frame(self, bg=bg, height=12).pack(fill="x")
 
         # Panel position utilisateur (en bas)
-        user_panel = tk.Frame(self, bg="#fff", relief="solid", borderwidth=1)
+        user_panel = tk.Frame(self, bg=theme.COLORS.white, relief="solid", borderwidth=1)
         user_panel.pack(fill="x", padx=24, pady=(0, 24))
 
-        content_frame = tk.Frame(user_panel, bg="#fff")
+        content_frame = tk.Frame(user_panel, bg=theme.COLORS.white)
         content_frame.pack(fill="both", expand=True, padx=12, pady=12)
 
         tk.Label(
             content_frame,
             text="Your Position",
             font=("Segoe UI", 11, "bold"),
-            bg="#fff", fg="#6b7280",
+            bg=theme.COLORS.white, fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="w")
 
         if current_user_rank:
@@ -91,7 +94,7 @@ class LeaderboardView(tk.Frame):
             content_frame,
             text=position_text,
             font=("Segoe UI", 13, "bold"),
-            bg="#fff", fg="#10b981",
+            bg=theme.COLORS.white, fg=theme.WORKSPACE_GREEN,
         ).pack(anchor="w", pady=(4, 0))
 
 

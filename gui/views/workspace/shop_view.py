@@ -4,41 +4,27 @@ import tkinter as tk
 
 from gui.messages import show_error
 from gui.messages import show_info
+import gui.views.common.theme as theme
 
 
 class ShopView(tk.Frame):
     """Page boutique: catalogue, achat d'objets et activation des objets possédés."""
 
-    COLOR_BG = "#f3f4f6"
-    COLOR_PANEL = "#ffffff"
-    COLOR_TEXT = "#111827"
-    COLOR_MUTED = "#6b7280"
-    COLOR_BORDER = "#e5e7eb"
-    COLOR_BLUE = "#3b82f6"
-    COLOR_BLUE_DARK = "#2563eb"
-    COLOR_GREEN = "#10b981"
-    COLOR_GREEN_DARK = "#059669"
-    COLOR_GREEN_SOFT = "#dcfce7"
-    COLOR_GREEN_TEXT = "#166534"
-    COLOR_NEUTRAL = "#f3f4f6"
-    COLOR_NEUTRAL_TEXT = "#374151"
-    COLOR_ORANGE = "#f59e0b"
-
     SECTION_META = {
-        "badge": ("Badges", "#10b981", "Récompenses visuelles actives ou à acheter."),
-        "titre": ("Titres", "#3b82f6", "Titres de profil à débloquer et activer."),
-        "theme": ("Thèmes", "#f59e0b", "Styles visuels du profil à équiper."),
-        "autre": ("Autres objets", "#374151", "Objets disponibles mais sans activation spéciale."),
+        "badge": ("Badges", theme.WORKSPACE_GREEN, "Récompenses visuelles actives ou à acheter."),
+        "titre": ("Titres", theme.WORKSPACE_BLUE_DARK, "Titres de profil à débloquer et activer."),
+        "theme": ("Thèmes", theme.WORKSPACE_ORANGE, "Styles visuels du profil à équiper."),
+        "autre": ("Autres objets", theme.WORKSPACE_NEUTRAL_TEXT, "Objets disponibles mais sans activation spéciale."),
     }
 
-    def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
+    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
         self.data = {}
 
-        self._make_label("Shop", ("Segoe UI", 20, "bold"), fg="#111827").pack(anchor="nw", padx=24, pady=(24, 8))
-        self._make_label("Achetez et activez vos objets cosmétiques.", ("Segoe UI", 12), fg=self.COLOR_MUTED).pack(anchor="nw", padx=24)
+        self._make_label("Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT).pack(anchor="nw", padx=24, pady=(24, 8))
+        self._make_label("Achetez et activez vos objets cosmétiques.", ("Segoe UI", 12), fg=theme.WORKSPACE_MUTED).pack(anchor="nw", padx=24)
 
         self.summary_frame = tk.Frame(self, bg=bg)
         self.summary_frame.pack(fill="x", padx=24, pady=(16, 8))
@@ -71,22 +57,22 @@ class ShopView(tk.Frame):
             text=text,
             font=font,
             bg=bg or self.bg,
-            fg=fg or self.COLOR_TEXT,
+            fg=fg or theme.WORKSPACE_TEXT,
             **kwargs,
         )
 
     def _make_panel_label(self, parent, text, font, fg=None, **kwargs):
         """Crée un tk.Label sur fond COLOR_PANEL."""
-        return self._make_label(text, font, parent=parent, fg=fg, bg=self.COLOR_PANEL, **kwargs)
+        return self._make_label(text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs)
 
     def _make_panel_frame(self, parent, **kwargs):
         """Crée un Frame avec le style carte (fond blanc + bordure)."""
         return tk.Frame(
             parent,
-            bg=self.COLOR_PANEL,
+            bg=theme.COLORS.white,
             padx=14,
             pady=14,
-            highlightbackground=self.COLOR_BORDER,
+            highlightbackground=theme.WORKSPACE_BORDER,
             highlightthickness=1,
             **kwargs,
         )
@@ -95,14 +81,14 @@ class ShopView(tk.Frame):
         """Affiche le titre et le sous-titre d'une section."""
         title, _, subtitle = self.SECTION_META[item_type]
         self._make_panel_label(parent, title, ("Segoe UI", 13, "bold")).pack(anchor="w")
-        self._make_panel_label(parent, subtitle, ("Segoe UI", 9), fg=self.COLOR_MUTED).pack(anchor="w", pady=(2, 10))
+        self._make_panel_label(parent, subtitle, ("Segoe UI", 9), fg=theme.WORKSPACE_MUTED).pack(anchor="w", pady=(2, 10))
 
     def _make_empty_label(self, parent) -> None:
         self._make_panel_label(
             parent,
             "Aucun objet dans cette catégorie.",
             ("Segoe UI", 10),
-            fg=self.COLOR_MUTED,
+            fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="w")
 
     # ── data & render ──────────────────────────────────────────────────────
@@ -118,22 +104,22 @@ class ShopView(tk.Frame):
             child.destroy()
 
         cards = [
-            ("Points", str(self.data.get("points", 0)), "#000000"),
-            ("Objets possédés", str(len(self.data.get("owned", []))), "#A1A1A1"),
+            ("Points", str(self.data.get("points", 0)), theme.COLORS.black),
+            ("Objets possédés", str(len(self.data.get("owned", []))), theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
             card = tk.Frame(
                 self.summary_frame,
-                bg=self.COLOR_PANEL,
+                bg=theme.COLORS.white,
                 padx=16,
                 pady=12,
-                highlightbackground=self.COLOR_BORDER,
+                highlightbackground=theme.WORKSPACE_BORDER,
                 highlightthickness=1,
             )
             card.pack(side="left", padx=(0, 12))
             self._make_panel_label(card, value, ("Segoe UI", 18, "bold"), fg=color).pack(anchor="w")
-            self._make_panel_label(card, label, ("Segoe UI", 10), fg=self.COLOR_MUTED).pack(anchor="w")
+            self._make_panel_label(card, label, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED).pack(anchor="w")
 
     def _render_catalogue(self) -> None:
         for child in self.scroll_frame.winfo_children():
@@ -146,7 +132,7 @@ class ShopView(tk.Frame):
             self._make_label(
                 "Aucun objet disponible pour le moment.",
                 ("Segoe UI", 11),
-                fg=self.COLOR_MUTED,
+                fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w", pady=8)
             return
 
@@ -178,7 +164,7 @@ class ShopView(tk.Frame):
         section = self._make_panel_frame(parent)
         self._make_section_header(section, item_type)
 
-        items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+        items_frame = tk.Frame(section, bg=theme.COLORS.white)
         items_frame.pack(fill="both", expand=True)
 
         if not items:
@@ -197,7 +183,7 @@ class ShopView(tk.Frame):
         self._make_section_header(section, item_type)
 
         if item_type == "autre":
-            items_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+            items_frame = tk.Frame(section, bg=theme.COLORS.white)
             items_frame.pack(fill="x")
             for col in range(3):
                 items_frame.grid_columnconfigure(col, weight=1)
@@ -245,8 +231,8 @@ class ShopView(tk.Frame):
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type)
 
-        card = tk.Frame(parent, bg=self.COLOR_PANEL, padx=12, pady=12,
-                        highlightbackground=self.COLOR_BORDER, highlightthickness=1)
+        card = tk.Frame(parent, bg=theme.COLORS.white, padx=12, pady=12,
+                        highlightbackground=theme.WORKSPACE_BORDER, highlightthickness=1)
         if layout == "grid":
             card.grid(row=row, column=column, sticky="nsew", padx=6, pady=6)
         elif vertical:
@@ -257,22 +243,22 @@ class ShopView(tk.Frame):
 
         self._make_panel_label(card, item.name, ("Segoe UI", 12, "bold")).pack(anchor="w")
         self._make_panel_label(
-            card, item.description, ("Segoe UI", 10), fg=self.COLOR_MUTED,
+            card, item.description, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED,
             wraplength=wraplength, justify="left", anchor="w",
         ).pack(fill="x", pady=(6, 8))
 
-        footer = tk.Frame(card, bg=self.COLOR_PANEL)
+        footer = tk.Frame(card, bg=theme.COLORS.white)
         footer.pack(fill="x")
 
-        self._make_panel_label(footer, f"{item.price_points} pts", ("Segoe UI", 10, "bold"), fg=self.COLOR_GREEN).pack(side="left")
+        self._make_panel_label(footer, f"{item.price_points} pts", ("Segoe UI", 10, "bold"), fg=theme.WORKSPACE_GREEN).pack(side="left")
 
         status_text = "Possédé" if is_owned else "Disponible"
-        status_fg = self.COLOR_GREEN if is_owned else self.COLOR_MUTED
-        status_bg = self.COLOR_GREEN_SOFT if is_owned else self.COLOR_NEUTRAL
+        status_fg = theme.WORKSPACE_GREEN if is_owned else theme.WORKSPACE_MUTED
+        status_bg = theme.WORKSPACE_GREEN_LIGHT if is_owned else theme.WORKSPACE_BACKGROUND
         tk.Label(footer, text=status_text, font=("Segoe UI", 9, "bold"),
                  bg=status_bg, fg=status_fg, padx=8, pady=3).pack(side="left", padx=12)
 
-        actions = tk.Frame(footer, bg=self.COLOR_PANEL)
+        actions = tk.Frame(footer, bg=theme.COLORS.white)
         actions.pack(side="right")
 
         if not is_owned:
@@ -287,13 +273,13 @@ class ShopView(tk.Frame):
                                          lambda iid=item.item_id: self._on_action("activate", iid)).pack(side="right")
         else:
             tk.Label(actions, text="Aucune action", font=("Segoe UI", 10, "bold"),
-                     bg=self.COLOR_NEUTRAL, fg=self.COLOR_NEUTRAL_TEXT, padx=12, pady=6).pack(side="right")
+                     bg=theme.WORKSPACE_BACKGROUND, fg=theme.WORKSPACE_NEUTRAL_TEXT, padx=12, pady=6).pack(side="right")
 
     def _make_action_button(self, parent, text: str, kind: str, command):
-        bg, active_bg = (self.COLOR_BLUE_DARK, self.COLOR_BLUE) if kind == "buy" else (self.COLOR_GREEN_DARK, self.COLOR_GREEN)
+        bg, active_bg = (theme.WORKSPACE_BLUE_DARK, theme.WORKSPACE_BLUE_LIGHT) if kind == "buy" else (theme.WORKSPACE_GREEN_DARK, theme.WORKSPACE_GREEN)
         return tk.Button(
             parent, text=text, font=("Segoe UI", 9, "bold"),
-            bg=bg, fg="white", activebackground=active_bg, activeforeground="white",
+            bg=bg, fg=theme.COLORS.white, activebackground=active_bg, activeforeground=theme.COLORS.white,
             bd=0, width=9, padx=10, pady=5, cursor="hand2", command=command,
         )
 

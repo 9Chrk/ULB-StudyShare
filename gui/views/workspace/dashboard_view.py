@@ -2,11 +2,13 @@
 
 import tkinter as tk
 
+import gui.views.common.theme as theme
+
 
 class DashboardView(tk.Frame):
     """Vue Dashboard simple pour illustrer le layout principal."""
 
-    def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
+    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -18,7 +20,7 @@ class DashboardView(tk.Frame):
             text="Dashboard",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
-            fg="#111827",
+            fg=theme.WORKSPACE_TEXT,
         )
         title.pack(anchor="nw", padx=24, pady=(24, 8))
 
@@ -27,7 +29,7 @@ class DashboardView(tk.Frame):
             text=f"Welcome to ULB StudyShare, {data['profile'].username if data.get('profile') else 'Guest'}!",
             font=("Segoe UI", 12),
             bg=bg,
-            fg="#6b7280",
+            fg=theme.WORKSPACE_MUTED,
         )
         subtitle.pack(anchor="nw", padx=24)
 
@@ -38,25 +40,25 @@ class DashboardView(tk.Frame):
         cards_frame.pack(anchor="nw", padx=24, pady=24, fill="x")
 
         cards = [
-            ("Points",  str(profile.points),  "#000000"),
-            ("Level",   str(profile.level),   "#A1A1A1"),
+            ("Points",  str(profile.points),  theme.COLORS.black),
+            ("Level",   str(profile.level),   theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
-            card = tk.Frame(cards_frame, bg="white", padx=20, pady=16)
+            card = tk.Frame(cards_frame, bg=theme.COLORS.white, padx=20, pady=16)
             card.pack(side="left", padx=(0, 16))
 
             tk.Label(card, text=value, font=("Segoe UI", 28, "bold"),
-                     bg="white", fg=color).pack()
+                     bg=theme.COLORS.white, fg=color).pack()
             tk.Label(card, text=label, font=("Segoe UI", 11),
-                     bg="white", fg="#6b7280").pack()
+                     bg=theme.COLORS.white, fg=theme.WORKSPACE_MUTED).pack()
         # Titre actif
         active_title = data.get("active_title")
         tk.Label(
             self,
             text=f"Active title: {active_title if active_title else 'None'}",
             font=("Segoe UI", 11),
-            bg=bg, fg="#374151",
+            bg=bg, fg=theme.WORKSPACE_NEUTRAL_TEXT,
         ).pack(anchor="nw", padx=24, pady=(8, 16))
 
         # Activités récentes
@@ -64,31 +66,31 @@ class DashboardView(tk.Frame):
             self,
             text="Recent Activity",
             font=("Segoe UI", 14, "bold"),
-            bg=bg, fg="#111827",
+            bg=bg, fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(0, 8))
 
         activity = data.get("recent_activity", [])
         if not activity:
-            tk.Label(self, text="No recent activity.", bg=bg, fg="#6b7280",
+            tk.Label(self, text="No recent activity.", bg=bg, fg=theme.WORKSPACE_MUTED,
                      font=("Segoe UI", 11)).pack(anchor="nw", padx=24)
         else:
             for act_type, titre, date in activity:
-                row = tk.Frame(self, bg="white", padx=12, pady=8)
+                row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
                 if act_type == "Published":
-                    color = "#68ba9f"
+                    color = theme.WORKSPACE_GREEN
                 elif act_type == "Evaluated":
-                    color = "#6995dc"
+                    color = theme.WORKSPACE_BLUE_LIGHT
                 elif act_type == "Transaction":
-                    color = "#f59e0b"
+                    color = theme.WORKSPACE_ORANGE
                 else:
-                    color = "#9ca3af"
+                    color = theme.WORKSPACE_MUTED
 
                 tk.Label(
                     row,
                     text=act_type,
                     font=("Segoe UI", 10, "bold"),
-                    bg="white",
+                    bg=theme.COLORS.white,
                     fg=color,
                     width=10,
                     anchor="w",
@@ -98,8 +100,8 @@ class DashboardView(tk.Frame):
                     row,
                     text=titre,
                     font=("Segoe UI", 10),
-                    bg="white",
-                    fg="#111827",
+                    bg=theme.COLORS.white,
+                    fg=theme.WORKSPACE_TEXT,
                     anchor="w",
                 ).pack(side="left", padx=8)
 
@@ -107,8 +109,8 @@ class DashboardView(tk.Frame):
                     row,
                     text=str(date),
                     font=("Segoe UI", 9),
-                    bg="white",
-                    fg="#6b7280",
+                    bg=theme.COLORS.white,
+                    fg=theme.WORKSPACE_MUTED,
                     anchor="w",
                 ).pack(side="left")
 

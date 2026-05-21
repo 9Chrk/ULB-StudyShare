@@ -3,21 +3,14 @@
 import tkinter as tk
 from tkinter import ttk
 
+import gui.views.common.theme as theme
+
 
 class StatisticsView(tk.Frame):
     """Affiche les huit statistiques demandées par le guide."""
 
-    COLOR_BG = "#f3f4f6"
-    COLOR_PANEL = "#ffffff"
-    COLOR_TEXT = "#111827"
-    COLOR_MUTED = "#6b7280"
-    COLOR_BORDER = "#e5e7eb"
-    COLOR_BLUE = "#3b82f6"
-    COLOR_BLUE_DARK = "#2563eb"
-    COLOR_GREEN = "#10b981"
-    COLOR_ORANGE = "#f59e0b"
 
-    def __init__(self, root, app_controller, bg: str = "#f3f4f6", **kwargs):
+    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -28,7 +21,7 @@ class StatisticsView(tk.Frame):
             text="Statistics",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
-            fg=self.COLOR_TEXT,
+            fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(24, 8))
 
         tk.Label(
@@ -36,7 +29,7 @@ class StatisticsView(tk.Frame):
             text="Vue d'ensemble des indicateurs demandés par l'énoncé.",
             font=("Segoe UI", 12),
             bg=bg,
-            fg=self.COLOR_MUTED,
+            fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24)
 
         self._build_summary_cards()
@@ -47,19 +40,19 @@ class StatisticsView(tk.Frame):
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
 
         cards = [
-            ("Moyenne resumes / utilisateur", self._format_float(self.data.get("average_resumes_per_user")), self.COLOR_GREEN),
-            ("Objets cosmetiques top", self._format_top_object(), self.COLOR_BLUE),
-            ("Utilisateurs sans resume", str(len(self.data.get("users_without_resumes", []))), self.COLOR_ORANGE),
-            ("Utilisateurs en depassement", str(len(self.data.get("overspending_users", []))), self.COLOR_BLUE_DARK),
+            ("Moyenne resumes / utilisateur", self._format_float(self.data.get("average_resumes_per_user")), theme.WORKSPACE_GREEN),
+            ("Objets cosmetiques top", self._format_top_object(), theme.WORKSPACE_BLUE_LIGHT),
+            ("Utilisateurs sans resume", str(len(self.data.get("users_without_resumes", []))), theme.WORKSPACE_ORANGE),
+            ("Utilisateurs en depassement", str(len(self.data.get("overspending_users", []))), theme.WORKSPACE_BLUE_DARK),
         ]
 
         for index, (label, value, color) in enumerate(cards):
             card = tk.Frame(
                 cards_frame,
-                bg=self.COLOR_PANEL,
+                bg=theme.COLORS.white,
                 padx=16,
                 pady=12,
-                highlightbackground=self.COLOR_BORDER,
+                highlightbackground=theme.WORKSPACE_BORDER,
                 highlightthickness=1,
             )
             card.grid(row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 10, 0))
@@ -69,15 +62,15 @@ class StatisticsView(tk.Frame):
                 card,
                 text=value,
                 font=("Segoe UI", 18, "bold"),
-                bg=self.COLOR_PANEL,
+                bg=theme.COLORS.white,
                 fg=color,
             ).pack(anchor="w")
             tk.Label(
                 card,
                 text=label,
                 font=("Segoe UI", 10),
-                bg=self.COLOR_PANEL,
-                fg=self.COLOR_MUTED,
+                bg=theme.COLORS.white,
+                fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w")
 
     def _build_scroll_area(self) -> None:
@@ -116,10 +109,10 @@ class StatisticsView(tk.Frame):
     def _build_table_section(self, title: str, rows, headers, row_builder) -> None:
         section = tk.Frame(
             self.scroll_frame,
-            bg=self.COLOR_PANEL,
+            bg=theme.COLORS.white,
             padx=14,
             pady=14,
-            highlightbackground=self.COLOR_BORDER,
+            highlightbackground=theme.WORKSPACE_BORDER,
             highlightthickness=1,
         )
         section.pack(fill="x", pady=(0, 12))
@@ -128,11 +121,11 @@ class StatisticsView(tk.Frame):
             section,
             text=title,
             font=("Segoe UI", 13, "bold"),
-            bg=self.COLOR_PANEL,
-            fg=self.COLOR_TEXT,
+            bg=theme.COLORS.white,
+            fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="w")
 
-        table_frame = tk.Frame(section, bg=self.COLOR_PANEL)
+        table_frame = tk.Frame(section, bg=theme.COLORS.white)
         table_frame.pack(fill="x", pady=(10, 0))
 
         if not rows:
@@ -140,8 +133,8 @@ class StatisticsView(tk.Frame):
                 table_frame,
                 text="Aucune donnée disponible.",
                 font=("Segoe UI", 10),
-                bg=self.COLOR_PANEL,
-                fg=self.COLOR_MUTED,
+                bg=theme.COLORS.white,
+                fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w")
             return
 

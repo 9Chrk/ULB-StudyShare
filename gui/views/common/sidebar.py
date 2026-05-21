@@ -5,15 +5,16 @@ from typing import Dict, Optional
 from PIL import Image, ImageTk, ImageOps
 
 from gui.ui_helpers import get_asset_path
+import gui.views.common.theme as theme
 
 
 class Sidebar(tk.Frame):
     """Barre laterale avec boutons de navigation et etat actif."""
 
     def __init__(self, master, on_select,
-                 bg: str = "#141429",
-                 active_fg: str = "#1DE9B6",
-                 inactive_fg: str = "white",
+                 bg: str = theme.SIDEBAR_BACKGROUND,
+                 active_fg: str = theme.SIDEBAR_ACTIVE_TEXT,
+                 inactive_fg: str = theme.SIDEBAR_INACTIVE_TEXT,
                  **kwargs,
     ):
         super().__init__(master, bg=bg, **kwargs)
@@ -41,8 +42,8 @@ class Sidebar(tk.Frame):
         # Style
         self.active_fg = active_fg
         self.inactive_fg = inactive_fg
-        self.active_background = "#1B1B33"
-        self.exit_btn_color = "#5B100F"
+        self.active_background = theme.SIDEBAR_ACTIVE_BACKGROUND
+        self.exit_btn_color = theme.SIDEBAR_EXIT_BACKGROUND
 
         # Header branding
         self.build_header()
@@ -78,7 +79,7 @@ class Sidebar(tk.Frame):
         title_label.pack(side="left", padx=(10, 0))
 
         # Separateur visuel
-        top_separator = tk.Frame(self, bg="#2A2A45", height=1)
+        top_separator = tk.Frame(self, bg=theme.SIDEBAR_SEPARATOR, height=1)
         top_separator.grid(row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10))
 
 
@@ -129,7 +130,7 @@ class Sidebar(tk.Frame):
         self.grid_rowconfigure(self.exit_row, weight=1)
 
         # Separateur visuel
-        exit_separator = tk.Frame(self, bg="#333", height=1)
+        exit_separator = tk.Frame(self, bg=theme.SIDEBAR_EXIT_SEPARATOR, height=1)
         exit_separator.grid(row=self.exit_row + 1, column=0, columnspan=2, sticky="ew", pady=(20, 10), padx=20)
 
         # Bouton Log out
@@ -239,11 +240,11 @@ class Sidebar(tk.Frame):
         img = img.resize((18, 18), Image.LANCZOS)
 
         # Couleur selon l'etat actif/inactif
-        color = color_active if active else "#9CA3AF"
+        color = color_active if active else theme.SIDEBAR_ICON_INACTIVE       
         
         # Charger l'image et appliquer la teinte
         gray = ImageOps.grayscale(img)
-        colored = ImageOps.colorize(gray, black="#000000", white=color)
+        colored = ImageOps.colorize(gray, black=theme.COLORS.black, white=color)
         alpha = img.split()[-1]
         colored.putalpha(alpha)
 
