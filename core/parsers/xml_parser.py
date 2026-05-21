@@ -17,21 +17,22 @@ def xml_to_dict(file_path: str) -> list[dict]:
 # ---------- FONCTION AUXILIAIRE POUR XML ---------
 # ⚠️ ATTENTION : CETTE SECTION EST GÉNÉRÉ PAR IA
 
+
 def _parse_element(element) -> dict:
     """Fonction auxiliaire pour parser un élément XML récursivement"""
     result = {}
-    
+
     # Capturer les attributs
     if element.attrib:
         result.update(element.attrib)
-    
+
     # Grouper les enfants par tag pour détecter les listes
     children_by_tag = {}
     for child in element:
         if child.tag not in children_by_tag:
             children_by_tag[child.tag] = []
         children_by_tag[child.tag].append(child)
-    
+
     # Traiter chaque groupe d'enfants
     for tag_name, elements in children_by_tag.items():
         if len(elements) == 1:
@@ -49,5 +50,5 @@ def _parse_element(element) -> dict:
                     result[tag_name].append(_parse_element(child))
                 else:
                     result[tag_name].append(child.text)
-    
+
     return result

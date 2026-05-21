@@ -79,7 +79,9 @@ def buy_item(user_id: Optional[int], item_id: int) -> PurchaseResult:
 
         add_owned_item(cursor, user_id, item_id)
         spend_user_points(cursor, user_id, item.price_points)
-        create_spend_transaction(cursor, user_id, item.price_points, f"Achat boutique: {item.name}")
+        create_spend_transaction(
+            cursor, user_id, item.price_points, f"Achat boutique: {item.name}"
+        )
         return PurchaseResult(True, f"Achat réussi: {item.name}.")
 
 
@@ -97,7 +99,9 @@ def activate_owned_item(user_id: Optional[int], item_id: int) -> ActivationResul
             return ActivationResult(False, "Ce type d'objet ne peut pas être activé.")
 
         if not is_item_owned(cursor, user_id, item_id):
-            return ActivationResult(False, "Vous devez acheter cet objet avant activation.")
+            return ActivationResult(
+                False, "Vous devez acheter cet objet avant activation."
+            )
 
         if not activate_item(cursor, user_id, item_id, item.item_type):
             return ActivationResult(False, "Activation impossible.")

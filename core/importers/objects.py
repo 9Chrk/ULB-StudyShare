@@ -5,7 +5,9 @@ import mysql.connector
 from core.importers.utils import bounded_int, clean_text
 
 
-def import_objects(cursor, objects: list[dict], stats: dict[str, int]) -> dict[str, tuple[int, str]]:
+def import_objects(
+    cursor, objects: list[dict], stats: dict[str, int]
+) -> dict[str, tuple[int, str]]:
     """Insère 'ObjetCosmetique' puis, si besoin, son sous-type.
 
     Returns:
@@ -25,7 +27,11 @@ def import_objects(cursor, objects: list[dict], stats: dict[str, int]) -> dict[s
         description = clean_text(row.get("description")) or "Objet importé"
         points = bounded_int(row.get("prix"), default=1, minimum=1)
 
-        if not object_id or not name or object_type not in {"badge", "titre", "theme", "cosmetique"}:
+        if (
+            not object_id
+            or not name
+            or object_type not in {"badge", "titre", "theme", "cosmetique"}
+        ):
             stats["skipped"] += 1
             continue
 

@@ -26,7 +26,12 @@ class WorkspaceView(tk.Frame):
         self.grid_columnconfigure(1, weight=1)
 
         # Sidebar à gauche
-        self.sidebar = Sidebar(master=self, on_select=self.show_view, active_fg=theme.SIDEBAR_ACTIVE_TEXT, inactive_fg=theme.SIDEBAR_INACTIVE_TEXT)
+        self.sidebar = Sidebar(
+            master=self,
+            on_select=self.show_view,
+            active_fg=theme.SIDEBAR_ACTIVE_TEXT,
+            inactive_fg=theme.SIDEBAR_INACTIVE_TEXT,
+        )
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
         # Zone de contenu à droite
@@ -38,14 +43,13 @@ class WorkspaceView(tk.Frame):
         # Initialiser les vues et la sidebar
         self.create_views()
         self.configure_sidebar_items()
-        
+
         # Ajouter le bouton Exit en bas
         self.sidebar.add_exit_button(on_exit_callback=self.on_exit)
 
         # Vue par défaut
         self.show_view("dashboard")
 
-    
     # ---------- NAVIGATION ENTRE VUES ----------
 
     def on_exit(self) -> None:
@@ -65,19 +69,18 @@ class WorkspaceView(tk.Frame):
         # Afficher la vue dans la zone de contenu
         frame.tkraise()
 
-
     # ---------- INITIALISATION DES VUES ----------
 
     def create_views(self) -> None:
         """Instancie toutes les vues de l'application dans la zone de contenu."""
         # Imports locaux pour éviter les imports circulaires
-        from gui.views.workspace.dashboard_view   import DashboardView
-        from gui.views.workspace.explorer_view    import ExplorerView
+        from gui.views.workspace.dashboard_view import DashboardView
+        from gui.views.workspace.explorer_view import ExplorerView
         from gui.views.workspace.leaderboard_view import LeaderboardView
-        from gui.views.workspace.my_library_view  import MyLibraryView
-        from gui.views.workspace.profile_view     import ProfileView
-        from gui.views.workspace.shop_view        import ShopView
-        from gui.views.workspace.statistics_view  import StatisticsView
+        from gui.views.workspace.my_library_view import MyLibraryView
+        from gui.views.workspace.profile_view import ProfileView
+        from gui.views.workspace.shop_view import ShopView
+        from gui.views.workspace.statistics_view import StatisticsView
 
         views_config = {
             "dashboard": DashboardView,
@@ -90,7 +93,9 @@ class WorkspaceView(tk.Frame):
         }
 
         for name, ViewClass in views_config.items():
-            frame = ViewClass(self.content_area, self.app_controller, bg=self.content_bg)
+            frame = ViewClass(
+                self.content_area, self.app_controller, bg=self.content_bg
+            )
             frame.grid(row=0, column=0, sticky="nsew")
             self.views[name] = frame
 

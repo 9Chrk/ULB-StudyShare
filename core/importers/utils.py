@@ -26,7 +26,9 @@ def to_int(value: object, default: int) -> int:
         return default
 
 
-def bounded_int(value: object, default: int, minimum: int, maximum: Optional[int] = None) -> int:
+def bounded_int(
+    value: object, default: int, minimum: int, maximum: Optional[int] = None
+) -> int:
     """Convertit en entier dans un intervalle autorise, sinon 'default'."""
     number = to_int(value, default)
 

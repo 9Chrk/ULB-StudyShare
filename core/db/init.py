@@ -10,14 +10,14 @@ def execute_sql_script(filename: str) -> None:
 
     # On part de la configuration globale mais sans base sélectionnée
     config = DB_CONFIG.copy()
-    del config['database']
-    
+    del config["database"]
+
     # Connexion à MySQL
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
 
     # Lecture du script SQL
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open(filename, "r", encoding="utf-8") as f:
         script = f.read()
 
     # Exécution multi-statements

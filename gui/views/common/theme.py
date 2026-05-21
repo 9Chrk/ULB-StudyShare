@@ -38,6 +38,7 @@ class ColorPalette:
     red_500: str = "#ef4444"
     red_900: str = "#5B100F"
 
+
 COLORS = ColorPalette()
 
 WORKSPACE_BACKGROUND = COLORS.gray_50

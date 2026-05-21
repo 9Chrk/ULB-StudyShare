@@ -12,13 +12,31 @@ class ShopView(tk.Frame):
     """Page boutique: catalogue, achat d'objets et activation des objets possédés."""
 
     SECTION_META = {
-        "badge": ("Badges", theme.WORKSPACE_GREEN, "Récompenses visuelles actives ou à acheter."),
-        "titre": ("Titres", theme.WORKSPACE_BLUE_DARK, "Titres de profil à débloquer et activer."),
-        "theme": ("Thèmes", theme.WORKSPACE_ORANGE, "Styles visuels du profil à équiper."),
-        "autre": ("Autres objets", theme.WORKSPACE_NEUTRAL_TEXT, "Objets disponibles mais sans activation spéciale."),
+        "badge": (
+            "Badges",
+            theme.WORKSPACE_GREEN,
+            "Récompenses visuelles actives ou à acheter.",
+        ),
+        "titre": (
+            "Titres",
+            theme.WORKSPACE_BLUE_DARK,
+            "Titres de profil à débloquer et activer.",
+        ),
+        "theme": (
+            "Thèmes",
+            theme.WORKSPACE_ORANGE,
+            "Styles visuels du profil à équiper.",
+        ),
+        "autre": (
+            "Autres objets",
+            theme.WORKSPACE_NEUTRAL_TEXT,
+            "Objets disponibles mais sans activation spéciale.",
+        ),
     }
 
-    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
+    def __init__(
+        self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
+    ):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -32,8 +50,14 @@ class ShopView(tk.Frame):
             active_theme_id=None,
         )
 
-        self._make_label("Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT).pack(anchor="nw", padx=24, pady=(24, 8))
-        self._make_label("Achetez et activez vos objets cosmétiques.", ("Segoe UI", 12), fg=theme.WORKSPACE_MUTED).pack(anchor="nw", padx=24)
+        self._make_label(
+            "Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT
+        ).pack(anchor="nw", padx=24, pady=(24, 8))
+        self._make_label(
+            "Achetez et activez vos objets cosmétiques.",
+            ("Segoe UI", 12),
+            fg=theme.WORKSPACE_MUTED,
+        ).pack(anchor="nw", padx=24)
 
         self.summary_frame = tk.Frame(self, bg=bg)
         self.summary_frame.pack(fill="x", padx=24, pady=(16, 8))
@@ -42,7 +66,9 @@ class ShopView(tk.Frame):
         content_container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         self.canvas = tk.Canvas(content_container, bg=bg, highlightthickness=0)
-        self.scrollbar = tk.Scrollbar(content_container, orient="vertical", command=self.canvas.yview)
+        self.scrollbar = tk.Scrollbar(
+            content_container, orient="vertical", command=self.canvas.yview
+        )
         self.scroll_frame = tk.Frame(self.canvas, bg=bg)
 
         self.scroll_frame.bind(
@@ -72,7 +98,9 @@ class ShopView(tk.Frame):
 
     def _make_panel_label(self, parent, text, font, fg=None, **kwargs):
         """Crée un tk.Label sur fond COLOR_PANEL."""
-        return self._make_label(text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs)
+        return self._make_label(
+            text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs
+        )
 
     def _make_panel_frame(self, parent, **kwargs):
         """Crée un Frame avec le style carte (fond blanc + bordure)."""
@@ -90,7 +118,9 @@ class ShopView(tk.Frame):
         """Affiche le titre et le sous-titre d'une section."""
         title, _, subtitle = self.SECTION_META[item_type]
         self._make_panel_label(parent, title, ("Segoe UI", 13, "bold")).pack(anchor="w")
-        self._make_panel_label(parent, subtitle, ("Segoe UI", 9), fg=theme.WORKSPACE_MUTED).pack(anchor="w", pady=(2, 10))
+        self._make_panel_label(
+            parent, subtitle, ("Segoe UI", 9), fg=theme.WORKSPACE_MUTED
+        ).pack(anchor="w", pady=(2, 10))
 
     def _make_empty_label(self, parent) -> None:
         self._make_panel_label(
@@ -127,8 +157,12 @@ class ShopView(tk.Frame):
                 highlightthickness=1,
             )
             card.pack(side="left", padx=(0, 12))
-            self._make_panel_label(card, value, ("Segoe UI", 18, "bold"), fg=color).pack(anchor="w")
-            self._make_panel_label(card, label, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED).pack(anchor="w")
+            self._make_panel_label(
+                card, value, ("Segoe UI", 18, "bold"), fg=color
+            ).pack(anchor="w")
+            self._make_panel_label(
+                card, label, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED
+            ).pack(anchor="w")
 
     def _render_catalogue(self) -> None:
         for child in self.scroll_frame.winfo_children():
@@ -153,16 +187,22 @@ class ShopView(tk.Frame):
             top_frame.grid_columnconfigure(col, weight=1)
 
         for index, item_type in enumerate(("badge", "titre", "theme")):
-            section = self._build_section(top_frame, item_type, sections.get(item_type, []), owned_ids)
+            section = self._build_section(
+                top_frame, item_type, sections.get(item_type, []), owned_ids
+            )
             padx = (0 if index == 0 else 8, 0 if index == 2 else 8)
             section.grid(row=0, column=index, sticky="nsew", padx=padx)
 
-        self._build_horizontal_section(self.scroll_frame, "autre", sections.get("autre", []), owned_ids)
+        self._build_horizontal_section(
+            self.scroll_frame, "autre", sections.get("autre", []), owned_ids
+        )
 
     def _group_items_by_type(self, catalogue):
         sections = {"badge": [], "titre": [], "theme": [], "autre": []}
         for item in catalogue:
-            sections[item.item_type if item.item_type in sections else "autre"].append(item)
+            sections[item.item_type if item.item_type in sections else "autre"].append(
+                item
+            )
         return sections
 
     # ── section builders ───────────────────────────────────────────────────
@@ -180,11 +220,20 @@ class ShopView(tk.Frame):
             self._make_empty_label(items_frame)
         else:
             for item in items:
-                self._build_item_card(items_frame, item, owned_ids, accent_color=accent, vertical=True, wraplength=300)
+                self._build_item_card(
+                    items_frame,
+                    item,
+                    owned_ids,
+                    accent_color=accent,
+                    vertical=True,
+                    wraplength=300,
+                )
 
         return section
 
-    def _build_horizontal_section(self, parent, item_type: str, items, owned_ids) -> None:
+    def _build_horizontal_section(
+        self, parent, item_type: str, items, owned_ids
+    ) -> None:
         """Section horizontale (autre)."""
         _, accent, _ = self.SECTION_META[item_type]
         section = self._make_panel_frame(parent)
@@ -208,13 +257,26 @@ class ShopView(tk.Frame):
         if item_type == "autre":
             for index, item in enumerate(items):
                 self._build_item_card(
-                    items_frame, item, owned_ids,
-                    accent_color=accent, vertical=True, wraplength=220,
-                    layout="grid", row=index // 3, column=index % 3,
+                    items_frame,
+                    item,
+                    owned_ids,
+                    accent_color=accent,
+                    vertical=True,
+                    wraplength=220,
+                    layout="grid",
+                    row=index // 3,
+                    column=index % 3,
                 )
         else:
             for item in items:
-                self._build_item_card(items_frame, item, owned_ids, accent_color=accent, vertical=False, wraplength=220)
+                self._build_item_card(
+                    items_frame,
+                    item,
+                    owned_ids,
+                    accent_color=accent,
+                    vertical=False,
+                    wraplength=220,
+                )
 
     def _create_horizontal_scroller(self, parent, height: int):
         container = tk.Frame(parent, bg=self.bg)
@@ -223,25 +285,45 @@ class ShopView(tk.Frame):
         inner = tk.Frame(canvas, bg=self.bg)
 
         canvas.create_window((0, 0), window=inner, anchor="nw")
-        inner.bind("<Configure>", lambda _: canvas.configure(scrollregion=canvas.bbox("all")))
+        inner.bind(
+            "<Configure>", lambda _: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
         canvas.configure(xscrollcommand=scrollbar.set)
         canvas.pack(side="top", fill="both", expand=True)
         scrollbar.pack(side="bottom", fill="x")
 
-        return {"container": container, "canvas": canvas, "inner": inner, "scrollbar": scrollbar}
+        return {
+            "container": container,
+            "canvas": canvas,
+            "inner": inner,
+            "scrollbar": scrollbar,
+        }
 
     # ── item card ──────────────────────────────────────────────────────────
 
     def _build_item_card(
-        self, parent, item, owned_ids,
-        accent_color: str, vertical: bool, wraplength: int,
-        layout: str = "pack", row: int = 0, column: int = 0,
+        self,
+        parent,
+        item,
+        owned_ids,
+        accent_color: str,
+        vertical: bool,
+        wraplength: int,
+        layout: str = "pack",
+        row: int = 0,
+        column: int = 0,
     ) -> None:
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type)
 
-        card = tk.Frame(parent, bg=theme.COLORS.white, padx=12, pady=12,
-                        highlightbackground=theme.WORKSPACE_BORDER, highlightthickness=1)
+        card = tk.Frame(
+            parent,
+            bg=theme.COLORS.white,
+            padx=12,
+            pady=12,
+            highlightbackground=theme.WORKSPACE_BORDER,
+            highlightthickness=1,
+        )
         if layout == "grid":
             card.grid(row=row, column=column, sticky="nsew", padx=6, pady=6)
         elif vertical:
@@ -250,52 +332,113 @@ class ShopView(tk.Frame):
             card.configure(width=250)
             card.pack(side="left", fill="y", padx=(0, 10), pady=6)
 
-        self._make_panel_label(card, item.name, ("Segoe UI", 12, "bold")).pack(anchor="w")
+        self._make_panel_label(card, item.name, ("Segoe UI", 12, "bold")).pack(
+            anchor="w"
+        )
         self._make_panel_label(
-            card, item.description, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED,
-            wraplength=wraplength, justify="left", anchor="w",
+            card,
+            item.description,
+            ("Segoe UI", 10),
+            fg=theme.WORKSPACE_MUTED,
+            wraplength=wraplength,
+            justify="left",
+            anchor="w",
         ).pack(fill="x", pady=(6, 8))
 
         footer = tk.Frame(card, bg=theme.COLORS.white)
         footer.pack(fill="x")
 
-        self._make_panel_label(footer, f"{item.price_points} pts", ("Segoe UI", 10, "bold"), fg=theme.WORKSPACE_GREEN).pack(side="left")
+        self._make_panel_label(
+            footer,
+            f"{item.price_points} pts",
+            ("Segoe UI", 10, "bold"),
+            fg=theme.WORKSPACE_GREEN,
+        ).pack(side="left")
 
         status_text = "Possédé" if is_owned else "Disponible"
         status_fg = theme.WORKSPACE_GREEN if is_owned else theme.WORKSPACE_MUTED
-        status_bg = theme.WORKSPACE_GREEN_LIGHT if is_owned else theme.WORKSPACE_BACKGROUND
-        tk.Label(footer, text=status_text, font=("Segoe UI", 9, "bold"),
-                 bg=status_bg, fg=status_fg, padx=8, pady=3).pack(side="left", padx=12)
+        status_bg = (
+            theme.WORKSPACE_GREEN_LIGHT if is_owned else theme.WORKSPACE_BACKGROUND
+        )
+        tk.Label(
+            footer,
+            text=status_text,
+            font=("Segoe UI", 9, "bold"),
+            bg=status_bg,
+            fg=status_fg,
+            padx=8,
+            pady=3,
+        ).pack(side="left", padx=12)
 
         actions = tk.Frame(footer, bg=theme.COLORS.white)
         actions.pack(side="right")
 
         if not is_owned:
-            self._make_action_button(actions, "Acheter", "buy",
-                                     lambda iid=item.item_id: self._on_action("buy", iid)).pack(side="right")
+            self._make_action_button(
+                actions,
+                "Acheter",
+                "buy",
+                lambda iid=item.item_id: self._on_action("buy", iid),
+            ).pack(side="right")
         elif item.item_type in ("badge", "titre", "theme"):
             if is_active:
-                tk.Label(actions, text="Activé", font=("Segoe UI", 9, "bold"),
-                         bg=status_bg, fg=status_fg, padx=8, pady=3).pack(side="right")
+                tk.Label(
+                    actions,
+                    text="Activé",
+                    font=("Segoe UI", 9, "bold"),
+                    bg=status_bg,
+                    fg=status_fg,
+                    padx=8,
+                    pady=3,
+                ).pack(side="right")
             else:
-                self._make_action_button(actions, "Activer", "activate",
-                                         lambda iid=item.item_id: self._on_action("activate", iid)).pack(side="right")
+                self._make_action_button(
+                    actions,
+                    "Activer",
+                    "activate",
+                    lambda iid=item.item_id: self._on_action("activate", iid),
+                ).pack(side="right")
         else:
-            tk.Label(actions, text="Aucune action", font=("Segoe UI", 10, "bold"),
-                     bg=theme.WORKSPACE_BACKGROUND, fg=theme.WORKSPACE_NEUTRAL_TEXT, padx=12, pady=6).pack(side="right")
+            tk.Label(
+                actions,
+                text="Aucune action",
+                font=("Segoe UI", 10, "bold"),
+                bg=theme.WORKSPACE_BACKGROUND,
+                fg=theme.WORKSPACE_NEUTRAL_TEXT,
+                padx=12,
+                pady=6,
+            ).pack(side="right")
 
     def _make_action_button(self, parent, text: str, kind: str, command):
-        bg, active_bg = (theme.WORKSPACE_BLUE_DARK, theme.WORKSPACE_BLUE_LIGHT) if kind == "buy" else (theme.WORKSPACE_GREEN_DARK, theme.WORKSPACE_GREEN)
+        bg, active_bg = (
+            (theme.WORKSPACE_BLUE_DARK, theme.WORKSPACE_BLUE_LIGHT)
+            if kind == "buy"
+            else (theme.WORKSPACE_GREEN_DARK, theme.WORKSPACE_GREEN)
+        )
         return tk.Button(
-            parent, text=text, font=("Segoe UI", 9, "bold"),
-            bg=bg, fg=theme.COLORS.white, activebackground=active_bg, activeforeground=theme.COLORS.white,
-            bd=0, width=9, padx=10, pady=5, cursor="hand2", command=command,
+            parent,
+            text=text,
+            font=("Segoe UI", 9, "bold"),
+            bg=bg,
+            fg=theme.COLORS.white,
+            activebackground=active_bg,
+            activeforeground=theme.COLORS.white,
+            bd=0,
+            width=9,
+            padx=10,
+            pady=5,
+            cursor="hand2",
+            command=command,
         )
 
     # ── state helpers ──────────────────────────────────────────────────────
 
     def _is_item_active(self, item_id: int, item_type: str) -> bool:
-        key = {"badge": "active_badge_id", "titre": "active_title_id", "theme": "active_theme_id"}.get(item_type)
+        key = {
+            "badge": "active_badge_id",
+            "titre": "active_title_id",
+            "theme": "active_theme_id",
+        }.get(item_type)
         return key is not None and getattr(self.data, key) == item_id
 
     def _on_action(self, kind: str, item_id: int) -> None:

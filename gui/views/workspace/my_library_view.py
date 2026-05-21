@@ -2,13 +2,15 @@
 
 import tkinter as tk
 
-import gui.views.common.theme as theme  
+import gui.views.common.theme as theme
 
 
 class MyLibraryView(tk.Frame):
     """Simple My Library page for sidebar navigation."""
 
-    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
+    def __init__(
+        self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
+    ):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -17,7 +19,7 @@ class MyLibraryView(tk.Frame):
             text="My Library",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
-            fg=theme.WORKSPACE_TEXT,  
+            fg=theme.WORKSPACE_TEXT,
         )
         title.pack(anchor="nw", padx=24, pady=(24, 8))
 

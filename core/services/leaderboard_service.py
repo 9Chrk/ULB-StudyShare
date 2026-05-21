@@ -11,4 +11,7 @@ def get_leaderboard(limit: Optional[int] = None) -> list[LeaderboardEntry]:
     """Renvoie le classement complet des utilisateurs (tous par defaut)."""
     with DBManager() as cursor:
         rows = get_top_users(cursor, limit)
-        return [LeaderboardEntry(username=row[0], points=row[1], level=row[2]) for row in rows]
+        return [
+            LeaderboardEntry(username=row[0], points=row[1], level=row[2])
+            for row in rows
+        ]

@@ -13,14 +13,14 @@ class AuthController:
     def __init__(self, root, app_controller):
         self.root = root
         self.app_controller = app_controller
-        
+
     def show_login(self):
         login_view.build(
             root=self.root,
             on_login=self.login,
             on_register_link=self.app_controller.show_register,
         )
-        
+
     def show_register(self):
         register_view.build(
             root=self.root,
@@ -29,7 +29,7 @@ class AuthController:
         )
 
     # ---------- FONCTIONS DE GESTION DE L'AUTHENTIFICATION ---------
-    
+
     def login(self, user_entry, password_entry):
         username = user_entry.get()
         password = password_entry.get()
@@ -58,7 +58,7 @@ class AuthController:
             return
 
         is_ok, message = auth_service.add(username, password, email)
-        
+
         if is_ok:
             user_entry.delete(0, "end")
             email_entry.delete(0, "end")

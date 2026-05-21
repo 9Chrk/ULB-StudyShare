@@ -83,13 +83,17 @@ def import_data(
 
         # Import des references (cours + année) avant les entités dépendantes.
         course_codes = import_courses(cursor, courses, stats)
-        import_course_year_links(cursor, course_codes, DEFAULT_YEAR_CODE, DEFAULT_YEAR_LABEL, stats)
+        import_course_year_links(
+            cursor, course_codes, DEFAULT_YEAR_CODE, DEFAULT_YEAR_LABEL, stats
+        )
 
         object_map = import_objects(cursor, objects, stats)
         user_map = import_users(cursor, users, stats)
 
         # Les resumes/possessions/activations/evaluations dependent des maps precedentes.
-        resume_map = import_resumes(cursor, users, user_map, course_codes, DEFAULT_YEAR_CODE, stats)
+        resume_map = import_resumes(
+            cursor, users, user_map, course_codes, DEFAULT_YEAR_CODE, stats
+        )
         import_possessions(cursor, users, user_map, object_map, stats)
         apply_active_objects(cursor, users, user_map, object_map, stats)
 

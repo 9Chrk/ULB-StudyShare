@@ -12,7 +12,9 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     clear_frames(root)
 
     # Charger le logo de l'application
-    logo_image = tk.PhotoImage(file=str(get_asset_path("assets", "images", "ulb_logo.png"))).subsample(10, 10)
+    logo_image = tk.PhotoImage(
+        file=str(get_asset_path("assets", "images", "ulb_logo.png"))
+    ).subsample(10, 10)
 
     # Frame principale blanche, centrée dans la fenêtre
     login_frame = tk.Frame(root, bg="white", bd=0)
@@ -34,7 +36,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     logo_label = tk.Label(login_frame, image=logo_image, bg="white")
     logo_label.place(x=45, y=20)
     login_frame.logo_image = logo_image
-    
+
     title_label = tk.Label(
         login_frame,
         text="StudyShare",

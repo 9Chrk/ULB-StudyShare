@@ -5,7 +5,9 @@ import mysql.connector
 from core.importers.utils import clean_text
 
 
-def import_courses(cursor, courses: list[dict[str, str]], stats: dict[str, int]) -> set[str]:
+def import_courses(
+    cursor, courses: list[dict[str, str]], stats: dict[str, int]
+) -> set[str]:
     """Insère les cours CSV valides.
 
     Args:
@@ -44,13 +46,13 @@ def import_courses(cursor, courses: list[dict[str, str]], stats: dict[str, int])
     return course_codes
 
 
-def import_course_year_links(cursor,
+def import_course_year_links(
+    cursor,
     course_codes: set[str],
     year_code: str,
     year_label: str,
     stats: dict[str, int],
-    ) -> None:
-
+) -> None:
     """Cree l'année académique cible puis associe tous les cours importés.
 
     Cette fonction se base sur les 'course_codes' retournés par

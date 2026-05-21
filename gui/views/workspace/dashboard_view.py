@@ -8,7 +8,9 @@ import gui.views.common.theme as theme
 class DashboardView(tk.Frame):
     """Vue Dashboard simple pour illustrer le layout principal."""
 
-    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
+    def __init__(
+        self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
+    ):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -40,25 +42,36 @@ class DashboardView(tk.Frame):
         cards_frame.pack(anchor="nw", padx=24, pady=24, fill="x")
 
         cards = [
-            ("Points",  str(profile.points),  theme.COLORS.black),
-            ("Level",   str(profile.level),   theme.COLORS.gray_500),
+            ("Points", str(profile.points), theme.COLORS.black),
+            ("Level", str(profile.level), theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
             card = tk.Frame(cards_frame, bg=theme.COLORS.white, padx=20, pady=16)
             card.pack(side="left", padx=(0, 16))
 
-            tk.Label(card, text=value, font=("Segoe UI", 28, "bold"),
-                     bg=theme.COLORS.white, fg=color).pack()
-            tk.Label(card, text=label, font=("Segoe UI", 11),
-                     bg=theme.COLORS.white, fg=theme.WORKSPACE_MUTED).pack()
+            tk.Label(
+                card,
+                text=value,
+                font=("Segoe UI", 28, "bold"),
+                bg=theme.COLORS.white,
+                fg=color,
+            ).pack()
+            tk.Label(
+                card,
+                text=label,
+                font=("Segoe UI", 11),
+                bg=theme.COLORS.white,
+                fg=theme.WORKSPACE_MUTED,
+            ).pack()
         # Titre actif
         active_title = data.active_title
         tk.Label(
             self,
             text=f"Active title: {active_title if active_title else 'None'}",
             font=("Segoe UI", 11),
-            bg=bg, fg=theme.WORKSPACE_NEUTRAL_TEXT,
+            bg=bg,
+            fg=theme.WORKSPACE_NEUTRAL_TEXT,
         ).pack(anchor="nw", padx=24, pady=(8, 16))
 
         # Activités récentes
@@ -66,13 +79,19 @@ class DashboardView(tk.Frame):
             self,
             text="Recent Activity",
             font=("Segoe UI", 14, "bold"),
-            bg=bg, fg=theme.WORKSPACE_TEXT,
+            bg=bg,
+            fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(0, 8))
 
         activity = data.recent_activity
         if not activity:
-            tk.Label(self, text="No recent activity.", bg=bg, fg=theme.WORKSPACE_MUTED,
-                     font=("Segoe UI", 11)).pack(anchor="nw", padx=24)
+            tk.Label(
+                self,
+                text="No recent activity.",
+                bg=bg,
+                fg=theme.WORKSPACE_MUTED,
+                font=("Segoe UI", 11),
+            ).pack(anchor="nw", padx=24)
         else:
             for item in activity:
                 row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
@@ -113,4 +132,3 @@ class DashboardView(tk.Frame):
                     fg=theme.WORKSPACE_MUTED,
                     anchor="w",
                 ).pack(side="left")
-

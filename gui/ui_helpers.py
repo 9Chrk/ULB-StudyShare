@@ -19,7 +19,7 @@ def clear_frames(root: tk.Tk) -> None:
 
 def bind_entry_placeholder(entry, placeholder: str, is_password: bool = False) -> None:
     """Ajoute un placeholder géré au focus sur un champ de saisie."""
-    
+
     def focus_in(_event):
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
@@ -36,7 +36,9 @@ def bind_entry_placeholder(entry, placeholder: str, is_password: bool = False) -
     entry.bind("<FocusOut>", focus_out)
 
 
-def center_window(root: tk.Tk, width: int, height: int, resizable: bool = False) -> None:
+def center_window(
+    root: tk.Tk, width: int, height: int, resizable: bool = False
+) -> None:
     """Centre la fenêtre sur l'écran en fonction de la taille donnée."""
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()

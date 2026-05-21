@@ -11,11 +11,14 @@ import gui.views.common.theme as theme
 class Sidebar(tk.Frame):
     """Barre laterale avec boutons de navigation et etat actif."""
 
-    def __init__(self, master, on_select,
-                 bg: str = theme.SIDEBAR_BACKGROUND,
-                 active_fg: str = theme.SIDEBAR_ACTIVE_TEXT,
-                 inactive_fg: str = theme.SIDEBAR_INACTIVE_TEXT,
-                 **kwargs,
+    def __init__(
+        self,
+        master,
+        on_select,
+        bg: str = theme.SIDEBAR_BACKGROUND,
+        active_fg: str = theme.SIDEBAR_ACTIVE_TEXT,
+        inactive_fg: str = theme.SIDEBAR_INACTIVE_TEXT,
+        **kwargs,
     ):
         super().__init__(master, bg=bg, **kwargs)
 
@@ -34,7 +37,7 @@ class Sidebar(tk.Frame):
         # Largeur fixe de la sidebar
         self.configure(bg=bg, width=250)
         self.grid_propagate(False)
-        
+
         # Colonne 0 = indicateur, colonne 1 = contenu
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
@@ -48,20 +51,20 @@ class Sidebar(tk.Frame):
         # Header branding
         self.build_header()
 
-
     # --------- CONSTRUCTION DE L'ENTETE DE MARQUE ----------
 
     def build_header(self) -> None:
         """Construit l'entete de marque en haut de la sidebar."""
         brand_frame = tk.Frame(self, bg=self["bg"])
-        brand_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(18, 14))
+        brand_frame.grid(
+            row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(18, 14)
+        )
 
         # Logo ULB
         try:
-            self.logo_image = (
-                tk.PhotoImage(file=str(get_asset_path("assets", "images", "ulb_logo.png")))
-                .subsample(12, 12)
-            )
+            self.logo_image = tk.PhotoImage(
+                file=str(get_asset_path("assets", "images", "ulb_logo.png"))
+            ).subsample(12, 12)
             logo_label = tk.Label(brand_frame, image=self.logo_image, bg=self["bg"])
             logo_label.pack(side="left")
         except tk.TclError:
@@ -80,8 +83,9 @@ class Sidebar(tk.Frame):
 
         # Separateur visuel
         top_separator = tk.Frame(self, bg=theme.SIDEBAR_SEPARATOR, height=1)
-        top_separator.grid(row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10))
-
+        top_separator.grid(
+            row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10)
+        )
 
     # ---------- CONFIGURATION DES ENTREES DE MENU ----------
 
@@ -121,7 +125,6 @@ class Sidebar(tk.Frame):
         # Derniere ligne utilisee pour placer le bouton Log out en bas
         self.exit_row = self.start_row + len(items)
 
-
     # ---------- BOUTON LOG OUT ----------
 
     def add_exit_button(self, on_exit_callback) -> None:
@@ -131,7 +134,14 @@ class Sidebar(tk.Frame):
 
         # Separateur visuel
         exit_separator = tk.Frame(self, bg=theme.SIDEBAR_EXIT_SEPARATOR, height=1)
-        exit_separator.grid(row=self.exit_row + 1, column=0, columnspan=2, sticky="ew", pady=(20, 10), padx=20)
+        exit_separator.grid(
+            row=self.exit_row + 1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            pady=(20, 10),
+            padx=20,
+        )
 
         # Bouton Log out
         exit_btn = tk.Button(
@@ -158,10 +168,11 @@ class Sidebar(tk.Frame):
             exit_btn.configure(image=icon, compound="left", padx=16)
 
         # Placer le bouton Log out en bas de la sidebar
-        exit_btn.grid(row=self.exit_row + 2, column=0, columnspan=2, sticky="ew", pady=(0, 16))
+        exit_btn.grid(
+            row=self.exit_row + 2, column=0, columnspan=2, sticky="ew", pady=(0, 16)
+        )
         self.grid_rowconfigure(self.exit_row + 1, weight=0)
         self.grid_rowconfigure(self.exit_row + 2, weight=0)
-        
 
     # ---------- GESTION DE L'ETAT ACTIF ----------
 
@@ -192,21 +203,28 @@ class Sidebar(tk.Frame):
             if icon_set is None:
                 icon_set = {
                     "inactive": self.load_icon_for(name, active=False),
-                    "active": self.load_icon_for(name, color_active=self.active_fg, active=True),
+                    "active": self.load_icon_for(
+                        name, color_active=self.active_fg, active=True
+                    ),
                 }
                 self.icons[name] = icon_set
 
             # Choisir l'icone a afficher selon l'etat actif/inactif
-            img = icon_set.get("active") if is_active and icon_set.get("active") is not None else icon_set.get("inactive")
+            img = (
+                icon_set.get("active")
+                if is_active and icon_set.get("active") is not None
+                else icon_set.get("inactive")
+            )
             if img is not None:
                 btn.configure(image=img, compound="left", padx=16)
             else:
                 btn.configure(image="", padx=30)
-                
 
     # ---------- ICONES DE MENU ----------
 
-    def load_icon_for(self, view_name: str, color_active: str = None, active: bool = False):
+    def load_icon_for(
+        self, view_name: str, color_active: str = None, active: bool = False
+    ):
         """Charge et teinte une icone pour une vue donnee.
 
         - utilise les fichiers fournis dans assets/images
@@ -228,10 +246,10 @@ class Sidebar(tk.Frame):
         base_name = icon_map.get(view_name)
         if base_name is None:
             return None
-        
+
         # Construire le chemin vers l'asset
         path = get_asset_path("assets", "images", base_name)
-        
+
         try:
             img = Image.open(path).convert("RGBA")
         except Exception:
@@ -240,8 +258,8 @@ class Sidebar(tk.Frame):
         img = img.resize((18, 18), Image.LANCZOS)
 
         # Couleur selon l'etat actif/inactif
-        color = color_active if active else theme.SIDEBAR_ICON_INACTIVE       
-        
+        color = color_active if active else theme.SIDEBAR_ICON_INACTIVE
+
         # Charger l'image et appliquer la teinte
         gray = ImageOps.grayscale(img)
         colored = ImageOps.colorize(gray, black=theme.COLORS.black, white=color)

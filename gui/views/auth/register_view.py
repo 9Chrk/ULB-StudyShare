@@ -61,14 +61,18 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     email_entry.place(x=50, y=160, width=270, height=30)
 
     # Icône + champ de saisie pour le mot de passe
-    password_icon = tk.Label(register_frame, text="🔒", font=("Segoe UI", 12), bg="white")
+    password_icon = tk.Label(
+        register_frame, text="🔒", font=("Segoe UI", 12), bg="white"
+    )
     password_icon.place(x=20, y=210)
     password_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
     password_entry.insert(0, "Password")
     password_entry.place(x=50, y=210, width=270, height=30)
 
     # Icône + champ pour confirmer le mot de passe
-    confirm_icon = tk.Label(register_frame, text="🔒", font=("Segoe UI", 12), bg="white")
+    confirm_icon = tk.Label(
+        register_frame, text="🔒", font=("Segoe UI", 12), bg="white"
+    )
     confirm_icon.place(x=20, y=260)
     confirm_password_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
     confirm_password_entry.insert(0, "Confirm Password")
@@ -87,7 +91,9 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     register_button.place(x=30, y=310, width=290, height=40)
     register_button.bind(
         "<Button-1>",
-        lambda _: on_register(user_entry, password_entry, confirm_password_entry, email_entry),
+        lambda _: on_register(
+            user_entry, password_entry, confirm_password_entry, email_entry
+        ),
     )
 
     # Texte + lien cliquable pour revenir à la vue de login

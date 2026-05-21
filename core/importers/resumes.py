@@ -53,7 +53,14 @@ def import_resumes(
                     INSERT INTO Resume (titre, description, datePublication, idUtilisateur, codeCours, codeAnnee)
                     VALUES (%s, %s, %s, %s, %s, %s)
                     """,
-                    (title, description, date_publication, user_id, code_cours, year_code),
+                    (
+                        title,
+                        description,
+                        date_publication,
+                        user_id,
+                        code_cours,
+                        year_code,
+                    ),
                 )
 
                 resume_id = cursor.lastrowid

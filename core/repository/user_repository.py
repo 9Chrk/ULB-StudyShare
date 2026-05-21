@@ -1,4 +1,5 @@
 """Requêtes SQL liées à l'entité Utilisateur."""
+
 from typing import Optional, List, Tuple
 from core.models.user import UserInfo
 
@@ -55,7 +56,7 @@ def get_active_title(cursor, user_id: int) -> Optional[str]:
         JOIN ObjetCosmetique oc ON u.idTitreActif = oc.idObjet
         WHERE u.idUtilisateur = %s AND u.idTitreActif IS NOT NULL
         """,
-        (user_id,)
+        (user_id,),
     )
     row = cursor.fetchone()
     return row[0] if row else None
@@ -79,6 +80,6 @@ def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
         ORDER BY date DESC
         LIMIT 8
         """,
-        (user_id, user_id, user_id)
+        (user_id, user_id, user_id),
     )
     return cursor.fetchall()

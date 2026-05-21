@@ -7,8 +7,9 @@ import gui.views.common.theme as theme
 
 
 class LeaderboardView(tk.Frame):
-
-    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
+    def __init__(
+        self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
+    ):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
@@ -19,14 +20,16 @@ class LeaderboardView(tk.Frame):
             self,
             text="Leaderboard",
             font=("Segoe UI", 20, "bold"),
-            bg=bg, fg=theme.WORKSPACE_TEXT,
+            bg=bg,
+            fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(24, 8))
 
         tk.Label(
             self,
             text="See top contributors in the community.",
             font=("Segoe UI", 12),
-            bg=bg, fg=theme.WORKSPACE_MUTED,
+            bg=bg,
+            fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24, pady=(0, 16))
 
         # Tableau avec scrollbar
@@ -36,15 +39,15 @@ class LeaderboardView(tk.Frame):
         columns = ("rang", "username", "points", "niveau")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=12)
 
-        tree.heading("rang",     text="Rank")
+        tree.heading("rang", text="Rank")
         tree.heading("username", text="Player")
-        tree.heading("points",   text="Points")
-        tree.heading("niveau",   text="Level")
+        tree.heading("points", text="Points")
+        tree.heading("niveau", text="Level")
 
-        tree.column("rang",     width=50,  anchor="center")
+        tree.column("rang", width=50, anchor="center")
         tree.column("username", width=150, anchor="w")
-        tree.column("points",   width=80,  anchor="center")
-        tree.column("niveau",   width=60,  anchor="center")
+        tree.column("points", width=80, anchor="center")
+        tree.column("niveau", width=60, anchor="center")
 
         # Scrollbar
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
@@ -59,9 +62,12 @@ class LeaderboardView(tk.Frame):
             tag = "current" if entry.username == current_user else ""
             if entry.username == current_user:
                 current_user_rank = i
-            tree.insert("", "end",
-                        values=(i, entry.username, entry.points, entry.level),
-                        tags=(tag,))
+            tree.insert(
+                "",
+                "end",
+                values=(i, entry.username, entry.points, entry.level),
+                tags=(tag,),
+            )
 
         tree.tag_configure("current", background=theme.WORKSPACE_HIGHLIGHT)
 
@@ -72,7 +78,9 @@ class LeaderboardView(tk.Frame):
         tk.Frame(self, bg=bg, height=12).pack(fill="x")
 
         # Panel position utilisateur (en bas)
-        user_panel = tk.Frame(self, bg=theme.COLORS.white, relief="solid", borderwidth=1)
+        user_panel = tk.Frame(
+            self, bg=theme.COLORS.white, relief="solid", borderwidth=1
+        )
         user_panel.pack(fill="x", padx=24, pady=(0, 24))
 
         content_frame = tk.Frame(user_panel, bg=theme.COLORS.white)
@@ -82,7 +90,8 @@ class LeaderboardView(tk.Frame):
             content_frame,
             text="Your Position",
             font=("Segoe UI", 11, "bold"),
-            bg=theme.COLORS.white, fg=theme.WORKSPACE_MUTED,
+            bg=theme.COLORS.white,
+            fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="w")
 
         if current_user_rank:
@@ -94,8 +103,6 @@ class LeaderboardView(tk.Frame):
             content_frame,
             text=position_text,
             font=("Segoe UI", 13, "bold"),
-            bg=theme.COLORS.white, fg=theme.WORKSPACE_GREEN,
+            bg=theme.COLORS.white,
+            fg=theme.WORKSPACE_GREEN,
         ).pack(anchor="w", pady=(4, 0))
-
-
-

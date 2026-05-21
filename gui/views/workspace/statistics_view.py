@@ -9,8 +9,9 @@ import gui.views.common.theme as theme
 class StatisticsView(tk.Frame):
     """Affiche les huit statistiques demandées par le guide."""
 
-
-    def __init__(self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs):
+    def __init__(
+        self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
+    ):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -40,10 +41,26 @@ class StatisticsView(tk.Frame):
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
 
         cards = [
-            ("Moyenne resumes / utilisateur", self._format_float(self.data.average_resumes_per_user), theme.WORKSPACE_GREEN),
-            ("Objets cosmetiques top", self._format_top_object(), theme.WORKSPACE_BLUE_LIGHT),
-            ("Utilisateurs sans resume", str(len(self.data.users_without_resumes)), theme.WORKSPACE_ORANGE),
-            ("Utilisateurs en depassement", str(len(self.data.overspending_users)), theme.WORKSPACE_BLUE_DARK),
+            (
+                "Moyenne resumes / utilisateur",
+                self._format_float(self.data.average_resumes_per_user),
+                theme.WORKSPACE_GREEN,
+            ),
+            (
+                "Objets cosmetiques top",
+                self._format_top_object(),
+                theme.WORKSPACE_BLUE_LIGHT,
+            ),
+            (
+                "Utilisateurs sans resume",
+                str(len(self.data.users_without_resumes)),
+                theme.WORKSPACE_ORANGE,
+            ),
+            (
+                "Utilisateurs en depassement",
+                str(len(self.data.overspending_users)),
+                theme.WORKSPACE_BLUE_DARK,
+            ),
         ]
 
         for index, (label, value, color) in enumerate(cards):
@@ -55,7 +72,9 @@ class StatisticsView(tk.Frame):
                 highlightbackground=theme.WORKSPACE_BORDER,
                 highlightthickness=1,
             )
-            card.grid(row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 10, 0))
+            card.grid(
+                row=0, column=index, sticky="nsew", padx=(0 if index == 0 else 10, 0)
+            )
             cards_frame.grid_columnconfigure(index, weight=1)
 
             tk.Label(
@@ -78,7 +97,9 @@ class StatisticsView(tk.Frame):
         container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         self.canvas = tk.Canvas(container, bg=self.bg, highlightthickness=0)
-        self.scrollbar = tk.Scrollbar(container, orient="vertical", command=self.canvas.yview)
+        self.scrollbar = tk.Scrollbar(
+            container, orient="vertical", command=self.canvas.yview
+        )
         self.scroll_frame = tk.Frame(self.canvas, bg=self.bg)
 
         self.scroll_frame.bind(
@@ -95,12 +116,42 @@ class StatisticsView(tk.Frame):
 
     def _build_sections(self) -> None:
         sections = [
-            ("Top 10 utilisateurs", self.data.top_users, ("Rang", "Utilisateur", "Points", "Niveau"), self._rows_top_users),
-            ("Utilisateurs avec au moins 3 cours distincts", self.data.multi_course_users, ("Utilisateur", "Cours", "Resumes"), self._rows_multi_course_users),
-            ("Cours avec le plus de resumes", self.data.top_courses, ("Code", "Cours", "Resumes"), self._rows_top_courses),
-            ("Meilleurs resumes par cours", self.data.best_rated_resumes, ("Code", "Cours", "Resume", "Note moyenne"), self._rows_best_rated_resumes),
-            ("Utilisateurs n'ayant jamais publie", self.data.users_without_resumes, ("Utilisateur", "Email", "Points"), self._rows_users_without_resumes),
-            ("Utilisateurs ayant depense trop de points", self.data.overspending_users, ("Utilisateur", "Points", "Depense", "Excedent"), self._rows_overspending_users),
+            (
+                "Top 10 utilisateurs",
+                self.data.top_users,
+                ("Rang", "Utilisateur", "Points", "Niveau"),
+                self._rows_top_users,
+            ),
+            (
+                "Utilisateurs avec au moins 3 cours distincts",
+                self.data.multi_course_users,
+                ("Utilisateur", "Cours", "Resumes"),
+                self._rows_multi_course_users,
+            ),
+            (
+                "Cours avec le plus de resumes",
+                self.data.top_courses,
+                ("Code", "Cours", "Resumes"),
+                self._rows_top_courses,
+            ),
+            (
+                "Meilleurs resumes par cours",
+                self.data.best_rated_resumes,
+                ("Code", "Cours", "Resume", "Note moyenne"),
+                self._rows_best_rated_resumes,
+            ),
+            (
+                "Utilisateurs n'ayant jamais publie",
+                self.data.users_without_resumes,
+                ("Utilisateur", "Email", "Points"),
+                self._rows_users_without_resumes,
+            ),
+            (
+                "Utilisateurs ayant depense trop de points",
+                self.data.overspending_users,
+                ("Utilisateur", "Points", "Depense", "Excedent"),
+                self._rows_overspending_users,
+            ),
         ]
 
         for title, rows, headers, row_builder in sections:
@@ -139,7 +190,9 @@ class StatisticsView(tk.Frame):
             return
 
         columns = tuple(f"c{i}" for i in range(len(headers)))
-        tree = ttk.Treeview(table_frame, columns=columns, show="headings", height=min(len(rows), 8) or 1)
+        tree = ttk.Treeview(
+            table_frame, columns=columns, show="headings", height=min(len(rows), 8) or 1
+        )
         for column_id, header in zip(columns, headers):
             tree.heading(column_id, text=header)
             tree.column(column_id, anchor="w", width=150, stretch=True)
@@ -158,7 +211,9 @@ class StatisticsView(tk.Frame):
 
     def _rows_multi_course_users(self, tree, rows) -> None:
         for row in rows:
-            tree.insert("", "end", values=(row.username, row.course_count, row.resume_count))
+            tree.insert(
+                "", "end", values=(row.username, row.course_count, row.resume_count)
+            )
 
     def _rows_top_courses(self, tree, rows) -> None:
         for row in rows:
@@ -166,7 +221,16 @@ class StatisticsView(tk.Frame):
 
     def _rows_best_rated_resumes(self, tree, rows) -> None:
         for row in rows:
-            tree.insert("", "end", values=(row.course_code, row.course_name, row.resume_title, self._format_float(row.average_rating)))
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    row.course_code,
+                    row.course_name,
+                    row.resume_title,
+                    self._format_float(row.average_rating),
+                ),
+            )
 
     def _rows_users_without_resumes(self, tree, rows) -> None:
         for row in rows:
@@ -174,7 +238,11 @@ class StatisticsView(tk.Frame):
 
     def _rows_overspending_users(self, tree, rows) -> None:
         for row in rows:
-            tree.insert("", "end", values=(row.username, row.points, row.total_spent, row.excess_spent))
+            tree.insert(
+                "",
+                "end",
+                values=(row.username, row.points, row.total_spent, row.excess_spent),
+            )
 
     def _format_float(self, value) -> str:
         if value is None:
