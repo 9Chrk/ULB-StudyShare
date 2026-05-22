@@ -2,7 +2,7 @@
 
 import tkinter as tk
 
-from core.models.shop import BoutiqueData
+from core.models.shop import ShopData
 from gui.messages import show_error
 from gui.messages import show_info
 import gui.views.common.theme as theme
@@ -41,7 +41,7 @@ class ShopView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = BoutiqueData(
+        self.data = ShopData(
             user_id=None,
             catalogue=[],
             owned=[],

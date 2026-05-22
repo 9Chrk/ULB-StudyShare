@@ -29,7 +29,7 @@ class StatisticsView(tk.Frame):
 
         tk.Label(
             self,
-            text="Vue d'ensemble des indicateurs demandés par l'énoncé.",
+            text="Vue d'ensemble des requêtes SQL demandés par l'énoncé.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -48,22 +48,22 @@ class StatisticsView(tk.Frame):
 
         cards = [
             (
-                "Moyenne resumes / utilisateur",
+                "Moyenne résumés / utilisateur",
                 self._format_float(self.data.average_resumes_per_user),
                 theme.WORKSPACE_GREEN,
             ),
             (
-                "Objets cosmetiques top",
+                "Objets cosmétiques top",
                 self._format_top_object(),
                 theme.WORKSPACE_BLUE_LIGHT,
             ),
             (
-                "Utilisateurs sans resume",
+                "Utilisateurs sans résumé",
                 str(len(self.data.users_without_resumes)),
                 theme.WORKSPACE_ORANGE,
             ),
             (
-                "Utilisateurs en depassement",
+                "Utilisateurs en dépassement",
                 str(len(self.data.overspending_users)),
                 theme.WORKSPACE_BLUE_DARK,
             ),
@@ -134,31 +134,31 @@ class StatisticsView(tk.Frame):
             (
                 "Utilisateurs avec au moins 3 cours distincts",
                 self.data.multi_course_users,
-                ("Utilisateur", "Cours", "Resumes"),
+                ("Utilisateur", "Cours", "Résumés"),
                 self._rows_multi_course_users,
             ),
             (
-                "Cours avec le plus de resumes",
+                "Cours avec le plus de résumés",
                 self.data.top_courses,
-                ("Code", "Cours", "Resumes"),
+                ("Code", "Cours", "Résumés"),
                 self._rows_top_courses,
             ),
             (
-                "Meilleurs resumes par cours",
+                "Meilleurs résumés par cours",
                 self.data.best_rated_resumes,
-                ("Code", "Cours", "Resume", "Note moyenne"),
+                ("Code", "Cours", "Résumé", "Note moyenne"),
                 self._rows_best_rated_resumes,
             ),
             (
-                "Utilisateurs n'ayant jamais publie",
+                "Utilisateurs n'ayant jamais publié de résumé",
                 self.data.users_without_resumes,
                 ("Utilisateur", "E-mail", "Points"),
                 self._rows_users_without_resumes,
             ),
             (
-                "Utilisateurs ayant depense trop de points",
+                "Utilisateurs ayant dépensé trop de points",
                 self.data.overspending_users,
-                ("Utilisateur", "Points", "Depense", "Excedent"),
+                ("Utilisateur", "Points", "Dépense", "Excédent"),
                 self._rows_overspending_users,
             ),
         ]
@@ -193,7 +193,7 @@ class StatisticsView(tk.Frame):
             # Les sections vides restent lisibles sans Treeview superflu.
             tk.Label(
                 table_frame,
-                text="Nonee donnée disponible.",
+                text="Aucune donnée disponible.",
                 font=("Segoe UI", 10),
                 bg=theme.COLORS.white,
                 fg=theme.WORKSPACE_MUTED,

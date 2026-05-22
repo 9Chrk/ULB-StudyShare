@@ -56,7 +56,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
         bg="white",
         fg="#666",
     )
-    subtitle_label.place(relx=0.5, y=70, anchor="center")
+    subtitle_label.place(relx=0.5, y=80, anchor="center")
 
     # -------- Fields --------
     # Icône + champ de saisie pour le nom d'utilisateur
@@ -105,7 +105,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
         fg="#00d68f",
         cursor="hand2",
     )
-    register_link.place(x=130, y=270)
+    register_link.place(x=180, y=270)
     register_link.bind("<Button-1>", lambda _: on_register_link())
 
     # -------- Placeholders --------

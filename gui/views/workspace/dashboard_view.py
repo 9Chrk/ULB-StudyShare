@@ -82,7 +82,7 @@ class DashboardView(tk.Frame):
         # Activités récentes
         tk.Label(
             self,
-            text="Activité récente",
+            text="Activités récentes",
             font=("Segoe UI", 14, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,

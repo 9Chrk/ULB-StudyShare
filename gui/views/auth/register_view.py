@@ -109,7 +109,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
         bg="white",
         fg="#999",
     )
-    login_label.place(x=70, y=365)
+    login_label.place(x=55, y=365)
 
     login_link = tk.Label(
         register_frame,
