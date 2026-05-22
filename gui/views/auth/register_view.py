@@ -33,7 +33,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     # Titre principal de la vue d'inscription
     title_label = tk.Label(
         register_frame,
-        text="Create Account",
+        text="Créer un compte",
         font=("Segoe UI", 20, "bold"),
         bg="white",
     )
@@ -43,7 +43,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     # Sous-titre décrivant brièvement le but de la plateforme
     subtitle_label = tk.Label(
         register_frame,
-        text="Join the ULB student community.",
+        text="Rejoignez la communauté étudiante de l'ULB.",
         font=("Segoe UI", 10),
         bg="white",
         fg="#666",
@@ -54,14 +54,14 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     user_icon = tk.Label(register_frame, text="👤", font=("Segoe UI", 12), bg="white")
     user_icon.place(x=20, y=110)
     user_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
-    user_entry.insert(0, "Username")
+    user_entry.insert(0, "Nom d'utilisateur")
     user_entry.place(x=50, y=110, width=270, height=30)
 
     # Icône + champ de saisie pour l'email
     email_icon = tk.Label(register_frame, text="📧", font=("Segoe UI", 12), bg="white")
     email_icon.place(x=20, y=160)
     email_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
-    email_entry.insert(0, "Email")
+    email_entry.insert(0, "E-mail")
     email_entry.place(x=50, y=160, width=270, height=30)
 
     # Icône + champ de saisie pour le mot de passe
@@ -70,7 +70,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     )
     password_icon.place(x=20, y=210)
     password_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
-    password_entry.insert(0, "Password")
+    password_entry.insert(0, "Mot de passe")
     password_entry.place(x=50, y=210, width=270, height=30)
 
     # Icône + champ pour confirmer le mot de passe
@@ -79,14 +79,14 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     )
     confirm_icon.place(x=20, y=260)
     confirm_password_entry = ttk.Entry(register_frame, font=("Segoe UI", 10))
-    confirm_password_entry.insert(0, "Confirm Password")
+    confirm_password_entry.insert(0, "Confirmer le mot de passe")
     confirm_password_entry.place(x=50, y=260, width=270, height=30)
 
     # -------- Actions --------
     # Bouton qui déclenche la tentative de création de compte
     register_button = tk.Button(
         register_frame,
-        text="Create Account",
+        text="Créer un compte",
         font=("Segoe UI", 10, "bold"),
         bg="#00d68f",
         fg="white",
@@ -104,7 +104,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     # Texte + lien cliquable pour revenir à la vue de connexion
     login_label = tk.Label(
         register_frame,
-        text="Already have an account? ",
+        text="Vous avez déjà un compte ? ",
         font=("Segoe UI", 9),
         bg="white",
         fg="#999",
@@ -113,7 +113,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
 
     login_link = tk.Label(
         register_frame,
-        text="Log in",
+        text="Se connecter",
         font=("Segoe UI", 9, "underline"),
         bg="white",
         fg="#00d68f",
@@ -124,10 +124,10 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
 
     # -------- Placeholders --------
     # Gestion des placeholders et masquage des champs de mot de passe
-    bind_entry_placeholder(user_entry, "Username")
-    bind_entry_placeholder(email_entry, "Email")
-    bind_entry_placeholder(password_entry, "Password", is_password=True)
-    bind_entry_placeholder(confirm_password_entry, "Confirm Password", is_password=True)
+    bind_entry_placeholder(user_entry, "Nom d'utilisateur")
+    bind_entry_placeholder(email_entry, "E-mail")
+    bind_entry_placeholder(password_entry, "Mot de passe", is_password=True)
+    bind_entry_placeholder(confirm_password_entry, "Confirmer le mot de passe", is_password=True)
 
     return {
         "user_entry": user_entry,

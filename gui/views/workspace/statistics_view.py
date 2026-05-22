@@ -21,7 +21,7 @@ class StatisticsView(tk.Frame):
         # -------- Header --------
         tk.Label(
             self,
-            text="Statistics",
+            text="Statistiques",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -152,7 +152,7 @@ class StatisticsView(tk.Frame):
             (
                 "Utilisateurs n'ayant jamais publie",
                 self.data.users_without_resumes,
-                ("Utilisateur", "Email", "Points"),
+                ("Utilisateur", "E-mail", "Points"),
                 self._rows_users_without_resumes,
             ),
             (
@@ -193,7 +193,7 @@ class StatisticsView(tk.Frame):
             # Les sections vides restent lisibles sans Treeview superflu.
             tk.Label(
                 table_frame,
-                text="Aucune donnée disponible.",
+                text="Nonee donnée disponible.",
                 font=("Segoe UI", 10),
                 bg=theme.COLORS.white,
                 fg=theme.WORKSPACE_MUTED,

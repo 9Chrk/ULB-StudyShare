@@ -21,7 +21,7 @@ class DashboardView(tk.Frame):
         # En-tête du tableau de bord
         title = tk.Label(
             self,
-            text="Dashboard",
+            text="Tableau de bord",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -30,7 +30,7 @@ class DashboardView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text=f"Welcome to ULB StudyShare, {data.profile.username if data.profile else 'Guest'}!",
+            text=f"Bienvenue sur ULB StudyShare, {data.profile.username if data.profile else 'Invité'}!",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -47,7 +47,7 @@ class DashboardView(tk.Frame):
 
         cards = [
             ("Points", str(profile.points), theme.COLORS.black),
-            ("Level", str(profile.level), theme.COLORS.gray_500),
+            ("Niveau", str(profile.level), theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
@@ -73,7 +73,7 @@ class DashboardView(tk.Frame):
         # Le titre actif peut être absent tant qu'aucun objet n'est activé.
         tk.Label(
             self,
-            text=f"Active title: {active_title if active_title else 'None'}",
+            text=f"Titre actif : {active_title if active_title else 'Aucun'}",
             font=("Segoe UI", 11),
             bg=bg,
             fg=theme.WORKSPACE_NEUTRAL_TEXT,
@@ -82,7 +82,7 @@ class DashboardView(tk.Frame):
         # Activités récentes
         tk.Label(
             self,
-            text="Recent Activity",
+            text="Activité récente",
             font=("Segoe UI", 14, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -92,7 +92,7 @@ class DashboardView(tk.Frame):
         if not activity:
             tk.Label(
                 self,
-                text="No recent activity.",
+                text="Aucune activité récente.",
                 bg=bg,
                 fg=theme.WORKSPACE_MUTED,
                 font=("Segoe UI", 11),
@@ -114,7 +114,7 @@ class DashboardView(tk.Frame):
 
                 tk.Label(
                     row,
-                    text=item.activity_type,
+                    text={"Published": "Publié", "Evaluated": "Évalué", "Transaction": "Transaction"}.get(item.activity_type, item.activity_type),
                     font=("Segoe UI", 10, "bold"),
                     bg=theme.COLORS.white,
                     fg=color,

@@ -18,7 +18,7 @@ class MyLibraryView(tk.Frame):
         # -------- Header --------
         title = tk.Label(
             self,
-            text="My Library",
+            text="Ma bibliothèque",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -27,7 +27,7 @@ class MyLibraryView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text="Access your saved study materials.",
+            text="Accédez à vos ressources d'étude enregistrées.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
