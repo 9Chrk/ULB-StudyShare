@@ -101,7 +101,7 @@ class DashboardView(tk.Frame):
             for item in activity:
                 row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
-                
+
                 # Chaque type d'activité garde une couleur lisible et cohérente.
                 if item.activity_type == "Published":
                     color = theme.WORKSPACE_GREEN

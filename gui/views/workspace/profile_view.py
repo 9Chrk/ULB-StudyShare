@@ -35,7 +35,7 @@ class ProfileView(tk.Frame):
         subtitle.pack(anchor="nw", padx=24)
 
         # -------- Data --------
-        
+
         data = self.app_controller.get_profile_data()
         profile = data.profile
 

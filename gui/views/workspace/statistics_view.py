@@ -37,7 +37,7 @@ class StatisticsView(tk.Frame):
 
         # -------- Summary cards --------
         self._build_summary_cards()
-        
+
         # -------- Detailed tables --------
         self._build_scroll_area()
 
