@@ -111,12 +111,12 @@ class WorkspaceView(tk.Frame):
         """Configure les entrées de navigation de la sidebar."""
         # -------- Navigation labels --------
         items = {
-            "dashboard": "Dashboard",
-            "my_library": "My Library",
-            "explorer": "Explorer",
-            "statistics": "Statistics",
-            "leaderboard": "Leaderboard",
-            "shop": "Shop",
-            "profile": "Profile",
+            "dashboard": "Tableau de bord",
+            "my_library": "Ma bibliothèque",
+            "explorer": "Explorateur",
+            "statistics": "Statistiques",
+            "leaderboard": "Classement",
+            "shop": "Boutique",
+            "profile": "Profil",
         }
         self.sidebar.set_items(items)

@@ -128,15 +128,15 @@ class Sidebar(tk.Frame):
             self.buttons[view_name] = btn
             self.indicators[view_name] = indicator
 
-        # Dernière ligne utilisée pour placer le bouton Log out en bas
+        # Dernière ligne utilisée pour placer le bouton Déconnexion en bas
         self.exit_row = self.start_row + len(items)
 
     # ---------- BOUTON DE DÉCONNEXION ----------
 
     def add_exit_button(self, on_exit_callback) -> None:
-        """Ajoute un bouton Log out en bas de la sidebar."""
+        """Ajoute un bouton Déconnexion en bas de la sidebar."""
         # -------- Sortie --------
-        # Utiliser une ligne flexible pour pousser Log out en bas
+        # Utiliser une ligne flexible pour pousser Déconnexion en bas
         self.grid_rowconfigure(self.exit_row, weight=1)
 
         # Séparateur visuel
@@ -150,10 +150,10 @@ class Sidebar(tk.Frame):
             padx=20,
         )
 
-        # Bouton Log out
+        # Bouton Déconnexion
         exit_btn = tk.Button(
             self,
-            text="Log out",
+            text="Déconnexion",
             font=("Segoe UI", 11, "bold"),
             bg=self["bg"],
             fg="white",
@@ -174,7 +174,7 @@ class Sidebar(tk.Frame):
             self.logout_icon = icon
             exit_btn.configure(image=icon, compound="left", padx=16)
 
-        # Placer le bouton Log out en bas de la barre latérale
+        # Placer le bouton Déconnexion en bas de la barre latérale
         exit_btn.grid(
             row=self.exit_row + 2, column=0, columnspan=2, sticky="ew", pady=(0, 16)
         )
