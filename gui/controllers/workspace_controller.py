@@ -9,6 +9,7 @@ class WorkspaceController:
     """Instancie et affiche l'espace de travail après connexion."""
 
     def __init__(self, root, app_controller):
+        """Retient la fenêtre racine et le contrôleur principal de l'application."""
         self.root = root
         self.app_controller = app_controller
         self.workspace = None

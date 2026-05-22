@@ -9,6 +9,7 @@ from gui.app import run
 
 
 def print_import_stats(stats: dict[str, int]) -> None:
+    """Affiche les compteurs issus de l'import en mode console."""
     print("Import terminé.\n")
     print("-------- Statistiques --------")
 
@@ -32,11 +33,13 @@ def print_import_stats(stats: dict[str, int]) -> None:
 
 
 def run_import_mode() -> None:
+    """Lance l'import des données puis affiche le résumé des statistiques."""
     stats = import_data()
     print_import_stats(stats)
 
 
 def main(argv: list[str] | None = None) -> None:
+    """Point d'entrée CLI: initialise la base, importe si demandé, puis lance la GUI."""
     args = argv if argv is not None else sys.argv
     options = [arg.strip().lower() for arg in args[1:]]
 

@@ -19,6 +19,7 @@ class AppController:
     """Contrôle la navigation entre les écrans."""
 
     def __init__(self, root):
+        """Conserve la fenêtre racine et instancie les contrôleurs spécialisés."""
         self.root = root
 
         # utilisateur connecté
@@ -47,18 +48,16 @@ class AppController:
 
     # ---------- FONCTIONS DE RÉCUPÉRATION DE DONNÉES ----------
 
-    """
-    Ces fonctions sont appelées par les vues pour obtenir les données à afficher.
-    Elles font le lien entre les vues et les services métier.
-    """
-
     def get_dashboard_data(self) -> DashboardData:
+        """Retourne les données nécessaires au tableau de bord."""
         return user_service.get_dashboard_info(self.current_user_id)
 
     def get_explorer_data(self) -> dict:
+        """Retourne les données de l'explorateur, encore non implémenté."""
         return {}
 
     def get_leaderboard_data(self) -> LeaderboardData:
+        """Retourne les données du leaderboard."""
         from core.services import leaderboard_service
 
         return LeaderboardData(
@@ -67,12 +66,15 @@ class AppController:
         )
 
     def get_my_library_data(self) -> dict:
+        """Retourne les données de la bibliothèque personnelle, encore non implémenté."""
         return {}
 
     def get_profile_data(self) -> ProfileData:
+        """Retourne les données du profil utilisateur courant."""
         return user_service.get_profile_data(self.current_user_id)
 
     def get_shop_data(self) -> ShopData:
+        """Retourne les données nécessaires à la boutique."""
         return shop_service.get_shop_data(self.current_user_id)
 
     def buy_shop_item(self, item_id: int) -> PurchaseResult:
@@ -84,4 +86,5 @@ class AppController:
         return shop_service.activate_owned_item(self.current_user_id, item_id)
 
     def get_statistics_data(self) -> StatisticsData:
+        """Retourne les statistiques globales affichées dans la vue dédiée."""
         return statistics_service.get_statistics_data(self.current_user_id)

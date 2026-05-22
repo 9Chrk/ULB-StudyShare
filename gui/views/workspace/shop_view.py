@@ -37,6 +37,7 @@ class ShopView(tk.Frame):
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue Boutique et initialise ses zones de catalogue."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -50,6 +51,7 @@ class ShopView(tk.Frame):
             active_theme_id=None,
         )
 
+        # -------- Header --------
         self._make_label(
             "Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT
         ).pack(anchor="nw", padx=24, pady=(24, 8))
@@ -59,9 +61,11 @@ class ShopView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24)
 
+        # -------- Summary --------
         self.summary_frame = tk.Frame(self, bg=bg)
         self.summary_frame.pack(fill="x", padx=24, pady=(16, 8))
 
+        # -------- Catalogue container --------
         content_container = tk.Frame(self, bg=bg)
         content_container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
@@ -81,6 +85,7 @@ class ShopView(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
+        # -------- Chargement initial --------
         self.reload_data()
 
     # ── helpers ────────────────────────────────────────────────────────────
@@ -139,6 +144,7 @@ class ShopView(tk.Frame):
         self._render_catalogue()
 
     def _render_summary(self) -> None:
+        # -------- Summary cards --------
         for child in self.summary_frame.winfo_children():
             child.destroy()
 
@@ -165,6 +171,7 @@ class ShopView(tk.Frame):
             ).pack(anchor="w")
 
     def _render_catalogue(self) -> None:
+        # -------- Catalogue --------
         for child in self.scroll_frame.winfo_children():
             child.destroy()
 
@@ -172,6 +179,7 @@ class ShopView(tk.Frame):
         owned_ids = set(self.data.owned)
 
         if not catalogue:
+            # État vide: on évite de construire des sections inutiles.
             self._make_label(
                 "Aucun objet disponible pour le moment.",
                 ("Segoe UI", 11),
@@ -198,6 +206,7 @@ class ShopView(tk.Frame):
         )
 
     def _group_items_by_type(self, catalogue):
+        # On sépare le catalogue par type pour choisir ensuite le bon gabarit.
         sections = {"badge": [], "titre": [], "theme": [], "autre": []}
         for item in catalogue:
             sections[item.item_type if item.item_type in sections else "autre"].append(
@@ -209,6 +218,7 @@ class ShopView(tk.Frame):
 
     def _build_section(self, parent, item_type: str, items, owned_ids):
         """Section verticale (badge, titre, theme)."""
+        # -------- Vertical section --------
         _, accent, _ = self.SECTION_META[item_type]
         section = self._make_panel_frame(parent)
         self._make_section_header(section, item_type)
@@ -235,6 +245,7 @@ class ShopView(tk.Frame):
         self, parent, item_type: str, items, owned_ids
     ) -> None:
         """Section horizontale (autre)."""
+        # -------- Horizontal section --------
         _, accent, _ = self.SECTION_META[item_type]
         section = self._make_panel_frame(parent)
         section.pack(fill="x", pady=(0, 4))
@@ -313,6 +324,7 @@ class ShopView(tk.Frame):
         row: int = 0,
         column: int = 0,
     ) -> None:
+        # -------- Item card --------
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type)
 
@@ -360,6 +372,7 @@ class ShopView(tk.Frame):
         status_bg = (
             theme.WORKSPACE_GREEN_LIGHT if is_owned else theme.WORKSPACE_BACKGROUND
         )
+        # Le badge d'état résume immédiatement si l'objet peut encore être acheté.
         tk.Label(
             footer,
             text=status_text,
@@ -374,6 +387,7 @@ class ShopView(tk.Frame):
         actions.pack(side="right")
 
         if not is_owned:
+            # Les objets non possédés n'exposent qu'une action d'achat.
             self._make_action_button(
                 actions,
                 "Acheter",
@@ -382,6 +396,7 @@ class ShopView(tk.Frame):
             ).pack(side="right")
         elif item.item_type in ("badge", "titre", "theme"):
             if is_active:
+                # Un objet cosmétique actif est seulement signalé comme tel.
                 tk.Label(
                     actions,
                     text="Activé",
@@ -399,6 +414,7 @@ class ShopView(tk.Frame):
                     lambda iid=item.item_id: self._on_action("activate", iid),
                 ).pack(side="right")
         else:
+            # Les objets sans mécanique d'activation restent informatifs.
             tk.Label(
                 actions,
                 text="Aucune action",
@@ -431,9 +447,10 @@ class ShopView(tk.Frame):
             command=command,
         )
 
-    # ── state helpers ──────────────────────────────────────────────────────
+    # ── Aide à l'état ──────────────────────────────────────────────────────
 
     def _is_item_active(self, item_id: int, item_type: str) -> bool:
+        # Chaque type cosmétique a une seule clé d'état actif dans ShopData.
         key = {
             "badge": "active_badge_id",
             "titre": "active_title_id",
@@ -443,6 +460,7 @@ class ShopView(tk.Frame):
 
     def _on_action(self, kind: str, item_id: int) -> None:
         """Gère achat et activation via un unique handler."""
+        # -------- Actions --------
         if kind == "buy":
             result = self.app_controller.buy_shop_item(item_id)
             default_ok, default_err = "Achat effectué.", "Achat impossible."

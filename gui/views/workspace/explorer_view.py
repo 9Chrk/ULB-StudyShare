@@ -1,4 +1,4 @@
-"""Simple post-login Explorer view."""
+"""Vue Explorateur simple après connexion."""
 
 import tkinter as tk
 
@@ -6,11 +6,12 @@ import gui.views.common.theme as theme
 
 
 class ExplorerView(tk.Frame):
-    """Simple Explorer page for sidebar navigation."""
+    """Page Explorateur simple pour la navigation latérale."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue Explorateur affichée depuis la sidebar."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 

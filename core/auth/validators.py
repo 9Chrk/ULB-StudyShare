@@ -9,11 +9,12 @@ from core.constants import (
 
 
 def validate_login_input(username: str, password: str) -> tuple[bool, str]:
+    """Valide les identifiants de connexion et renvoie un message explicite."""
     # Les champs ne peuvent pas être vides
     if is_blank(username) or is_blank(password):
         return False, "Username and password are required."
 
-    # data cleanup
+    # nettoyage des données
     username = username.strip()
     password = password.strip()
 
@@ -34,6 +35,7 @@ def validate_login_input(username: str, password: str) -> tuple[bool, str]:
 def validate_registration_input(
     username: str, password: str, email: str
 ) -> tuple[bool, str]:
+    """Valide les données d'inscription en réutilisant les règles de connexion."""
     # Les champs ne peuvent pas être vides
     if is_blank(email):
         return False, "Email is required."
@@ -43,7 +45,7 @@ def validate_registration_input(
     if not is_valid_login:
         return False, login_message
 
-    # data cleanup
+    # nettoyage des données
     email = email.strip()
 
     # Validation de la longueur uniquement pour l'email (username/password déjà vérifiés)

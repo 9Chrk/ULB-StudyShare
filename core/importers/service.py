@@ -41,6 +41,7 @@ def reset_import_tables(cursor) -> None:
     L'ordre est explicite via 'RESET_TABLES'. Les contraintes FK sont
     désactivées temporairement pour permettre le 'TRUNCATE' en chaine.
     """
+    # Les FK doivent être coupées temporairement sinon les TRUNCATE échouent.
     cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
     try:
         for table_name in RESET_TABLES:
@@ -72,13 +73,14 @@ def import_data(
         "skipped": 0,
     }
 
-    # Parsing des sources une seule fois avant écriture SQL.
+    # On parse chaque source une seule fois pour éviter de relire les fichiers plusieurs fois.
     courses = csv_to_dict(courses_path)
     objects = xml_to_dict(objects_path)
     users = xml_to_dict(users_path)
     evaluations = json_to_dict(evaluations_path)
 
     with DBManager() as cursor:
+        # On repart toujours d'une base vide pour garantir un import déterministe.
         reset_import_tables(cursor)
 
         # Import des references (cours + année) avant les entités dépendantes.
@@ -87,6 +89,7 @@ def import_data(
             cursor, course_codes, DEFAULT_YEAR_CODE, DEFAULT_YEAR_LABEL, stats
         )
 
+        # Les objets et les utilisateurs servent d'ancres pour les relations suivantes.
         object_map = import_objects(cursor, objects, stats)
         user_map = import_users(cursor, users, stats)
 

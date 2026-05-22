@@ -11,9 +11,11 @@ class ProfileView(tk.Frame):
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue Profil et affiche les informations de l'utilisateur."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
+        # -------- Header --------
         title = tk.Label(
             self,
             text="Profile",
@@ -32,19 +34,23 @@ class ProfileView(tk.Frame):
         )
         subtitle.pack(anchor="nw", padx=24)
 
-        # Data
+        # -------- Data --------
+        
         data = self.app_controller.get_profile_data()
         profile = data.profile
 
         if profile is None:
+            # -------- Empty state --------
             tk.Label(
                 self, text="No profile found.", bg=bg, fg=theme.WORKSPACE_RED
             ).pack(padx=24, pady=16)
             return
 
+        # -------- Details card --------
         card = tk.Frame(self, bg=theme.COLORS.white, padx=24, pady=24)
         card.pack(anchor="nw", padx=24, pady=16, fill="x")
 
+        # -------- Fields --------
         fields = [
             ("Username", profile.username),
             ("Email", profile.email),

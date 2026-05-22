@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ColorPalette:
+    """Palette de couleurs centralisée pour les vues Tkinter."""
     # Neutrals
     white: str = "#ffffff"
     black: str = "#000000"

@@ -20,9 +20,11 @@ class Sidebar(tk.Frame):
         inactive_fg: str = theme.SIDEBAR_INACTIVE_TEXT,
         **kwargs,
     ):
+        """Construit la barre latérale de navigation et prépare ses états visuels."""
         super().__init__(master, bg=bg, **kwargs)
 
-        # Data et callbacks
+        # -------- État --------
+        # Données et callbacks
         self.buttons: Dict[str, tk.Button] = {}
         self.icons: Dict[str, Dict[str, Optional[tk.PhotoImage]]] = {}
         self.indicators: Dict[str, tk.Frame] = {}
@@ -34,6 +36,7 @@ class Sidebar(tk.Frame):
         self.start_row = 2
         self.exit_row = 0
 
+        # -------- Disposition --------
         # Largeur fixe de la sidebar
         self.configure(bg=bg, width=250)
         self.grid_propagate(False)
@@ -48,10 +51,11 @@ class Sidebar(tk.Frame):
         self.active_background = theme.SIDEBAR_ACTIVE_BACKGROUND
         self.exit_btn_color = theme.SIDEBAR_EXIT_BACKGROUND
 
-        # Header branding
+        # -------- En-tête --------
+        # En-tête de marque
         self.build_header()
 
-    # --------- CONSTRUCTION DE L'ENTETE DE MARQUE ----------
+    # --------- CONSTRUCTION DE L'EN-TÊTE DE MARQUE ----------
 
     def build_header(self) -> None:
         """Construit l'entete de marque en haut de la sidebar."""
@@ -81,21 +85,23 @@ class Sidebar(tk.Frame):
         )
         title_label.pack(side="left", padx=(10, 0))
 
-        # Separateur visuel
+        # Séparateur visuel
         top_separator = tk.Frame(self, bg=theme.SIDEBAR_SEPARATOR, height=1)
         top_separator.grid(
             row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10)
         )
 
-    # ---------- CONFIGURATION DES ENTREES DE MENU ----------
+    # ---------- CONFIGURATION DES ENTRÉES DE MENU ----------
 
     def set_items(self, items: Dict[str, str]) -> None:
         """Cree les boutons de navigation a partir d'un dict {view_name: label}."""
+        # -------- Menu --------
+        # L'ordre du dict détermine l'ordre d'affichage dans la sidebar.
         for index, (view_name, label) in enumerate(items.items()):
             row = self.start_row + index
             pad_y = (10 if index == 0 else 5, 0)
 
-            # Indicateur vertical a gauche du bouton
+            # Indicateur vertical à gauche du bouton
             indicator = tk.Frame(self, bg=self["bg"], width=3)
             indicator.grid(row=row, column=0, sticky="ns", pady=pad_y)
 
@@ -122,17 +128,18 @@ class Sidebar(tk.Frame):
             self.buttons[view_name] = btn
             self.indicators[view_name] = indicator
 
-        # Derniere ligne utilisee pour placer le bouton Log out en bas
+        # Dernière ligne utilisée pour placer le bouton Log out en bas
         self.exit_row = self.start_row + len(items)
 
-    # ---------- BOUTON LOG OUT ----------
+    # ---------- BOUTON DE DÉCONNEXION ----------
 
     def add_exit_button(self, on_exit_callback) -> None:
         """Ajoute un bouton Log out en bas de la sidebar."""
+        # -------- Sortie --------
         # Utiliser une ligne flexible pour pousser Log out en bas
         self.grid_rowconfigure(self.exit_row, weight=1)
 
-        # Separateur visuel
+        # Séparateur visuel
         exit_separator = tk.Frame(self, bg=theme.SIDEBAR_EXIT_SEPARATOR, height=1)
         exit_separator.grid(
             row=self.exit_row + 1,
@@ -161,20 +168,20 @@ class Sidebar(tk.Frame):
             command=on_exit_callback,
         )
 
-        # Icone de logout
+        # Icône de déconnexion
         icon = self.load_icon_for("logout", active=False)
         if icon is not None:
             self.logout_icon = icon
             exit_btn.configure(image=icon, compound="left", padx=16)
 
-        # Placer le bouton Log out en bas de la sidebar
+        # Placer le bouton Log out en bas de la barre latérale
         exit_btn.grid(
             row=self.exit_row + 2, column=0, columnspan=2, sticky="ew", pady=(0, 16)
         )
         self.grid_rowconfigure(self.exit_row + 1, weight=0)
         self.grid_rowconfigure(self.exit_row + 2, weight=0)
 
-    # ---------- GESTION DE L'ETAT ACTIF ----------
+    # ---------- GESTION DE L'ÉTAT ACTIF ----------
 
     def on_click(self, view_name: str) -> None:
         """Callback interne lorsqu'un bouton est clique."""
@@ -184,11 +191,13 @@ class Sidebar(tk.Frame):
 
     def set_active(self, view_name: str) -> None:
         """Met a jour la couleur du texte et les icones des boutons."""
+        # -------- Actualisation de l'état --------
+        # On recalcule tout l'état visuel en une seule passe pour garder la sidebar cohérente.
         for name, btn in self.buttons.items():
             is_active = name == view_name
             indicator = self.indicators.get(name)
 
-            # Indicateur vertical et couleur du texte selon l'etat actif/inactif
+            # Indicateur vertical et couleur du texte selon l'état actif/inactif
             if is_active:
                 btn.configure(fg=self.active_fg, bg=self.active_background)
                 if indicator is not None:
@@ -198,9 +207,10 @@ class Sidebar(tk.Frame):
                 if indicator is not None:
                     indicator.configure(bg=self["bg"])
 
-            # Charger les icones si necessaire
+            # Charger les icônes si nécessaire
             icon_set = self.icons.get(name)
             if icon_set is None:
+                # Les icônes sont chargées à la demande pour éviter du travail inutile au démarrage.
                 icon_set = {
                     "inactive": self.load_icon_for(name, active=False),
                     "active": self.load_icon_for(
@@ -209,7 +219,7 @@ class Sidebar(tk.Frame):
                 }
                 self.icons[name] = icon_set
 
-            # Choisir l'icone a afficher selon l'etat actif/inactif
+            # Choisir l'icône à afficher selon l'état actif/inactif
             img = (
                 icon_set.get("active")
                 if is_active and icon_set.get("active") is not None
@@ -220,18 +230,19 @@ class Sidebar(tk.Frame):
             else:
                 btn.configure(image="", padx=30)
 
-    # ---------- ICONES DE MENU ----------
+    # ---------- ICÔNES DE MENU ----------
 
     def load_icon_for(
         self, view_name: str, color_active: str = None, active: bool = False
     ):
-        """Charge et teinte une icone pour une vue donnee.
+        """Charge et teinte une icône pour une vue donnée.
 
         - utilise les fichiers fournis dans assets/images
-        - applique une teinte verte pour l'etat actif (self.active_fg)
-          et un gris neutre pour l'etat inactif
+        - applique une teinte verte pour l'état actif (self.active_fg)
+          et un gris neutre pour l'état inactif
         """
 
+        # -------- Correspondance des assets --------
         icon_map = {
             "dashboard": "home.ico",
             "my_library": "open-book.ico",
@@ -242,22 +253,24 @@ class Sidebar(tk.Frame):
             "profile": "user.ico",
             "logout": "logout.ico",
         }
-        # Trouver le nom de fichier correspondant a la vue
+        # Trouver le nom de fichier correspondant à la vue
         base_name = icon_map.get(view_name)
         if base_name is None:
             return None
 
+        # -------- Chargement --------
         # Construire le chemin vers l'asset
         path = get_asset_path("assets", "images", base_name)
 
         try:
+            # Les images sont converties avant teinte pour conserver la transparence.
             img = Image.open(path).convert("RGBA")
         except Exception:
             return None
 
         img = img.resize((18, 18), Image.LANCZOS)
 
-        # Couleur selon l'etat actif/inactif
+        # Couleur selon l'état actif/inactif
         color = color_active if active else theme.SIDEBAR_ICON_INACTIVE
 
         # Charger l'image et appliquer la teinte

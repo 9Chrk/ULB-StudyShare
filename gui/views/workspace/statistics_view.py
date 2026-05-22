@@ -12,11 +12,13 @@ class StatisticsView(tk.Frame):
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue des statistiques globales et charge ses données."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
         self.data = self.app_controller.get_statistics_data()
 
+        # -------- Header --------
         tk.Label(
             self,
             text="Statistics",
@@ -33,10 +35,14 @@ class StatisticsView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24)
 
+        # -------- Summary cards --------
         self._build_summary_cards()
+        
+        # -------- Detailed tables --------
         self._build_scroll_area()
 
     def _build_summary_cards(self) -> None:
+        # -------- Summary cards --------
         cards_frame = tk.Frame(self, bg=self.bg)
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
 
@@ -93,6 +99,7 @@ class StatisticsView(tk.Frame):
             ).pack(anchor="w")
 
     def _build_scroll_area(self) -> None:
+        # -------- Tables container --------
         container = tk.Frame(self, bg=self.bg)
         container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
@@ -115,6 +122,8 @@ class StatisticsView(tk.Frame):
         self._build_sections()
 
     def _build_sections(self) -> None:
+        # -------- Section registry --------
+        # Chaque bloc relie un titre, une source de données et un renderer dédié.
         sections = [
             (
                 "Top 10 utilisateurs",
@@ -158,6 +167,7 @@ class StatisticsView(tk.Frame):
             self._build_table_section(title, rows, headers, row_builder)
 
     def _build_table_section(self, title: str, rows, headers, row_builder) -> None:
+        # -------- Table section --------
         section = tk.Frame(
             self.scroll_frame,
             bg=theme.COLORS.white,
@@ -180,6 +190,7 @@ class StatisticsView(tk.Frame):
         table_frame.pack(fill="x", pady=(10, 0))
 
         if not rows:
+            # Les sections vides restent lisibles sans Treeview superflu.
             tk.Label(
                 table_frame,
                 text="Aucune donnée disponible.",
@@ -206,6 +217,7 @@ class StatisticsView(tk.Frame):
         scrollbar.pack(side="right", fill="y")
 
     def _rows_top_users(self, tree, rows) -> None:
+        # Les numéros de rang sont reconstruits à l'affichage.
         for index, row in enumerate(rows, start=1):
             tree.insert("", "end", values=(index, row.username, row.points, row.level))
 

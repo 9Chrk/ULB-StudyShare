@@ -22,6 +22,7 @@ def import_evaluations(
         recipient_name = clean_text(evaluation.get("destinataire"))
         resume_info = evaluation.get("resume") or {}
 
+        # La structure attendue doit bien contenir un sous-objet "resume".
         if not isinstance(resume_info, dict):
             stats["skipped"] += 1
             continue
@@ -33,6 +34,7 @@ def import_evaluations(
             stats["skipped"] += 1
             continue
 
+        # On résout d'abord les identités pour éviter des INSERTs orphelins.
         author_id = user_map.get(author_name)
         recipient_id = user_map.get(recipient_name)
         if author_id is None or recipient_id is None:
@@ -44,12 +46,13 @@ def import_evaluations(
             stats["skipped"] += 1
             continue
 
+        # La clé métier du résumé est construite pendant l'import des résumés.
         resume_id = resume_map.get((recipient_name, code_cours, title))
         if resume_id is None:
             stats["skipped"] += 1
             continue
 
-        # Validation defensive pour respecter la contrainte CHECK(note BETWEEN 1 AND 5).
+        # Validation défensive pour respecter la contrainte CHECK(note BETWEEN 1 AND 5).
         note = bounded_int(evaluation.get("note"), default=1, minimum=1, maximum=5)
         comment = clean_text(evaluation.get("commentaire")) or None
 

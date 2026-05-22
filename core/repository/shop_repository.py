@@ -8,6 +8,7 @@ from core.models.shop import ShopUserState
 
 def get_catalogue(cursor) -> List[ShopItem]:
     """Renvoie le catalogue complet avec la catégorie de chaque objet."""
+    # Les LEFT JOIN permettent d'identifier le sous-type sans requête supplémentaire.
     cursor.execute(
         """
         SELECT
@@ -73,6 +74,7 @@ def get_user_shop_state(cursor, user_id: int) -> Optional[ShopUserState]:
 
 def get_item_by_id(cursor, item_id: int) -> Optional[ShopItem]:
     """Renvoie un objet du catalogue par son ID."""
+    # Même stratégie que get_catalogue(): une seule requête pour récupérer le sous-type.
     cursor.execute(
         """
         SELECT
@@ -149,6 +151,7 @@ def create_spend_transaction(cursor, user_id: int, amount: int, reason: str) -> 
 def activate_item(cursor, user_id: int, item_id: int, item_type: str) -> bool:
     """Active un objet possédé selon son type (badge, titre, theme)."""
     if item_type == "badge":
+        # Chaque type met à jour une colonne différente dans Utilisateur.
         cursor.execute(
             "UPDATE Utilisateur SET idBadgeActif = %s WHERE idUtilisateur = %s",
             (item_id, user_id),
@@ -156,6 +159,7 @@ def activate_item(cursor, user_id: int, item_id: int, item_type: str) -> bool:
         return True
 
     if item_type == "titre":
+        # Le titre actif suit exactement la même logique que le badge.
         cursor.execute(
             "UPDATE Utilisateur SET idTitreActif = %s WHERE idUtilisateur = %s",
             (item_id, user_id),
@@ -163,6 +167,7 @@ def activate_item(cursor, user_id: int, item_id: int, item_type: str) -> bool:
         return True
 
     if item_type == "theme":
+        # Les thèmes sont stockés dans leur propre colonne d'activation.
         cursor.execute(
             "UPDATE Utilisateur SET idThemeActif = %s WHERE idUtilisateur = %s",
             (item_id, user_id),

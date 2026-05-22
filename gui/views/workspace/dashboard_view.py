@@ -6,17 +6,19 @@ import gui.views.common.theme as theme
 
 
 class DashboardView(tk.Frame):
-    """Vue Dashboard simple pour illustrer le layout principal."""
+    """Vue du tableau de bord simple pour illustrer le layout principal."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit le tableau de bord et peuple les cartes de synthèse."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
         data = self.app_controller.get_dashboard_data()
 
-        # En-tête du dashboard
+        # -------- Header --------
+        # En-tête du tableau de bord
         title = tk.Label(
             self,
             text="Dashboard",
@@ -35,8 +37,10 @@ class DashboardView(tk.Frame):
         )
         subtitle.pack(anchor="nw", padx=24)
 
+        # -------- Résumé du profil --------
         profile = data.profile
         if profile is None:
+            # Sans profil chargé, on garde l'en-tête et on stoppe l'affichage détaillé.
             return
         cards_frame = tk.Frame(self, bg=bg)
         cards_frame.pack(anchor="nw", padx=24, pady=24, fill="x")
@@ -66,6 +70,7 @@ class DashboardView(tk.Frame):
             ).pack()
         # Titre actif
         active_title = data.active_title
+        # Le titre actif peut être absent tant qu'aucun objet n'est activé.
         tk.Label(
             self,
             text=f"Active title: {active_title if active_title else 'None'}",
@@ -96,6 +101,8 @@ class DashboardView(tk.Frame):
             for item in activity:
                 row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
+                
+                # Chaque type d'activité garde une couleur lisible et cohérente.
                 if item.activity_type == "Published":
                     color = theme.WORKSPACE_GREEN
                 elif item.activity_type == "Evaluated":

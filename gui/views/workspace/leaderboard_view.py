@@ -1,4 +1,4 @@
-"""Simple post-login Leaderboard view."""
+"""Vue du classement simple après connexion."""
 
 import tkinter as tk
 from tkinter import ttk
@@ -7,14 +7,18 @@ import gui.views.common.theme as theme
 
 
 class LeaderboardView(tk.Frame):
+    """Vue dédiée au classement des utilisateurs par points."""
+
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue du classement et remplit le tableau des joueurs."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
         data = self.app_controller.get_leaderboard_data()
 
+        # -------- Header --------
         # Titre
         tk.Label(
             self,
@@ -32,7 +36,8 @@ class LeaderboardView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24, pady=(0, 16))
 
-        # Tableau avec scrollbar
+        # -------- Tableau du classement --------
+        # Tableau avec barre de défilement
         frame = tk.Frame(self, bg=bg)
         frame.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
@@ -49,16 +54,18 @@ class LeaderboardView(tk.Frame):
         tree.column("points", width=80, anchor="center")
         tree.column("niveau", width=60, anchor="center")
 
-        # Scrollbar
+        # Barre de défilement
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
 
+        # -------- Rows --------
         # Remplissage
         current_user = data.current_username
         leaderboard = data.entries
 
         current_user_rank = None
         for i, entry in enumerate(leaderboard, start=1):
+            # On marque la ligne de l'utilisateur courant pour la mettre en évidence.
             tag = "current" if entry.username == current_user else ""
             if entry.username == current_user:
                 current_user_rank = i
@@ -74,6 +81,7 @@ class LeaderboardView(tk.Frame):
         scrollbar.pack(side="right", fill="y")
         tree.pack(side="left", fill="both", expand=True)
 
+        # -------- Panneau de position --------
         # Espace vide
         tk.Frame(self, bg=bg, height=12).pack(fill="x")
 
@@ -95,6 +103,7 @@ class LeaderboardView(tk.Frame):
         ).pack(anchor="w")
 
         if current_user_rank:
+            # Le rang est calculé en local pour éviter de dépendre d'un champ dédié.
             position_text = f"Rank #{current_user_rank} - {current_user}"
         else:
             position_text = f"Not ranked - {current_user}"

@@ -5,6 +5,7 @@ from core.models.user import UserInfo
 
 
 def get_user_id_with_credentials(cursor, username: str, password: str) -> Optional[int]:
+    """Retourne l'identifiant de l'utilisateur correspondant aux identifiants fournis."""
     cursor.execute(
         "SELECT idUtilisateur FROM Utilisateur WHERE nomUtilisateur = %s AND motDePasse = %s",
         (username, password),
@@ -14,6 +15,7 @@ def get_user_id_with_credentials(cursor, username: str, password: str) -> Option
 
 
 def username_or_email_exists(cursor, username: str, email: str) -> bool:
+    """Indique si un nom d'utilisateur ou un email existe déjà en base."""
     cursor.execute(
         "SELECT 1 FROM Utilisateur WHERE nomUtilisateur = %s OR email = %s",
         (username, email),
@@ -22,6 +24,7 @@ def username_or_email_exists(cursor, username: str, email: str) -> bool:
 
 
 def insert_user(cursor, username: str, email: str, password: str) -> None:
+    """Insère un nouvel utilisateur avec les valeurs métier par défaut."""
     cursor.execute(
         """
         INSERT INTO Utilisateur (nomUtilisateur, email, motDePasse, dateInscription, niveau, nombrePoints)
@@ -32,6 +35,7 @@ def insert_user(cursor, username: str, email: str, password: str) -> None:
 
 
 def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
+    """Charge le profil métier d'un utilisateur à partir de son identifiant."""
     cursor.execute(
         "SELECT nomUtilisateur, email, dateInscription, niveau, nombrePoints FROM Utilisateur WHERE idUtilisateur = %s",
         (user_id,),
@@ -49,6 +53,7 @@ def get_user_info(cursor, user_id: int) -> Optional[UserInfo]:
 
 
 def get_active_title(cursor, user_id: int) -> Optional[str]:
+    """Retourne le titre cosmétique actif de l'utilisateur, s'il existe."""
     cursor.execute(
         """
         SELECT oc.nomObjet
@@ -63,6 +68,7 @@ def get_active_title(cursor, user_id: int) -> Optional[str]:
 
 
 def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
+    """Retourne les activités récentes d'un utilisateur, triées de la plus récente à la plus ancienne."""
     cursor.execute(
         """
         SELECT 'Published' AS type, r.titre AS title, r.datePublication AS date

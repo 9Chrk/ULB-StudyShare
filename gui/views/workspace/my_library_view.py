@@ -1,4 +1,4 @@
-"""Simple post-login My Library view."""
+"""Vue Bibliothèque personnelle simple après connexion."""
 
 import tkinter as tk
 
@@ -6,14 +6,16 @@ import gui.views.common.theme as theme
 
 
 class MyLibraryView(tk.Frame):
-    """Simple My Library page for sidebar navigation."""
+    """Page Bibliothèque personnelle simple pour la navigation latérale."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
+        """Construit la vue Bibliothèque personnelle."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
 
+        # -------- Header --------
         title = tk.Label(
             self,
             text="My Library",

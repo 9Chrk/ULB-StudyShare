@@ -7,14 +7,17 @@ from gui.ui_helpers import bind_entry_placeholder, clear_frames
 
 
 def build(root: tk.Tk, on_register, on_login_link) -> dict:
-    """Construit la vue d'inscription et connecte les callbacks de l'application."""
+    """Construit la vue d'inscription et branche les callbacks de l'application."""
+    # -------- Reset --------
     # Nettoyer la fenêtre avant d'afficher la vue d'inscription
     clear_frames(root)
 
+    # -------- Frame --------
     # Frame principale blanche, centrée dans la fenêtre
     register_frame = tk.Frame(root, bg="white", bd=0)
     register_frame.place(relx=0.5, rely=0.5, width=350, height=400, anchor="center")
 
+    # -------- Header --------
     # Bouton de fermeture (croix en haut à droite)
     close_button = tk.Label(
         register_frame,
@@ -36,6 +39,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     )
     title_label.place(relx=0.5, y=40, anchor="center")
 
+    # -------- Inputs --------
     # Sous-titre décrivant brièvement le but de la plateforme
     subtitle_label = tk.Label(
         register_frame,
@@ -78,6 +82,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     confirm_password_entry.insert(0, "Confirm Password")
     confirm_password_entry.place(x=50, y=260, width=270, height=30)
 
+    # -------- Actions --------
     # Bouton qui déclenche la tentative de création de compte
     register_button = tk.Button(
         register_frame,
@@ -96,7 +101,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
         ),
     )
 
-    # Texte + lien cliquable pour revenir à la vue de login
+    # Texte + lien cliquable pour revenir à la vue de connexion
     login_label = tk.Label(
         register_frame,
         text="Already have an account? ",
@@ -117,6 +122,7 @@ def build(root: tk.Tk, on_register, on_login_link) -> dict:
     login_link.place(x=210, y=365)
     login_link.bind("<Button-1>", lambda _: on_login_link())
 
+    # -------- Placeholders --------
     # Gestion des placeholders et masquage des champs de mot de passe
     bind_entry_placeholder(user_entry, "Username")
     bind_entry_placeholder(email_entry, "Email")

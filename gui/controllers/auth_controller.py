@@ -15,6 +15,7 @@ class AuthController:
         self.app_controller = app_controller
 
     def show_login(self):
+        # On reconstruit la vue pour repartir d'un état propre après chaque navigation.
         login_view.build(
             root=self.root,
             on_login=self.login,
@@ -22,6 +23,7 @@ class AuthController:
         )
 
     def show_register(self):
+        # Même principe pour l'inscription: la vue est recréée à chaque affichage.
         register_view.build(
             root=self.root,
             on_register=self.register,
@@ -34,6 +36,7 @@ class AuthController:
         username = user_entry.get()
         password = password_entry.get()
 
+        # On efface immédiatement le mot de passe pour éviter qu'il reste affiché.
         password_entry.delete(0, "end")
         is_ok, message, user_id = auth_service.check(username, password)
 
@@ -50,6 +53,7 @@ class AuthController:
         password = password_entry.get()
         confirm_password = confirm_password_entry.get()
 
+        # Les champs sensibles sont effacés dès la lecture pour limiter l'exposition.
         password_entry.delete(0, "end")
         confirm_password_entry.delete(0, "end")
 

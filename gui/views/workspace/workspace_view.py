@@ -13,19 +13,23 @@ class WorkspaceView(tk.Frame):
     """
 
     def __init__(self, root: tk.Tk, app_controller, **kwargs):
+        """Construit la vue conteneur après connexion et installe la navigation."""
         self.content_bg = theme.WORKSPACE_BACKGROUND
         super().__init__(master=root, bg=self.content_bg, **kwargs)
 
+        # -------- State --------
         # Initialisation des attributs
         self.root = root
         self.app_controller = app_controller
         self.views = {}
 
+        # -------- Layout --------
         # Layout global : 2 colonnes (sidebar + contenu)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        # Sidebar à gauche
+        # -------- Navigation --------
+        # La sidebar pilote la navigation, le contenu affiche les vues empilées.
         self.sidebar = Sidebar(
             master=self,
             on_select=self.show_view,
@@ -40,6 +44,7 @@ class WorkspaceView(tk.Frame):
         self.content_area.grid_rowconfigure(0, weight=1)
         self.content_area.grid_columnconfigure(0, weight=1)
 
+        # -------- Boot --------
         # Initialiser les vues et la sidebar
         self.create_views()
         self.configure_sidebar_items()
@@ -73,6 +78,7 @@ class WorkspaceView(tk.Frame):
 
     def create_views(self) -> None:
         """Instancie toutes les vues de l'application dans la zone de contenu."""
+        # -------- Imports locaux --------
         # Imports locaux pour éviter les imports circulaires
         from gui.views.workspace.dashboard_view import DashboardView
         from gui.views.workspace.explorer_view import ExplorerView
@@ -92,7 +98,9 @@ class WorkspaceView(tk.Frame):
             "my_library": MyLibraryView,
         }
 
+        # -------- Instanciation --------
         for name, ViewClass in views_config.items():
+            # Chaque vue occupe la même cellule de grille; tkraise() choisit laquelle afficher.
             frame = ViewClass(
                 self.content_area, self.app_controller, bg=self.content_bg
             )
@@ -101,6 +109,7 @@ class WorkspaceView(tk.Frame):
 
     def configure_sidebar_items(self) -> None:
         """Configure les entrées de navigation de la sidebar."""
+        # -------- Navigation labels --------
         items = {
             "dashboard": "Dashboard",
             "my_library": "My Library",

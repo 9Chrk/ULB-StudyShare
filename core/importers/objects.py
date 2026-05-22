@@ -27,6 +27,7 @@ def import_objects(
         description = clean_text(row.get("description")) or "Objet importé"
         points = bounded_int(row.get("prix"), default=1, minimum=1)
 
+        # On rejette les lignes incomplètes ou les types non supportés.
         if (
             not object_id
             or not name
@@ -45,7 +46,7 @@ def import_objects(
             )
             object_map[name] = (object_id, object_type)
 
-            # Badge/Titre/Theme possèdent une table spécialisée en plus.
+            # Les types spécialisés ont aussi une ligne dans leur table dédiée.
             subtype_table = subtype_tables.get(object_type)
             if subtype_table:
                 cursor.execute(

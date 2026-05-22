@@ -7,10 +7,12 @@ from gui.ui_helpers import bind_entry_placeholder, clear_frames, get_asset_path
 
 
 def build(root: tk.Tk, on_login, on_register_link) -> dict:
-    """Construit la vue de connexion et connecte les callbacks de l'application."""
-    # Nettoyer la fenêtre avant d'afficher la vue de login
+    """Construit la vue de connexion et branche les callbacks de l'application."""
+    # -------- Reset --------
+    # Nettoyer la fenêtre avant d'afficher la vue de connexion
     clear_frames(root)
 
+    # -------- Branding --------
     # Charger le logo de l'application
     logo_image = tk.PhotoImage(
         file=str(get_asset_path("assets", "images", "ulb_logo.png"))
@@ -20,6 +22,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     login_frame = tk.Frame(root, bg="white", bd=0)
     login_frame.place(relx=0.5, rely=0.5, width=350, height=320, anchor="center")
 
+    # -------- Header --------
     # Bouton de fermeture (croix en haut à droite)
     close_button = tk.Label(
         login_frame,
@@ -55,6 +58,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     )
     subtitle_label.place(relx=0.5, y=70, anchor="center")
 
+    # -------- Fields --------
     # Icône + champ de saisie pour le nom d'utilisateur
     user_icon = tk.Label(login_frame, text="👤", font=("Segoe UI", 12), bg="white")
     user_icon.place(x=20, y=110)
@@ -69,6 +73,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     password_entry.insert(0, "Password")
     password_entry.place(x=50, y=160, width=270, height=30)
 
+    # -------- Actions --------
     # Bouton qui déclenche la tentative de connexion
     login_button = tk.Button(
         login_frame,
@@ -103,6 +108,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     register_link.place(x=130, y=270)
     register_link.bind("<Button-1>", lambda _: on_register_link())
 
+    # -------- Placeholders --------
     # Gestion des placeholders et masquage du mot de passe
     bind_entry_placeholder(user_entry, "Username")
     bind_entry_placeholder(password_entry, "Password", is_password=True)

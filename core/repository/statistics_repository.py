@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple
 
 
 def get_top_users_by_points(cursor, limit: int = 10) -> List[Tuple]:
+    """Retourne les utilisateurs ayant le plus de points."""
     cursor.execute(
         """
         SELECT nomUtilisateur, nombrePoints, niveau
@@ -17,6 +18,8 @@ def get_top_users_by_points(cursor, limit: int = 10) -> List[Tuple]:
 
 
 def get_users_with_at_least_n_courses(cursor, min_courses: int = 3) -> List[Tuple]:
+    """Retourne les utilisateurs ayant publié des résumés pour au moins un certain nombre de cours."""
+    # On compte les cours distincts pour éviter de surévaluer un même cours publié plusieurs fois.
     cursor.execute(
         """
         SELECT u.nomUtilisateur, COUNT(DISTINCT r.codeCours) AS nb_cours, COUNT(r.idResume) AS nb_resumes
@@ -32,6 +35,8 @@ def get_users_with_at_least_n_courses(cursor, min_courses: int = 3) -> List[Tupl
 
 
 def get_courses_with_most_resumes(cursor) -> List[Tuple]:
+    """Retourne les cours classés selon le nombre total de résumés associés."""
+    # LEFT JOIN pour conserver aussi les cours sans aucun résumé.
     cursor.execute(
         """
         SELECT c.codeCours, c.nomCours, COUNT(r.idResume) AS nb_resumes
@@ -45,6 +50,9 @@ def get_courses_with_most_resumes(cursor) -> List[Tuple]:
 
 
 def get_best_rated_resumes_by_course(cursor) -> List[Tuple]:
+    """Retourne, pour chaque cours, les résumés les mieux notés."""
+    # Première sous-requête: moyenne des notes par résumé.
+    # Deuxième sous-requête: meilleur score obtenu dans chaque cours.
     cursor.execute(
         """
         SELECT rr.codeCours, rr.nomCours, rr.titre, rr.avg_note
@@ -83,6 +91,8 @@ def get_best_rated_resumes_by_course(cursor) -> List[Tuple]:
 
 
 def get_users_with_no_resumes(cursor) -> List[Tuple]:
+    """Retourne les utilisateurs qui n'ont publié aucun résumé."""
+    # Le LEFT JOIN permet d'identifier les utilisateurs sans correspondance côté Resume.
     cursor.execute(
         """
         SELECT u.nomUtilisateur, u.email, u.nombrePoints
@@ -96,6 +106,8 @@ def get_users_with_no_resumes(cursor) -> List[Tuple]:
 
 
 def get_most_bought_cosmetics(cursor) -> List[Tuple]:
+    """Retourne les objets cosmétiques les plus achetés."""
+    # LIMIT 1 car on ne cherche que le champion global, pas tout le classement.
     cursor.execute(
         """
         SELECT oc.idObjet, oc.nomObjet, oc.description, oc.prixPoints, COUNT(p.idObjet) AS purchase_count
@@ -110,6 +122,8 @@ def get_most_bought_cosmetics(cursor) -> List[Tuple]:
 
 
 def get_users_spending_more_than_available(cursor) -> List[Tuple]:
+    """Retourne les utilisateurs ayant dépensé plus de points qu'ils n'en possédaient."""
+    # On ne somme que les transactions de dépense pour comparer au solde initial.
     cursor.execute(
         """
         SELECT
@@ -130,6 +144,8 @@ def get_users_spending_more_than_available(cursor) -> List[Tuple]:
 
 
 def get_average_resumes_per_user(cursor) -> Optional[float]:
+    """Retourne la moyenne de résumés publiés par utilisateur, ou None si elle est indéfinie."""
+    # Moyenne calculée sur un sous-ensemble par utilisateur afin d'inclure les zéros.
     cursor.execute(
         """
         SELECT AVG(user_resume_count)

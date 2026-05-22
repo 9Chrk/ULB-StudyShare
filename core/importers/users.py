@@ -9,7 +9,7 @@ from core.importers.utils import as_list, bounded_int, clean_text
 def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, int]:
     """Insère les utilisateurs et construit un index ``nom -> id``.
 
-    L'import remplit un mot de passe placeholder (nom d'utilisateur) pour
+    L'import remplit un mot de passe factice (nom d'utilisateur) pour
     garantir une valeur non nulle lors de l'initialisation.
     """
     user_map: dict[str, int] = {}
@@ -19,16 +19,18 @@ def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, 
         username = clean_text(user.get("nomUtilisateur"))
         email = clean_text(user.get("email"))
 
+        # On ignore les enregistrements incomplets avant d'attaquer l'INSERT.
         if not user_id or not username or not email:
             stats["skipped"] += 1
             continue
 
         date_inscription = clean_text(user.get("dateInscription"))
 
+        # La date d'inscription peut être absente ou invalide dans la source.
         try:
             date_inscription = date.fromisoformat(date_inscription).strftime("%Y-%m-%d")
         except ValueError:
-            # Fallback robuste pour éviter les erreurs SQL sur DATE NOT NULL.
+            # Repli robuste pour éviter les erreurs SQL sur DATE NOT NULL.
             date_inscription = date.today().strftime("%Y-%m-%d")
 
         level = bounded_int(user.get("niveau"), default=1, minimum=1)
@@ -65,6 +67,7 @@ def import_possessions(
         if user_id is None:
             continue
 
+        # Le noeud 'achats' est optionnel dans la source.
         achats_node = user.get("achats")
         if not isinstance(achats_node, dict):
             continue
@@ -74,6 +77,7 @@ def import_possessions(
             if not name:
                 continue
 
+            # On ne relie que les objets réellement importés plus tôt.
             object_entry = object_map.get(name)
             if object_entry is None:
                 stats["skipped"] += 1
@@ -121,6 +125,7 @@ def apply_active_objects(
             if not object_name:
                 continue
 
+            # L'objet actif doit déjà exister dans la table d'objets importés.
             object_entry = object_map.get(object_name)
             if object_entry is None:
                 stats["skipped"] += 1
@@ -131,7 +136,7 @@ def apply_active_objects(
                 stats["skipped"] += 1
                 continue
 
-            # Verification explicite cote import avant l'UPDATE final.
+            # Vérification explicite côté import avant l'UPDATE final.
             cursor.execute(
                 "SELECT 1 FROM Possede WHERE idUtilisateur = %s AND idObjet = %s",
                 (user_id, object_id),
