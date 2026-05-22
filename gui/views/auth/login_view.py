@@ -51,7 +51,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     # Sous-titre (slogan) sous le titre principal
     subtitle_label = tk.Label(
         login_frame,
-        text="Share. Learn. Grow.",
+        text="Partagez. Apprenez. Progressez.",
         font=("Segoe UI", 10),
         bg="white",
         fg="#666",
@@ -63,21 +63,21 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     user_icon = tk.Label(login_frame, text="👤", font=("Segoe UI", 12), bg="white")
     user_icon.place(x=20, y=110)
     user_entry = ttk.Entry(login_frame, font=("Segoe UI", 10))
-    user_entry.insert(0, "Username")
+    user_entry.insert(0, "Nom d'utilisateur")
     user_entry.place(x=50, y=110, width=270, height=30)
 
     # Icône + champ de saisie pour le mot de passe
     password_icon = tk.Label(login_frame, text="🔒", font=("Segoe UI", 12), bg="white")
     password_icon.place(x=20, y=160)
     password_entry = ttk.Entry(login_frame, font=("Segoe UI", 10))
-    password_entry.insert(0, "Password")
+    password_entry.insert(0, "Mot de passe")
     password_entry.place(x=50, y=160, width=270, height=30)
 
     # -------- Actions --------
     # Bouton qui déclenche la tentative de connexion
     login_button = tk.Button(
         login_frame,
-        text="Log in",
+        text="Se connecter",
         font=("Segoe UI", 10, "bold"),
         bg="#00d68f",
         fg="white",
@@ -90,7 +90,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
     # Texte + lien cliquable pour naviguer vers l'inscription
     register_label = tk.Label(
         login_frame,
-        text="New user? ",
+        text="Nouvel utilisateur ? ",
         font=("Segoe UI", 9),
         bg="white",
         fg="#999",
@@ -99,7 +99,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
 
     register_link = tk.Label(
         login_frame,
-        text="Create an account",
+        text="Créer un compte",
         font=("Segoe UI", 9, "underline"),
         bg="white",
         fg="#00d68f",
@@ -110,7 +110,7 @@ def build(root: tk.Tk, on_login, on_register_link) -> dict:
 
     # -------- Placeholders --------
     # Gestion des placeholders et masquage du mot de passe
-    bind_entry_placeholder(user_entry, "Username")
-    bind_entry_placeholder(password_entry, "Password", is_password=True)
+    bind_entry_placeholder(user_entry, "Nom d'utilisateur")
+    bind_entry_placeholder(password_entry, "Mot de passe", is_password=True)
 
     return {"user_entry": user_entry, "password_entry": password_entry}

@@ -1,8 +1,8 @@
-"""Vue Shop post-login avec achat et activation d'objets cosmétiques."""
+"""Vue Boutique post-login avec achat et activation d'objets cosmétiques."""
 
 import tkinter as tk
 
-from core.models.shop import ShopData
+from core.models.shop import BoutiqueData
 from gui.messages import show_error
 from gui.messages import show_info
 import gui.views.common.theme as theme
@@ -41,7 +41,7 @@ class ShopView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = ShopData(
+        self.data = BoutiqueData(
             user_id=None,
             catalogue=[],
             owned=[],
@@ -53,7 +53,7 @@ class ShopView(tk.Frame):
 
         # -------- Header --------
         self._make_label(
-            "Shop", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT
+            "Boutique", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT
         ).pack(anchor="nw", padx=24, pady=(24, 8))
         self._make_label(
             "Achetez et activez vos objets cosmétiques.",
@@ -130,7 +130,7 @@ class ShopView(tk.Frame):
     def _make_empty_label(self, parent) -> None:
         self._make_panel_label(
             parent,
-            "Aucun objet dans cette catégorie.",
+            "None objet dans cette catégorie.",
             ("Segoe UI", 10),
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="w")
@@ -181,7 +181,7 @@ class ShopView(tk.Frame):
         if not catalogue:
             # État vide: on évite de construire des sections inutiles.
             self._make_label(
-                "Aucun objet disponible pour le moment.",
+                "None objet disponible pour le moment.",
                 ("Segoe UI", 11),
                 fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w", pady=8)
@@ -417,7 +417,7 @@ class ShopView(tk.Frame):
             # Les objets sans mécanique d'activation restent informatifs.
             tk.Label(
                 actions,
-                text="Aucune action",
+                text="Nonee action",
                 font=("Segoe UI", 10, "bold"),
                 bg=theme.WORKSPACE_BACKGROUND,
                 fg=theme.WORKSPACE_NEUTRAL_TEXT,
@@ -450,7 +450,7 @@ class ShopView(tk.Frame):
     # ── Aide à l'état ──────────────────────────────────────────────────────
 
     def _is_item_active(self, item_id: int, item_type: str) -> bool:
-        # Chaque type cosmétique a une seule clé d'état actif dans ShopData.
+        # Chaque type cosmétique a une seule clé d'état actif dans BoutiqueData.
         key = {
             "badge": "active_badge_id",
             "titre": "active_title_id",

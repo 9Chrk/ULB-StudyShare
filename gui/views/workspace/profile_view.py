@@ -6,7 +6,7 @@ import gui.views.common.theme as theme
 
 
 class ProfileView(tk.Frame):
-    """Vue Profile pour tester la navigation via la sidebar."""
+    """Vue Profil pour tester la navigation via la sidebar."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
@@ -18,7 +18,7 @@ class ProfileView(tk.Frame):
         # -------- Header --------
         title = tk.Label(
             self,
-            text="Profile",
+            text="Profil",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -27,7 +27,7 @@ class ProfileView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text="View and edit your profile information.",
+            text="Consultez et modifiez les informations de votre profil.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -42,7 +42,7 @@ class ProfileView(tk.Frame):
         if profile is None:
             # -------- Empty state --------
             tk.Label(
-                self, text="No profile found.", bg=bg, fg=theme.WORKSPACE_RED
+                self, text="Aucun profil trouvé.", bg=bg, fg=theme.WORKSPACE_RED
             ).pack(padx=24, pady=16)
             return
 
@@ -52,10 +52,10 @@ class ProfileView(tk.Frame):
 
         # -------- Fields --------
         fields = [
-            ("Username", profile.username),
-            ("Email", profile.email),
-            ("Member since", str(profile.registration_date)),
-            ("Level", str(profile.level)),
+            ("Nom d'utilisateur", profile.username),
+            ("E-mail", profile.email),
+            ("Membre depuis", str(profile.registration_date)),
+            ("Niveau", str(profile.level)),
             ("Points", str(profile.points)),
         ]
 

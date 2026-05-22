@@ -22,7 +22,7 @@ class LeaderboardView(tk.Frame):
         # Titre
         tk.Label(
             self,
-            text="Leaderboard",
+            text="Classement",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -30,7 +30,7 @@ class LeaderboardView(tk.Frame):
 
         tk.Label(
             self,
-            text="See top contributors in the community.",
+            text="Découvrez les meilleurs contributeurs de la communauté.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -44,10 +44,10 @@ class LeaderboardView(tk.Frame):
         columns = ("rang", "username", "points", "niveau")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=12)
 
-        tree.heading("rang", text="Rank")
-        tree.heading("username", text="Player")
+        tree.heading("rang", text="Rang")
+        tree.heading("username", text="Utilisateur")
         tree.heading("points", text="Points")
-        tree.heading("niveau", text="Level")
+        tree.heading("niveau", text="Niveau")
 
         tree.column("rang", width=50, anchor="center")
         tree.column("username", width=150, anchor="w")
@@ -96,7 +96,7 @@ class LeaderboardView(tk.Frame):
 
         tk.Label(
             content_frame,
-            text="Your Position",
+            text="Votre position",
             font=("Segoe UI", 11, "bold"),
             bg=theme.COLORS.white,
             fg=theme.WORKSPACE_MUTED,
@@ -104,9 +104,9 @@ class LeaderboardView(tk.Frame):
 
         if current_user_rank:
             # Le rang est calculé en local pour éviter de dépendre d'un champ dédié.
-            position_text = f"Rank #{current_user_rank} - {current_user}"
+            position_text = f"Rang #{current_user_rank} - {current_user}"
         else:
-            position_text = f"Not ranked - {current_user}"
+            position_text = f"Non classé - {current_user}"
 
         tk.Label(
             content_frame,

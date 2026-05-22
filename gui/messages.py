@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 def show_error(root, message: str) -> None:
     """Affiche une boîte de dialogue d'erreur modale."""
-    messagebox.showerror("Error", message, parent=root)
+    messagebox.showerror("Erreur", message, parent=root)
 
 
 def show_info(root, message: str) -> None:

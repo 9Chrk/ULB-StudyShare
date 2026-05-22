@@ -17,7 +17,7 @@ class ExplorerView(tk.Frame):
 
         title = tk.Label(
             self,
-            text="Explorer",
+            text="Explorateur",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
@@ -26,7 +26,7 @@ class ExplorerView(tk.Frame):
 
         subtitle = tk.Label(
             self,
-            text="Discover courses and new resources.",
+            text="Découvrez des cours et de nouvelles ressources.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
