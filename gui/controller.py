@@ -13,6 +13,7 @@ from core.models.user import ProfileData
 from core.services import user_service
 from core.services import shop_service
 from core.services import statistics_service
+from core.services.my_library_service import LibraryService
 
 
 class AppController:
@@ -28,6 +29,7 @@ class AppController:
         # instances des contrôleurs
         self.auth_controller = AuthController(root, self)
         self.workspace_controller = WorkspaceController(root, self)
+        self.library_service = LibraryService()
 
         # point d'entrée de l'application
         with_alpha_transition(self.root, self.show_login)
@@ -65,10 +67,6 @@ class AppController:
             entries=leaderboard_service.get_leaderboard(),
         )
 
-    def get_my_library_data(self) -> dict:
-        """Retourne les données de la bibliothèque personnelle, encore non implémenté."""
-        return {}
-
     def get_profile_data(self) -> ProfileData:
         """Retourne les données du profil utilisateur courant."""
         return user_service.get_profile_data(self.current_user_id)
@@ -88,3 +86,17 @@ class AppController:
     def get_statistics_data(self) -> StatisticsData:
         """Retourne les statistiques globales affichées dans la vue dédiée."""
         return statistics_service.get_statistics_data(self.current_user_id)
+    def get_library_data(self) -> dict:
+        """Données pour remplir l'espace personnel de l'étudiant."""
+        return {
+            "my_summaries": self.library_service.get_my_summaries(self.current_user_id),
+            "my_evaluations": self.library_service.get_my_evaluations(self.current_user_id)
+        }
+
+    def modify_summary(self, summary_id: int, title: str, content: str) -> tuple:
+        """Envoie les modifications au back-end."""
+        return self.library_service.update_my_summary(summary_id, self.current_user_id, title, content)
+
+    def remove_summary(self, summary_id: int) -> tuple:
+        """Supprime le résumé sélectionné."""
+        return self.library_service.delete_my_summary(summary_id, self.current_user_id)
