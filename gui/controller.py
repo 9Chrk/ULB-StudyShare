@@ -1,5 +1,7 @@
 """Contrôleur principal de l'application."""
 
+from collections.abc import Callable
+
 from gui.transitions import with_alpha_transition
 from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
@@ -24,6 +26,7 @@ class AppController:
 
         # utilisateur connecté
         self.current_user_id = None
+        self._refresh_listeners: list[Callable[[], None]] = []
 
         # instances des contrôleurs
         self.auth_controller = AuthController(root, self)
@@ -46,6 +49,39 @@ class AppController:
         """Affiche l'espace de travail après une connexion réussie."""
         self.workspace_controller.show_workspace()
 
+    # ---------- FONCTIONS DE RAFRAÎCHISSEMENT GLOBAL ----------
+
+    def subscribe_refresh(self, callback: Callable[[], None]) -> None:
+        """Ajoute un observateur appelé quand les données applicatives changent."""
+        if callback not in self._refresh_listeners:
+            self._refresh_listeners.append(callback)
+
+    def unsubscribe_refresh(self, callback: Callable[[], None]) -> None:
+        """Retire un observateur de rafraîchissement."""
+        if callback in self._refresh_listeners:
+            self._refresh_listeners.remove(callback)
+
+    def refresh(self) -> None:
+        """Recharge les vues abonnées après une mutation de données."""
+        for callback in list(self._refresh_listeners):
+            callback()
+    
+    # ---------- FONCTIONS DE GESTION DE LA BOUTIQUE ----------
+    
+    def buy_shop_item(self, item_id: int) -> PurchaseResult:
+        """Tente l'achat d'un objet boutique pour l'utilisateur courant."""
+        result = shop_service.buy_item(self.current_user_id, item_id)
+        if result.success:
+            self.refresh()
+        return result
+
+    def activate_shop_item(self, item_id: int) -> ActivationResult:
+        """Tente l'activation d'un objet possédé pour l'utilisateur courant."""
+        result = shop_service.activate_owned_item(self.current_user_id, item_id)
+        if result.success:
+            self.refresh()
+        return result
+    
     # ---------- FONCTIONS DE RÉCUPÉRATION DE DONNÉES ----------
 
     def get_dashboard_data(self) -> DashboardData:
@@ -76,14 +112,6 @@ class AppController:
     def get_shop_data(self) -> ShopData:
         """Retourne les données nécessaires à la boutique."""
         return shop_service.get_shop_data(self.current_user_id)
-
-    def buy_shop_item(self, item_id: int) -> PurchaseResult:
-        """Tente l'achat d'un objet boutique pour l'utilisateur courant."""
-        return shop_service.buy_item(self.current_user_id, item_id)
-
-    def activate_shop_item(self, item_id: int) -> ActivationResult:
-        """Tente l'activation d'un objet possédé pour l'utilisateur courant."""
-        return shop_service.activate_owned_item(self.current_user_id, item_id)
 
     def get_statistics_data(self) -> StatisticsData:
         """Retourne les statistiques globales affichées dans la vue dédiée."""

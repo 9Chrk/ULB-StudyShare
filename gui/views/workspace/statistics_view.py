@@ -16,7 +16,7 @@ class StatisticsView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = self.app_controller.get_statistics_data()
+        self.data = None
 
         # -------- Header --------
         tk.Label(
@@ -35,6 +35,18 @@ class StatisticsView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24)
 
+        self.content_frame = tk.Frame(self, bg=bg)
+        self.content_frame.pack(fill="both", expand=True)
+
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Recharge toutes les statistiques affichées."""
+        self.data = self.app_controller.get_statistics_data()
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
+
         # -------- Summary cards --------
         self._build_summary_cards()
 
@@ -43,7 +55,7 @@ class StatisticsView(tk.Frame):
 
     def _build_summary_cards(self) -> None:
         # -------- Summary cards --------
-        cards_frame = tk.Frame(self, bg=self.bg)
+        cards_frame = tk.Frame(self.content_frame, bg=self.bg)
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
 
         cards = [
@@ -100,7 +112,7 @@ class StatisticsView(tk.Frame):
 
     def _build_scroll_area(self) -> None:
         # -------- Tables container --------
-        container = tk.Frame(self, bg=self.bg)
+        container = tk.Frame(self.content_frame, bg=self.bg)
         container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         self.canvas = tk.Canvas(container, bg=self.bg, highlightthickness=0)

@@ -143,6 +143,10 @@ class ShopView(tk.Frame):
         self._render_summary()
         self._render_catalogue()
 
+    def refresh(self) -> None:
+        """Interface standard appelée par le refresh global."""
+        self.reload_data()
+
     def _render_summary(self) -> None:
         # -------- Summary cards --------
         for child in self.summary_frame.winfo_children():
@@ -470,6 +474,5 @@ class ShopView(tk.Frame):
 
         if result.success:
             show_info(self, result.message or default_ok)
-            self.reload_data()
         else:
             show_error(self, result.message or default_err)
