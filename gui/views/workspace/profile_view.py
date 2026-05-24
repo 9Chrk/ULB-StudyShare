@@ -40,10 +40,11 @@ class ProfileView(tk.Frame):
 
     def refresh(self) -> None:
         """Recharge les informations du profil."""
+        data = self.app_controller.get_profile_data()
+
         for child in self.content_frame.winfo_children():
             child.destroy()
 
-        data = self.app_controller.get_profile_data()
         profile = data.profile
 
         if profile is None:

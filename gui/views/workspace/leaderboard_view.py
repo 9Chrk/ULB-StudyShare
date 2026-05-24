@@ -42,10 +42,10 @@ class LeaderboardView(tk.Frame):
 
     def refresh(self) -> None:
         """Recharge le classement et la position de l'utilisateur courant."""
+        data = self.app_controller.get_leaderboard_data()
+
         for child in self.content_frame.winfo_children():
             child.destroy()
-
-        data = self.app_controller.get_leaderboard_data()
 
         # -------- Tableau du classement --------
         # Tableau avec barre de défilement

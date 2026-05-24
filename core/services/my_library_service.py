@@ -1,39 +1,63 @@
-"""Logique métier pour 'My Library'"""
+"""Services metier lies a la bibliotheque personnelle."""
 
-from typing import List, Tuple
+from typing import Optional
+
 from core.db.manager import DBManager
-from core.repository import my_library_repository as repo
+from core.models.my_library import LibraryActionResult
+from core.models.my_library import MyLibraryData
+from core.repository import my_library_repository as repository
 
-class LibraryService:
-    def get_my_summaries(self, user_id: int) -> List[Tuple]:
-        """Récupère l historique des résumés publié par l utilisateur connecté."""
-        with DBManager() as cursor:
-            return repo.get_user_summaries(cursor, user_id)
 
-    def update_my_summary(self, summary_id: int, user_id: int, title: str, content: str) -> Tuple[bool, str]:
-        """Modifie le titre ou la description d un résumé possédé."""
-        if not title.strip() or not content.strip():
-            return False, "Le titre et la description ne peuvent pas être vides."
-            
-        with DBManager() as cursor:
-            success = repo.update_user_summary(cursor, summary_id, user_id, title.strip(), content.strip())
-            
-        if success:
-            return True, "Votre résumé a bien été modifié."
-        # on peut pas modif un résumé qui nous appartient pas
-        return False, "Erreur lors de la modification (Vérifiez vos droits)."
+def get_my_library_data(user_id: Optional[int]) -> MyLibraryData:
+    """Renvoie les resumes et evaluations de l'utilisateur connecte."""
+    if not user_id:
+        return MyLibraryData(user_id=None, summaries=[], evaluations=[])
 
-    def delete_my_summary(self, summary_id: int, user_id: int) -> Tuple[bool, str]:
-        """Supprime un résumé."""
-        with DBManager() as cursor:
-            success = repo.delete_user_summary(cursor, summary_id, user_id)
-            
-        if success:
-            return True, "Résumé supprimé définitivement."
-        # on peut pas modif un résumé qui nous appartient pas
-        return False, "Impossible de supprimer ce résumé."
+    with DBManager() as cursor:
+        summaries = repository.get_user_summaries(cursor, user_id)
+        evaluations = repository.get_evaluations_received(cursor, user_id)
 
-    def get_my_evaluations(self, user_id: int) -> List[Tuple]:
-        """Récupère les avis laisser par les autres sur tes résumés."""
-        with DBManager() as cursor:
-            return repo.get_evaluations_received(cursor, user_id)
+    return MyLibraryData(
+        user_id=user_id,
+        summaries=summaries,
+        evaluations=evaluations,
+    )
+
+
+def update_my_summary(
+    user_id: Optional[int], summary_id: int, title: str, content: str
+) -> LibraryActionResult:
+    """Modifie le titre et la description d'un resume possede."""
+    if not user_id:
+        return LibraryActionResult(False, "Utilisateur non connecté.")
+
+    title = title.strip()
+    content = content.strip()
+    if not title or not content:
+        return LibraryActionResult(
+            False, "Le titre et la description ne peuvent pas être vides."
+        )
+
+    with DBManager() as cursor:
+        success = repository.update_user_summary(
+            cursor, summary_id, user_id, title, content
+        )
+
+    if success:
+        return LibraryActionResult(True, "Votre résumé a bien été modifié.")
+    return LibraryActionResult(False, "Modification impossible pour ce résumé.")
+
+
+def delete_my_summary(
+    user_id: Optional[int], summary_id: int
+) -> LibraryActionResult:
+    """Supprime un resume possede par l'utilisateur connecte."""
+    if not user_id:
+        return LibraryActionResult(False, "Utilisateur non connecté.")
+
+    with DBManager() as cursor:
+        success = repository.delete_user_summary(cursor, summary_id, user_id)
+
+    if success:
+        return LibraryActionResult(True, "Résumé supprimé définitivement.")
+    return LibraryActionResult(False, "Impossible de supprimer ce résumé.")
