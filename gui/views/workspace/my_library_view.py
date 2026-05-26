@@ -140,7 +140,7 @@ class MyLibraryView(tk.Frame):
         tk.Button(popup, text="Enregistrer", bg="green", fg="black", command=save_changes).pack(pady=10)
 
     def delete_selected(self):
-        """Action déclenchée par le bouton Supprimer."""
+        """Action déclenchée par le bouton supprimer."""
         selected_item = self.tree.selection()
         if not selected_item:
             messagebox.showwarning("Sélection requise", "Veuillez d'abord cliquer sur un résumé dans le tableau.")
