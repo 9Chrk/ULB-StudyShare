@@ -14,6 +14,7 @@ from core.services import user_service
 from core.services import shop_service
 from core.services import statistics_service
 from core.services.my_library_service import LibraryService
+from core.services.explorer_service import ExplorerService
 
 
 class AppController:
@@ -22,6 +23,9 @@ class AppController:
     def __init__(self, root):
         """Conserve la fenêtre racine et instancie les contrôleurs spécialisés."""
         self.root = root
+
+
+        self.explorer_service = ExplorerService()
 
         # utilisateur connecté
         self.current_user_id = None
@@ -100,3 +104,17 @@ class AppController:
     def remove_summary(self, summary_id: int) -> tuple:
         """Supprime le résumé sélectionné."""
         return self.library_service.delete_my_summary(summary_id, self.current_user_id)
+    def publish_summary(self, course_id: str, title: str, content: str, academic_year: str) -> tuple:
+        """Publie un résumé en utilisant l'ID de l'utilisateur connecté et l'année choisie."""
+        return self.explorer_service.publish_summary(
+            course_id, self.current_user_id, title, content, academic_year
+        )
+
+    def rate_summary(self, summary_id: int, rating: int, comment: str) -> tuple:
+        """Evalue un résumé en utilisant l ID de l utilisateur connecté."""
+        return self.explorer_service.evaluate_summary(
+            summary_id, self.current_user_id, rating, comment
+        )
+    def get_academic_years(self) -> list:
+        """Récupère les années académiques pour la liste déroulante."""
+        return self.explorer_service.get_academic_years()

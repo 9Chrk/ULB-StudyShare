@@ -91,12 +91,14 @@ class MyLibraryView(tk.Frame):
         data = self.app_controller.get_library_data()
 
         for summary in data.get("my_summaries", []):
-            s_id, s_titre, s_cours, _, s_moyenne = summary[0], summary[1], summary[2], summary[3], summary[4]
-            self.tree.insert("", tk.END, values=(s_id, s_titre, s_cours, f"{float(s_moyenne):.1f} / 5"))
+            self.tree.insert("", tk.END, values=(
+                summary.id_resume, summary.titre, summary.code_cours, f"{float(summary.moyenne):.1f} / 5"
+            ))
 
         for ev in data.get("my_evaluations", []):
-            e_titre, e_note, e_comment, e_auteur = ev[0], ev[1], ev[2], ev[3]
-            self.tree_eval.insert("", tk.END, values=(e_titre, f"{e_note}/5", e_comment, e_auteur))
+            self.tree_eval.insert("", tk.END, values=(
+                ev.titre_resume, f"{ev.note}/5", ev.commentaire, ev.nom_evaluateur
+            ))
 
     def edit_selected(self):
         """Action pour modifier le résumé sélectionné via une fenêtre modale."""
@@ -112,7 +114,7 @@ class MyLibraryView(tk.Frame):
         popup = tk.Toplevel(self)
         popup.title("Modifier le résumé")
         popup.geometry("400x300")
-        popup.grab_set() 
+        popup.grab_set()
 
         tk.Label(popup, text="Nouveau titre :").pack(pady=(10, 0))
         title_entry = tk.Entry(popup, width=40)

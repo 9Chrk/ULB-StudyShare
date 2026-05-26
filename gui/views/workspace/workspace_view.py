@@ -63,13 +63,18 @@ class WorkspaceView(tk.Frame):
         self.app_controller.show_login()
 
     def show_view(self, view_name: str) -> None:
-        """Affiche la vue demandée via tkraise sans reconstruire les widgets."""
+        """Affiche la vue demandée via tkraise et rafraîchit ses données."""
         frame = self.views.get(view_name)
         if frame is None:
             return
 
         # Mettre à jour l'état des boutons de la sidebar
         self.sidebar.set_active(view_name)
+
+        if hasattr(frame, 'load_data'):
+            frame.load_data()
+        elif hasattr(frame, 'load_courses'): 
+            frame.load_courses()
 
         # Afficher la vue dans la zone de contenu
         frame.tkraise()
