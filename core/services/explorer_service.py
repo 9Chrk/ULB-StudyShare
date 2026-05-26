@@ -1,4 +1,4 @@
-"""Logique métier pour l'Explorer."""
+"""Logique métier pour l'Explorer"""
 
 from typing import List, Tuple, Optional
 from core.db.manager import DBManager

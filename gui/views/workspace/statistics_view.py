@@ -16,7 +16,6 @@ class StatisticsView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = self.app_controller.get_statistics_data()
 
         # -------- Header --------
         tk.Label(
@@ -35,36 +34,48 @@ class StatisticsView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24)
 
+        self.content_frame = tk.Frame(self, bg=bg)
+        self.content_frame.pack(fill="both", expand=True)
+
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Recharge toutes les statistiques affichées."""
+        data = self.app_controller.get_statistics_data()
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
+
         # -------- Summary cards --------
-        self._build_summary_cards()
+        self._build_summary_cards(data)
 
         # -------- Detailed tables --------
-        self._build_scroll_area()
+        self._build_scroll_area(data)
 
-    def _build_summary_cards(self) -> None:
+    def _build_summary_cards(self, data) -> None:
         # -------- Summary cards --------
-        cards_frame = tk.Frame(self, bg=self.bg)
+        cards_frame = tk.Frame(self.content_frame, bg=self.bg)
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
 
         cards = [
             (
                 "Moyenne résumés / utilisateur",
-                self._format_float(self.data.average_resumes_per_user),
+                self._format_float(data.average_resumes_per_user),
                 theme.WORKSPACE_GREEN,
             ),
             (
                 "Objets cosmétiques top",
-                self._format_top_object(),
+                self._format_top_object(data),
                 theme.WORKSPACE_BLUE_LIGHT,
             ),
             (
                 "Utilisateurs sans résumé",
-                str(len(self.data.users_without_resumes)),
+                str(len(data.users_without_resumes)),
                 theme.WORKSPACE_ORANGE,
             ),
             (
                 "Utilisateurs en dépassement",
-                str(len(self.data.overspending_users)),
+                str(len(data.overspending_users)),
                 theme.WORKSPACE_BLUE_DARK,
             ),
         ]
@@ -98,9 +109,9 @@ class StatisticsView(tk.Frame):
                 fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w")
 
-    def _build_scroll_area(self) -> None:
+    def _build_scroll_area(self, data) -> None:
         # -------- Tables container --------
-        container = tk.Frame(self, bg=self.bg)
+        container = tk.Frame(self.content_frame, bg=self.bg)
         container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         self.canvas = tk.Canvas(container, bg=self.bg, highlightthickness=0)
@@ -119,45 +130,45 @@ class StatisticsView(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-        self._build_sections()
+        self._build_sections(data)
 
-    def _build_sections(self) -> None:
+    def _build_sections(self, data) -> None:
         # -------- Section registry --------
         # Chaque bloc relie un titre, une source de données et un renderer dédié.
         sections = [
             (
                 "Top 10 utilisateurs",
-                self.data.top_users,
+                data.top_users,
                 ("Rang", "Utilisateur", "Points", "Niveau"),
                 self._rows_top_users,
             ),
             (
                 "Utilisateurs avec au moins 3 cours distincts",
-                self.data.multi_course_users,
+                data.multi_course_users,
                 ("Utilisateur", "Cours", "Résumés"),
                 self._rows_multi_course_users,
             ),
             (
                 "Cours avec le plus de résumés",
-                self.data.top_courses,
+                data.top_courses,
                 ("Code", "Cours", "Résumés"),
                 self._rows_top_courses,
             ),
             (
                 "Meilleurs résumés par cours",
-                self.data.best_rated_resumes,
+                data.best_rated_resumes,
                 ("Code", "Cours", "Résumé", "Note moyenne"),
                 self._rows_best_rated_resumes,
             ),
             (
                 "Utilisateurs n'ayant jamais publié de résumé",
-                self.data.users_without_resumes,
+                data.users_without_resumes,
                 ("Utilisateur", "E-mail", "Points"),
                 self._rows_users_without_resumes,
             ),
             (
                 "Utilisateurs ayant dépensé trop de points",
-                self.data.overspending_users,
+                data.overspending_users,
                 ("Utilisateur", "Points", "Dépense", "Excédent"),
                 self._rows_overspending_users,
             ),
@@ -261,8 +272,8 @@ class StatisticsView(tk.Frame):
             return "-"
         return f"{float(value):.2f}"
 
-    def _format_top_object(self) -> str:
-        rows = self.data.most_bought_cosmetics
+    def _format_top_object(self, data) -> str:
+        rows = data.most_bought_cosmetics
         if not rows:
             return "-"
         top_object = rows[0]

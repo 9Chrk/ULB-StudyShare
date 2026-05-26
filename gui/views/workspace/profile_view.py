@@ -14,40 +14,51 @@ class ProfileView(tk.Frame):
         """Construit la vue Profil et affiche les informations de l'utilisateur."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
+        self.bg = bg
 
         # -------- Header --------
-        title = tk.Label(
+        tk.Label(
             self,
             text="Profil",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
-        )
-        title.pack(anchor="nw", padx=24, pady=(24, 8))
+        ).pack(anchor="nw", padx=24, pady=(24, 8))
 
-        subtitle = tk.Label(
+        tk.Label(
             self,
             text="Consultez et modifiez les informations de votre profil.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
-        )
-        subtitle.pack(anchor="nw", padx=24)
+        ).pack(anchor="nw", padx=24)
 
-        # -------- Data --------
+        self.content_frame = tk.Frame(self, bg=bg)
+        self.content_frame.pack(fill="both", expand=True)
 
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Recharge les informations du profil."""
         data = self.app_controller.get_profile_data()
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
+
         profile = data.profile
 
         if profile is None:
             # -------- Empty state --------
             tk.Label(
-                self, text="Aucun profil trouvé.", bg=bg, fg=theme.WORKSPACE_RED
+                self.content_frame,
+                text="Aucun profil trouvé.",
+                bg=self.bg,
+                fg=theme.WORKSPACE_RED,
             ).pack(padx=24, pady=16)
             return
 
         # -------- Details card --------
-        card = tk.Frame(self, bg=theme.COLORS.white, padx=24, pady=24)
+        card = tk.Frame(self.content_frame, bg=theme.COLORS.white, padx=24, pady=24)
         card.pack(anchor="nw", padx=24, pady=16, fill="x")
 
         # -------- Fields --------

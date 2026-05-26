@@ -15,8 +15,7 @@ class LeaderboardView(tk.Frame):
         """Construit la vue du classement et remplit le tableau des joueurs."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
-
-        data = self.app_controller.get_leaderboard_data()
+        self.bg = bg
 
         # -------- Header --------
         # Titre
@@ -36,9 +35,21 @@ class LeaderboardView(tk.Frame):
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="nw", padx=24, pady=(0, 16))
 
+        self.content_frame = tk.Frame(self, bg=bg)
+        self.content_frame.pack(fill="both", expand=True)
+
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Recharge le classement et la position de l'utilisateur courant."""
+        data = self.app_controller.get_leaderboard_data()
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
+
         # -------- Tableau du classement --------
         # Tableau avec barre de défilement
-        frame = tk.Frame(self, bg=bg)
+        frame = tk.Frame(self.content_frame, bg=self.bg)
         frame.pack(fill="both", expand=True, padx=24, pady=(0, 16))
 
         columns = ("rang", "username", "points", "niveau")
@@ -83,11 +94,14 @@ class LeaderboardView(tk.Frame):
 
         # -------- Panneau de position --------
         # Espace vide
-        tk.Frame(self, bg=bg, height=12).pack(fill="x")
+        tk.Frame(self.content_frame, bg=self.bg, height=12).pack(fill="x")
 
         # Panel position utilisateur (en bas)
         user_panel = tk.Frame(
-            self, bg=theme.COLORS.white, relief="solid", borderwidth=1
+            self.content_frame,
+            bg=theme.COLORS.white,
+            relief="solid",
+            borderwidth=1,
         )
         user_panel.pack(fill="x", padx=24, pady=(0, 24))
 

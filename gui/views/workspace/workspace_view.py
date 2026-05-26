@@ -48,6 +48,7 @@ class WorkspaceView(tk.Frame):
         # Initialiser les vues et la sidebar
         self.create_views()
         self.configure_sidebar_items()
+        self.app_controller.subscribe_refresh(self.refresh)
 
         # Ajouter le bouton Exit en bas
         self.sidebar.add_exit_button(on_exit_callback=self.on_exit)
@@ -62,6 +63,11 @@ class WorkspaceView(tk.Frame):
         self.destroy()
         self.app_controller.show_login()
 
+    def destroy(self) -> None:
+        """Désabonne la vue du refresh global avant destruction."""
+        self.app_controller.unsubscribe_refresh(self.refresh)
+        super().destroy()
+
     def show_view(self, view_name: str) -> None:
         """Affiche la vue demandée via tkraise et rafraîchit ses données."""
         frame = self.views.get(view_name)
@@ -75,9 +81,19 @@ class WorkspaceView(tk.Frame):
             frame.load_data()
         elif hasattr(frame, 'load_courses'): 
             frame.load_courses()
+        refresh = getattr(frame, "refresh", None)
+        if callable(refresh):
+            refresh()
 
         # Afficher la vue dans la zone de contenu
         frame.tkraise()
+
+    def refresh(self) -> None:
+        """Diffuse un rafraîchissement aux vues qui savent se recharger."""
+        for frame in self.views.values():
+            refresh = getattr(frame, "refresh", None)
+            if callable(refresh):
+                refresh()
 
     # ---------- INITIALISATION DES VUES ----------
 

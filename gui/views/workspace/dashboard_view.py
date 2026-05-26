@@ -14,35 +14,47 @@ class DashboardView(tk.Frame):
         """Construit le tableau de bord et peuple les cartes de synthèse."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
-
-        data = self.app_controller.get_dashboard_data()
+        self.bg = bg
 
         # -------- Header --------
         # En-tête du tableau de bord
-        title = tk.Label(
+        tk.Label(
             self,
             text="Tableau de bord",
             font=("Segoe UI", 20, "bold"),
             bg=bg,
             fg=theme.WORKSPACE_TEXT,
-        )
-        title.pack(anchor="nw", padx=24, pady=(24, 8))
+        ).pack(anchor="nw", padx=24, pady=(24, 8))
 
-        subtitle = tk.Label(
+        self.subtitle = tk.Label(
             self,
-            text=f"Bienvenue sur ULB StudyShare, {data.profile.username if data.profile else 'Invité'}!",
+            text="Bienvenue sur ULB StudyShare!",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
         )
-        subtitle.pack(anchor="nw", padx=24)
+        self.subtitle.pack(anchor="nw", padx=24)
+
+        self.content_frame = tk.Frame(self, bg=bg)
+        self.content_frame.pack(fill="both", expand=True)
+
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Recharge les données dashboard et reconstruit le contenu dynamique."""
+        data = self.app_controller.get_dashboard_data()
+        username = data.profile.username if data.profile else "Invité"
+        self.subtitle.configure(text=f"Bienvenue sur ULB StudyShare, {username}!")
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
 
         # -------- Résumé du profil --------
         profile = data.profile
         if profile is None:
             # Sans profil chargé, on garde l'en-tête et on stoppe l'affichage détaillé.
             return
-        cards_frame = tk.Frame(self, bg=bg)
+        cards_frame = tk.Frame(self.content_frame, bg=self.bg)
         cards_frame.pack(anchor="nw", padx=24, pady=24, fill="x")
 
         cards = [
@@ -72,34 +84,36 @@ class DashboardView(tk.Frame):
         active_title = data.active_title
         # Le titre actif peut être absent tant qu'aucun objet n'est activé.
         tk.Label(
-            self,
+            self.content_frame,
             text=f"Titre actif : {active_title if active_title else 'Aucun'}",
             font=("Segoe UI", 11),
-            bg=bg,
+            bg=self.bg,
             fg=theme.WORKSPACE_NEUTRAL_TEXT,
         ).pack(anchor="nw", padx=24, pady=(8, 16))
 
         # Activités récentes
         tk.Label(
-            self,
+            self.content_frame,
             text="Activités récentes",
             font=("Segoe UI", 14, "bold"),
-            bg=bg,
+            bg=self.bg,
             fg=theme.WORKSPACE_TEXT,
         ).pack(anchor="nw", padx=24, pady=(0, 8))
 
         activity = data.recent_activity
         if not activity:
             tk.Label(
-                self,
+                self.content_frame,
                 text="Aucune activité récente.",
-                bg=bg,
+                bg=self.bg,
                 fg=theme.WORKSPACE_MUTED,
                 font=("Segoe UI", 11),
             ).pack(anchor="nw", padx=24)
         else:
             for item in activity:
-                row = tk.Frame(self, bg=theme.COLORS.white, padx=12, pady=8)
+                row = tk.Frame(
+                    self.content_frame, bg=theme.COLORS.white, padx=12, pady=8
+                )
                 row.pack(anchor="nw", padx=24, pady=2, fill="x")
 
                 # Chaque type d'activité garde une couleur lisible et cohérente.
@@ -114,7 +128,11 @@ class DashboardView(tk.Frame):
 
                 tk.Label(
                     row,
-                    text={"Published": "Publié", "Evaluated": "Évalué", "Transaction": "Transaction"}.get(item.activity_type, item.activity_type),
+                    text={
+                        "Published": "Publié",
+                        "Evaluated": "Évalué",
+                        "Transaction": "Transaction",
+                    }.get(item.activity_type, item.activity_type),
                     font=("Segoe UI", 10, "bold"),
                     bg=theme.COLORS.white,
                     fg=color,

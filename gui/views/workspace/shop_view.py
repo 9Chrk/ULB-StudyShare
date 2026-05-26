@@ -2,7 +2,6 @@
 
 import tkinter as tk
 
-from core.models.shop import ShopData
 from gui.messages import show_error
 from gui.messages import show_info
 import gui.views.common.theme as theme
@@ -41,15 +40,6 @@ class ShopView(tk.Frame):
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
-        self.data = ShopData(
-            user_id=None,
-            catalogue=[],
-            owned=[],
-            points=0,
-            active_badge_id=None,
-            active_title_id=None,
-            active_theme_id=None,
-        )
 
         # -------- Header --------
         self._make_label(
@@ -86,7 +76,7 @@ class ShopView(tk.Frame):
         self.scrollbar.pack(side="right", fill="y")
 
         # -------- Chargement initial --------
-        self.reload_data()
+        self.refresh()
 
     # ── helpers ────────────────────────────────────────────────────────────
 
@@ -137,20 +127,20 @@ class ShopView(tk.Frame):
 
     # ── data & render ──────────────────────────────────────────────────────
 
-    def reload_data(self) -> None:
+    def refresh(self) -> None:
         """Recharge les données shop et reconstruit l'affichage."""
-        self.data = self.app_controller.get_shop_data()
-        self._render_summary()
-        self._render_catalogue()
+        data = self.app_controller.get_shop_data()
+        self._render_summary(data)
+        self._render_catalogue(data)
 
-    def _render_summary(self) -> None:
+    def _render_summary(self, data) -> None:
         # -------- Summary cards --------
         for child in self.summary_frame.winfo_children():
             child.destroy()
 
         cards = [
-            ("Points", str(self.data.points), theme.COLORS.black),
-            ("Objets possédés", str(len(self.data.owned)), theme.COLORS.gray_500),
+            ("Points", str(data.points), theme.COLORS.black),
+            ("Objets possédés", str(len(data.owned)), theme.COLORS.gray_500),
         ]
 
         for label, value, color in cards:
@@ -170,13 +160,13 @@ class ShopView(tk.Frame):
                 card, label, ("Segoe UI", 10), fg=theme.WORKSPACE_MUTED
             ).pack(anchor="w")
 
-    def _render_catalogue(self) -> None:
+    def _render_catalogue(self, data) -> None:
         # -------- Catalogue --------
         for child in self.scroll_frame.winfo_children():
             child.destroy()
 
-        catalogue = self.data.catalogue
-        owned_ids = set(self.data.owned)
+        catalogue = data.catalogue
+        owned_ids = set(data.owned)
 
         if not catalogue:
             # État vide: on évite de construire des sections inutiles.
@@ -196,13 +186,13 @@ class ShopView(tk.Frame):
 
         for index, item_type in enumerate(("badge", "titre", "theme")):
             section = self._build_section(
-                top_frame, item_type, sections.get(item_type, []), owned_ids
+                top_frame, item_type, sections.get(item_type, []), owned_ids, data
             )
             padx = (0 if index == 0 else 8, 0 if index == 2 else 8)
             section.grid(row=0, column=index, sticky="nsew", padx=padx)
 
         self._build_horizontal_section(
-            self.scroll_frame, "autre", sections.get("autre", []), owned_ids
+            self.scroll_frame, "autre", sections.get("autre", []), owned_ids, data
         )
 
     def _group_items_by_type(self, catalogue):
@@ -216,7 +206,7 @@ class ShopView(tk.Frame):
 
     # ── section builders ───────────────────────────────────────────────────
 
-    def _build_section(self, parent, item_type: str, items, owned_ids):
+    def _build_section(self, parent, item_type: str, items, owned_ids, data):
         """Section verticale (badge, titre, theme)."""
         # -------- Vertical section --------
         _, accent, _ = self.SECTION_META[item_type]
@@ -234,6 +224,7 @@ class ShopView(tk.Frame):
                     items_frame,
                     item,
                     owned_ids,
+                    data,
                     accent_color=accent,
                     vertical=True,
                     wraplength=300,
@@ -242,7 +233,7 @@ class ShopView(tk.Frame):
         return section
 
     def _build_horizontal_section(
-        self, parent, item_type: str, items, owned_ids
+        self, parent, item_type: str, items, owned_ids, data
     ) -> None:
         """Section horizontale (autre)."""
         # -------- Horizontal section --------
@@ -271,6 +262,7 @@ class ShopView(tk.Frame):
                     items_frame,
                     item,
                     owned_ids,
+                    data,
                     accent_color=accent,
                     vertical=True,
                     wraplength=220,
@@ -284,6 +276,7 @@ class ShopView(tk.Frame):
                     items_frame,
                     item,
                     owned_ids,
+                    data,
                     accent_color=accent,
                     vertical=False,
                     wraplength=220,
@@ -317,6 +310,7 @@ class ShopView(tk.Frame):
         parent,
         item,
         owned_ids,
+        data,
         accent_color: str,
         vertical: bool,
         wraplength: int,
@@ -326,7 +320,7 @@ class ShopView(tk.Frame):
     ) -> None:
         # -------- Item card --------
         is_owned = item.item_id in owned_ids
-        is_active = self._is_item_active(item.item_id, item.item_type)
+        is_active = self._is_item_active(item.item_id, item.item_type, data)
 
         card = tk.Frame(
             parent,
@@ -449,14 +443,14 @@ class ShopView(tk.Frame):
 
     # ── Aide à l'état ──────────────────────────────────────────────────────
 
-    def _is_item_active(self, item_id: int, item_type: str) -> bool:
+    def _is_item_active(self, item_id: int, item_type: str, data) -> bool:
         # Chaque type cosmétique a une seule clé d'état actif dans BoutiqueData.
         key = {
             "badge": "active_badge_id",
             "titre": "active_title_id",
             "theme": "active_theme_id",
         }.get(item_type)
-        return key is not None and getattr(self.data, key) == item_id
+        return key is not None and getattr(data, key) == item_id
 
     def _on_action(self, kind: str, item_id: int) -> None:
         """Gère achat et activation via un unique handler."""
@@ -470,6 +464,5 @@ class ShopView(tk.Frame):
 
         if result.success:
             show_info(self, result.message or default_ok)
-            self.reload_data()
         else:
             show_error(self, result.message or default_err)
