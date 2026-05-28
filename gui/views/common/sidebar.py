@@ -1,4 +1,4 @@
-"""Composants communs pour la barre laterale de navigation."""
+"""Composants communs pour la barre latérale de navigation."""
 
 import tkinter as tk
 from typing import Dict, Optional
@@ -9,7 +9,7 @@ import gui.views.common.theme as theme
 
 
 class Sidebar(tk.Frame):
-    """Barre laterale avec boutons de navigation et etat actif."""
+    """Barre latérale avec boutons de navigation et état actif."""
 
     def __init__(
         self,
@@ -58,7 +58,7 @@ class Sidebar(tk.Frame):
     # --------- CONSTRUCTION DE L'EN-TÊTE DE MARQUE ----------
 
     def build_header(self) -> None:
-        """Construit l'entete de marque en haut de la sidebar."""
+        """Construit l'entête de marque en haut de la sidebar."""
         brand_frame = tk.Frame(self, bg=self["bg"])
         brand_frame.grid(
             row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(18, 14)

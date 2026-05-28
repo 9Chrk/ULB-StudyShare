@@ -1,4 +1,4 @@
-"""Validation des entrées utilisateur pour l'authentification."""
+"""Validation des entrées utilisateurs pour l'authentification."""
 
 from core.constants import (
     USERNAME_MAX_LENGTH,

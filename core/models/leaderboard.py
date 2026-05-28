@@ -1,4 +1,4 @@
-"""Modeles de donnees lies au leaderboard."""
+"""Modèles de donnees lies au leaderboard."""
 
 from dataclasses import dataclass
 

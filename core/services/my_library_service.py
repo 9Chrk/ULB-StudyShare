@@ -1,4 +1,4 @@
-"""Services metier lies a la bibliotheque personnelle."""
+"""Services metier lies à la bibliotheque personnelle."""
 
 from typing import Optional
 
@@ -9,7 +9,7 @@ from core.repository import my_library_repository as repository
 
 
 def get_my_library_data(user_id: Optional[int]) -> MyLibraryData:
-    """Renvoie les resumes et evaluations de l'utilisateur connecte."""
+    """Renvoie les résumés et evaluations de l'utilisateur connecte."""
     if not user_id:
         return MyLibraryData(user_id=None, summaries=[], evaluations=[])
 

@@ -18,7 +18,7 @@ class UserInfo:
 
 @dataclass(frozen=True)
 class DashboardActivity:
-    """Activite recente affichee sur le dashboard."""
+    """Activité récente affichée sur le dashboard."""
 
     activity_type: str
     title: str

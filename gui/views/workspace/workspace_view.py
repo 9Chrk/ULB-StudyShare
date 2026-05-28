@@ -77,10 +77,6 @@ class WorkspaceView(tk.Frame):
         # Mettre à jour l'état des boutons de la sidebar
         self.sidebar.set_active(view_name)
 
-        if hasattr(frame, 'load_data'):
-            frame.load_data()
-        elif hasattr(frame, 'load_courses'): 
-            frame.load_courses()
         refresh = getattr(frame, "refresh", None)
         if callable(refresh):
             refresh()

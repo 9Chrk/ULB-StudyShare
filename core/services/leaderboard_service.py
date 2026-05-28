@@ -8,7 +8,7 @@ from core.repository.leaderboard_repository import get_top_users
 
 
 def get_leaderboard(limit: Optional[int] = None) -> list[LeaderboardEntry]:
-    """Renvoie le classement complet des utilisateurs (tous par defaut)."""
+    """Renvoie le classement complet des utilisateurs (tous par défaut)."""
     with DBManager() as cursor:
         rows = get_top_users(cursor, limit)
         return [

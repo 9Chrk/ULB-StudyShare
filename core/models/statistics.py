@@ -1,4 +1,4 @@
-"""Modeles de donnees lies aux statistiques globales."""
+"""Modèles de donnees lies aux statistiques globales."""
 
 from dataclasses import dataclass
 from typing import Optional
@@ -73,7 +73,7 @@ class OverspendingUserStat:
 
 @dataclass(frozen=True)
 class StatisticsData:
-    """Agregat des statistiques affichees dans la vue."""
+    """Agrégat des statistiques affichées dans la vue."""
 
     top_users: list[TopUserStat]
     multi_course_users: list[MultiCourseUserStat]

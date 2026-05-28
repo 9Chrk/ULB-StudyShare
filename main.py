@@ -1,4 +1,4 @@
-"""Point d'entree principal: GUI toujours, import optionnel avec --init."""
+"""Point d'entrée principal: GUI toujours, import optionnel avec --init."""
 
 import sys
 import mysql.connector

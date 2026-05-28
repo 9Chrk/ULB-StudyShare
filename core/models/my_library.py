@@ -1,4 +1,4 @@
-"""Modeles de donnees lies a la bibliotheque personnelle."""
+"""Modèles de donnees lies a la bibliotheque personnelle."""
 
 from dataclasses import dataclass
 from datetime import date
@@ -38,7 +38,7 @@ class MyLibraryData:
 
 @dataclass(frozen=True)
 class LibraryActionResult:
-    """Resultat d'une action sur un resume de la bibliotheque."""
+    """Résultat d'une action sur un resume de la bibliotheque."""
 
     success: bool
     message: str

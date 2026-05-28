@@ -7,6 +7,8 @@ from gui.controllers.auth_controller import AuthController
 from gui.controllers.workspace_controller import WorkspaceController
 from core.models.my_library import LibraryActionResult
 from core.models.my_library import MyLibraryData
+from core.models.explorer import ExplorerActionResult
+from core.models.explorer import ExplorerData
 from core.models.shop import ActivationResult
 from core.models.shop import PurchaseResult
 from core.models.shop import ShopData
@@ -17,7 +19,7 @@ from core.models.user import ProfileData
 from core.services import user_service
 from core.services import shop_service
 from core.services import statistics_service
-from core.services.explorer_service import ExplorerService
+from core.services import explorer_service
 from core.services import my_library_service
 
 
@@ -27,9 +29,6 @@ class AppController:
     def __init__(self, root):
         """Conserve la fenêtre racine et instancie les contrôleurs spécialisés."""
         self.root = root
-
-
-        self.explorer_service = ExplorerService()
 
         # utilisateur connecté
         self.current_user_id = None
@@ -111,15 +110,50 @@ class AppController:
             self.refresh()
         return result
 
+    # ---------- FONCTIONS DE GESTION DE L'EXPLORATEUR ----------
+
+    def add_explorer_course(
+        self, code: str, name: str, faculty: str
+    ) -> ExplorerActionResult:
+        """Tente d'ajouter un cours depuis l'explorateur."""
+        result = explorer_service.add_course(code, name, faculty)
+        if result.success:
+            self.refresh()
+        return result
+
+    def publish_summary(
+        self, course_code: str, title: str, content: str, academic_year: str
+    ) -> ExplorerActionResult:
+        """Publie un résumé pour l'utilisateur courant."""
+        result = explorer_service.publish_summary(
+            self.current_user_id, course_code, title, content, academic_year
+        )
+        if result.success:
+            self.refresh()
+        return result
+
+    def rate_summary(
+        self, summary_id: int, rating: int, comment: str
+    ) -> ExplorerActionResult:
+        """Évalue un résumé pour l'utilisateur courant."""
+        result = explorer_service.evaluate_summary(
+            self.current_user_id, summary_id, rating, comment
+        )
+        if result.success:
+            self.refresh()
+        return result
+
     # ---------- FONCTIONS DE RÉCUPÉRATION DE DONNÉES ----------
 
     def get_dashboard_data(self) -> DashboardData:
         """Retourne les données nécessaires au tableau de bord."""
         return user_service.get_dashboard_info(self.current_user_id)
 
-    def get_explorer_data(self) -> dict:
-        """Retourne les données de l'explorateur, encore non implémenté."""
-        return {}
+    def get_explorer_data(
+        self, search_query: str = "", selected_course_code: str = ""
+    ) -> ExplorerData:
+        """Retourne les données nécessaires à l'explorateur."""
+        return explorer_service.get_explorer_data(search_query, selected_course_code)
 
     def get_leaderboard_data(self) -> LeaderboardData:
         """Retourne les données du leaderboard."""
@@ -145,23 +179,3 @@ class AppController:
     def get_my_library_data(self) -> MyLibraryData:
         """Données pour remplir l'espace personnel de l'étudiant."""
         return my_library_service.get_my_library_data(self.current_user_id)
-
-    def modify_summary(self, summary_id: int, title: str, content: str) -> tuple:
-        """Envoie les modifications au back-end."""
-        return self.library_service.update_my_summary(summary_id, self.current_user_id, title, content)
-
-    def publish_summary(self, course_id: str, title: str, content: str, academic_year: str) -> tuple:
-        """Publie un résumé en utilisant l'ID de l'utilisateur connecté et l'année choisie."""
-        return self.explorer_service.publish_summary(
-            course_id, self.current_user_id, title, content, academic_year
-        )
-
-    def rate_summary(self, summary_id: int, rating: int, comment: str) -> tuple:
-        """Evalue un résumé en utilisant l ID de l utilisateur connecté."""
-        return self.explorer_service.evaluate_summary(
-            summary_id, self.current_user_id, rating, comment
-        )
-    def get_academic_years(self) -> list:
-        """Récupère les années académiques pour la liste déroulante."""
-        return self.explorer_service.get_academic_years()
-

@@ -47,5 +47,5 @@ def get_dashboard_info(user_id: Optional[int]) -> DashboardData:
 
 
 def get_profile_data(user_id: Optional[int]) -> ProfileData:
-    """Renvoie les donnees necessaires a la vue profil."""
+    """Renvoie les données necessaires à la vue profil."""
     return ProfileData(user_id=user_id, profile=get_user_profile(user_id))

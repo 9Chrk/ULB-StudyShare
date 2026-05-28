@@ -1,4 +1,4 @@
-"""Vue Bibliotheque personnelle apres connexion."""
+"""Vue Bibliothèque personnelle apres connexion."""
 
 import tkinter as tk
 from tkinter import messagebox
@@ -9,12 +9,12 @@ import gui.views.common.theme as theme
 
 
 class MyLibraryView(tk.Frame):
-    """Page Bibliotheque personnelle: resumes publies et evaluations recues."""
+    """Page Bibliothèque personnelle: resumes publies et evaluations recues."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
-        """Construit la vue Bibliotheque personnelle."""
+        """Construit la vue Bibliothèque personnelle."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -82,7 +82,7 @@ class MyLibraryView(tk.Frame):
         )
 
     def _make_panel_frame(self, parent, **kwargs):
-        """Cree un panneau blanc reutilisable."""
+        """Cree un panneau blanc réutilisable."""
         return tk.Frame(
             parent,
             bg=theme.COLORS.white,
@@ -326,7 +326,7 @@ class MyLibraryView(tk.Frame):
         self._make_badge(
             header,
             summary.course_code,
-            fg=theme.WORKSPACE_BLUE_DARK,
+            fg=theme.COLORS.black,
         ).pack(side="right", padx=(10, 0))
 
         self._make_panel_label(
@@ -469,7 +469,7 @@ class MyLibraryView(tk.Frame):
         ).pack(anchor="e", padx=16, pady=16)
 
     def delete_summary(self, summary) -> None:
-        """Action declenchee par le bouton Supprimer d'une carte."""
+        """Action déclenchée par le bouton Supprimer d'une carte."""
         confirm = messagebox.askyesno(
             "Attention",
             "Voulez-vous vraiment supprimer ce résumé de la base de données ?",

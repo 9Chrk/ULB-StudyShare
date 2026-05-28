@@ -7,7 +7,7 @@ from core.models.my_library import ReceivedEvaluation
 
 
 def get_user_summaries(cursor, user_id: int) -> List[LibrarySummary]:
-    """Récupère la liste des résumé que l utilisateur a publié."""
+    """Récupère la liste des résumés que l'utilisateur a publiée."""
     cursor.execute(
         """
         SELECT r.idResume,
@@ -42,7 +42,7 @@ def get_user_summaries(cursor, user_id: int) -> List[LibrarySummary]:
 def update_user_summary(
     cursor, summary_id: int, user_id: int, title: str, content: str
 ) -> bool:
-    """Modifie le titre et le contenu d un résumé."""
+    """Modifie le titre et le contenu d'un résumé."""
     cursor.execute(
         """
         UPDATE Resume
@@ -66,7 +66,7 @@ def delete_user_summary(cursor, summary_id: int, user_id: int) -> bool:
 
 
 def get_evaluations_received(cursor, user_id: int) -> List[ReceivedEvaluation]:
-    """Récupère les notes et commentaire reçus par l utilisateur."""
+    """Récupère les notes et commentaire reçus par l'utilisateur."""
     cursor.execute(
         """
         SELECT r.titre, e.note, e.commentaire, u.nomUtilisateur
