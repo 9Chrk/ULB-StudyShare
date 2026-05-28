@@ -292,7 +292,10 @@ class ExplorerView(tk.Frame):
         selection = self.course_tree.selection()
         if not selection:
             return
-        self.current_course_code = str(selection[0])
+        selected_course_code = str(selection[0])
+        if selected_course_code == self.current_course_code:
+            return
+        self.current_course_code = selected_course_code
         self.refresh()
 
     # ---------- ACTIONS ----------

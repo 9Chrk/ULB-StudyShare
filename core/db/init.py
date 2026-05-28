@@ -24,7 +24,7 @@ def execute_sql_script(filename: str) -> None:
     cursor.execute(script, map_results=True)
 
     # Consommer les résultats
-    for statement, result_set in cursor.fetchsets():
+    for _, _ in cursor.fetchsets():
         pass
 
     # Commit des changements et fermeture de la connexion
