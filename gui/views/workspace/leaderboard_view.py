@@ -38,8 +38,6 @@ class LeaderboardView(tk.Frame):
         self.content_frame = tk.Frame(self, bg=bg)
         self.content_frame.pack(fill="both", expand=True)
 
-        self.refresh()
-
     def refresh(self) -> None:
         """Recharge le classement et la position de l'utilisateur courant."""
         data = self.app_controller.get_leaderboard_data()

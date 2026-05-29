@@ -22,6 +22,8 @@ class WorkspaceView(tk.Frame):
         self.root = root
         self.app_controller = app_controller
         self.views = {}
+        self.needs_refresh = {}
+        self.active_view_name = None
 
         # -------- Layout --------
         # Layout global : 2 colonnes (sidebar + contenu)
@@ -69,7 +71,7 @@ class WorkspaceView(tk.Frame):
         super().destroy()
 
     def show_view(self, view_name: str) -> None:
-        """Affiche la vue demandée via tkraise et rafraîchit ses données."""
+        """Affiche la vue demandée et recharge ses données si nécessaire."""
         frame = self.views.get(view_name)
         if frame is None:
             return
@@ -77,19 +79,30 @@ class WorkspaceView(tk.Frame):
         # Mettre à jour l'état des boutons de la sidebar
         self.sidebar.set_active(view_name)
 
-        refresh = getattr(frame, "refresh", None)
-        if callable(refresh):
-            refresh()
+        self.active_view_name = view_name
+        self._refresh_view_if_needed(view_name)
 
         # Afficher la vue dans la zone de contenu
         frame.tkraise()
 
     def refresh(self) -> None:
-        """Diffuse un rafraîchissement aux vues qui savent se recharger."""
-        for frame in self.views.values():
-            refresh = getattr(frame, "refresh", None)
-            if callable(refresh):
-                refresh()
+        """Marque les vues comme obsolètes après une mutation de données."""
+        for view_name in self.views:
+            self.needs_refresh[view_name] = True
+
+        if self.active_view_name:
+            self._refresh_view_if_needed(self.active_view_name)
+
+    def _refresh_view_if_needed(self, view_name: str) -> None:
+        """Recharge une vue uniquement si elle a été invalidée."""
+        if not self.needs_refresh.get(view_name, True):
+            return
+
+        frame = self.views.get(view_name)
+        refresh = getattr(frame, "refresh", None)
+        if callable(refresh):
+            refresh()
+        self.needs_refresh[view_name] = False
 
     # ---------- INITIALISATION DES VUES ----------
 
@@ -123,6 +136,7 @@ class WorkspaceView(tk.Frame):
             )
             frame.grid(row=0, column=0, sticky="nsew")
             self.views[name] = frame
+            self.needs_refresh[name] = True
 
     def configure_sidebar_items(self) -> None:
         """Configure les entrées de navigation de la sidebar."""

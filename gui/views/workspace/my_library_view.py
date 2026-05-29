@@ -60,8 +60,6 @@ class MyLibraryView(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-        self.refresh()
-
     # ---------- HELPERS ----------
 
     def _make_label(self, text, font, parent=None, fg=None, bg=None, **kwargs):

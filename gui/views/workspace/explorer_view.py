@@ -39,8 +39,6 @@ class ExplorerView(tk.Frame):
         self._build_course_panel()
         self._build_summary_panel()
 
-        self.refresh()
-
     # ---------- HELPERS ----------
 
     def _make_label(self, text, font, parent=None, fg=None, bg=None, **kwargs):

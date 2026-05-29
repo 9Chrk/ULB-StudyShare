@@ -36,8 +36,6 @@ class ProfileView(tk.Frame):
         self.content_frame = tk.Frame(self, bg=bg)
         self.content_frame.pack(fill="both", expand=True)
 
-        self.refresh()
-
     def refresh(self) -> None:
         """Recharge les informations du profil."""
         data = self.app_controller.get_profile_data()

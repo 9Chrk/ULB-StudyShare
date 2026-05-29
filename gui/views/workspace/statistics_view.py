@@ -6,6 +6,12 @@ from tkinter import ttk
 import gui.views.common.theme as theme
 
 
+def _format_float(value) -> str:
+    if value is None:
+        return "-"
+    return f"{float(value):.2f}"
+
+
 class StatisticsView(tk.Frame):
     """Affiche les huit statistiques demandées par le guide."""
 
@@ -37,8 +43,6 @@ class StatisticsView(tk.Frame):
         self.content_frame = tk.Frame(self, bg=bg)
         self.content_frame.pack(fill="both", expand=True)
 
-        self.refresh()
-
     def refresh(self) -> None:
         """Recharge toutes les statistiques affichées."""
         data = self.app_controller.get_statistics_data()
@@ -60,7 +64,7 @@ class StatisticsView(tk.Frame):
         cards = [
             (
                 "Moyenne résumés / utilisateur",
-                self._format_float(data.average_resumes_per_user),
+                _format_float(data.average_resumes_per_user),
                 theme.WORKSPACE_GREEN,
             ),
             (
@@ -251,7 +255,7 @@ class StatisticsView(tk.Frame):
                     row.course_code,
                     row.course_name,
                     row.resume_title,
-                    self._format_float(row.average_rating),
+                    _format_float(row.average_rating),
                 ),
             )
 
@@ -266,11 +270,6 @@ class StatisticsView(tk.Frame):
                 "end",
                 values=(row.username, row.points, row.total_spent, row.excess_spent),
             )
-
-    def _format_float(self, value) -> str:
-        if value is None:
-            return "-"
-        return f"{float(value):.2f}"
 
     def _format_top_object(self, data) -> str:
         rows = data.most_bought_cosmetics
