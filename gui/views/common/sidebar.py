@@ -53,12 +53,14 @@ class Sidebar(tk.Frame):
 
         # -------- En-tête --------
         # En-tête de marque
-        self.build_header()
+        self._build_header()
 
-    # --------- CONSTRUCTION DE L'EN-TÊTE DE MARQUE ----------
+    # --------------------------------------------------------
+    # Méthodes de construction
+    # --------------------------------------------------------
 
-    def build_header(self) -> None:
-        """Construit l'entête de marque en haut de la sidebar."""
+    def _build_header(self) -> None:
+        """Construit l'en-tête de marque en haut de la sidebar."""
         brand_frame = tk.Frame(self, bg=self["bg"])
         brand_frame.grid(
             row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(18, 14)
@@ -91,10 +93,12 @@ class Sidebar(tk.Frame):
             row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 10)
         )
 
-    # ---------- CONFIGURATION DES ENTRÉES DE MENU ----------
+    # --------------------------------------------------------
+    # Méthodes de configuration du menu
+    # --------------------------------------------------------
 
     def set_items(self, items: Dict[str, str]) -> None:
-        """Cree les boutons de navigation a partir d'un dict {view_name: label}."""
+        """Crée les boutons de navigation à partir d'un dict {view_name: label}."""
         # -------- Menu --------
         # L'ordre du dict détermine l'ordre d'affichage dans la sidebar.
         for index, (view_name, label) in enumerate(items.items()):
@@ -122,7 +126,7 @@ class Sidebar(tk.Frame):
             )
             # Placer le bouton dans la grille
             btn.grid(row=row, column=1, sticky="ew", pady=pad_y)
-            btn.configure(command=lambda vn=view_name: self.on_click(vn))
+            btn.configure(command=lambda vn=view_name: self._on_click(vn))
             self.grid_rowconfigure(row, weight=0)
 
             self.buttons[view_name] = btn
@@ -131,7 +135,9 @@ class Sidebar(tk.Frame):
         # Dernière ligne utilisée pour placer le bouton Déconnexion en bas
         self.exit_row = self.start_row + len(items)
 
-    # ---------- BOUTON DE DÉCONNEXION ----------
+    # --------------------------------------------------------
+    # Méthodes du bouton de déconnexion
+    # --------------------------------------------------------
 
     def add_exit_button(self, on_exit_callback) -> None:
         """Ajoute un bouton Déconnexion en bas de la sidebar."""
@@ -169,7 +175,7 @@ class Sidebar(tk.Frame):
         )
 
         # Icône de déconnexion
-        icon = self.load_icon_for("logout", active=False)
+        icon = self._load_icon_for("logout", active=False)
         if icon is not None:
             self.logout_icon = icon
             exit_btn.configure(image=icon, compound="left", padx=16)
@@ -181,16 +187,18 @@ class Sidebar(tk.Frame):
         self.grid_rowconfigure(self.exit_row + 1, weight=0)
         self.grid_rowconfigure(self.exit_row + 2, weight=0)
 
-    # ---------- GESTION DE L'ÉTAT ACTIF ----------
+    # --------------------------------------------------------
+    # Méthodes de gestion de l'état actif
+    # --------------------------------------------------------
 
-    def on_click(self, view_name: str) -> None:
-        """Callback interne lorsqu'un bouton est clique."""
+    def _on_click(self, view_name: str) -> None:
+        """Callback interne lorsqu'un bouton est cliqué."""
         self.set_active(view_name)
         if callable(self.on_select):
             self.on_select(view_name)
 
     def set_active(self, view_name: str) -> None:
-        """Met a jour la couleur du texte et les icones des boutons."""
+        """Met à jour la couleur du texte et les icônes des boutons."""
         # -------- Actualisation de l'état --------
         # On recalcule tout l'état visuel en une seule passe pour garder la sidebar cohérente.
         for name, btn in self.buttons.items():
@@ -212,8 +220,8 @@ class Sidebar(tk.Frame):
             if icon_set is None:
                 # Les icônes sont chargées à la demande pour éviter du travail inutile au démarrage.
                 icon_set = {
-                    "inactive": self.load_icon_for(name, active=False),
-                    "active": self.load_icon_for(
+                    "inactive": self._load_icon_for(name, active=False),
+                    "active": self._load_icon_for(
                         name, color_active=self.active_fg, active=True
                     ),
                 }
@@ -230,9 +238,11 @@ class Sidebar(tk.Frame):
             else:
                 btn.configure(image="", padx=30)
 
-    # ---------- ICÔNES DE MENU ----------
+    # --------------------------------------------------------
+    # Méthodes de chargement des icônes
+    # --------------------------------------------------------
 
-    def load_icon_for(
+    def _load_icon_for(
         self, view_name: str, color_active: str = None, active: bool = False
     ):
         """Charge et teinte une icône pour une vue donnée.

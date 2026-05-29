@@ -12,7 +12,7 @@ class LeaderboardView(tk.Frame):
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
-        """Construit la vue du classement et remplit le tableau des joueurs."""
+        """Construit la vue du classement et prépare le tableau des utilisateurs."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg

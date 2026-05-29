@@ -75,7 +75,9 @@ class ShopView(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-    # ── helpers ────────────────────────────────────────────────────────────
+    # --------------------------------------------------------
+    # Méthodes de construction communes
+    # --------------------------------------------------------
 
     def _make_label(self, text, font, parent=None, fg=None, bg=None, **kwargs):
         """Crée un tk.Label avec les valeurs par défaut de la vue."""
@@ -89,7 +91,7 @@ class ShopView(tk.Frame):
         )
 
     def _make_panel_label(self, parent, text, font, fg=None, **kwargs):
-        """Crée un tk.Label sur fond COLOR_PANEL."""
+        """Crée un tk.Label sur fond blanc."""
         return self._make_label(
             text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs
         )
@@ -115,14 +117,17 @@ class ShopView(tk.Frame):
         ).pack(anchor="w", pady=(2, 10))
 
     def _make_empty_label(self, parent) -> None:
+        """Affiche le message d'état vide d'une catégorie."""
         self._make_panel_label(
             parent,
-            "None objet dans cette catégorie.",
+            "Aucun objet dans cette catégorie.",
             ("Segoe UI", 10),
             fg=theme.WORKSPACE_MUTED,
         ).pack(anchor="w")
 
-    # ── data & render ──────────────────────────────────────────────────────
+    # --------------------------------------------------------
+    # Méthodes de données et rendu
+    # --------------------------------------------------------
 
     def refresh(self) -> None:
         """Recharge les données shop et reconstruit l'affichage."""
@@ -131,6 +136,7 @@ class ShopView(tk.Frame):
         self._render_catalogue(data)
 
     def _render_summary(self, data) -> None:
+        """Affiche les indicateurs rapides de la boutique."""
         # -------- Summary cards --------
         for child in self.summary_frame.winfo_children():
             child.destroy()
@@ -158,6 +164,7 @@ class ShopView(tk.Frame):
             ).pack(anchor="w")
 
     def _render_catalogue(self, data) -> None:
+        """Reconstruit le catalogue par catégorie."""
         # -------- Catalogue --------
         for child in self.scroll_frame.winfo_children():
             child.destroy()
@@ -168,7 +175,7 @@ class ShopView(tk.Frame):
         if not catalogue:
             # État vide: on évite de construire des sections inutiles.
             self._make_label(
-                "None objet disponible pour le moment.",
+                "Aucun objet disponible pour le moment.",
                 ("Segoe UI", 11),
                 fg=theme.WORKSPACE_MUTED,
             ).pack(anchor="w", pady=8)
@@ -193,6 +200,7 @@ class ShopView(tk.Frame):
         )
 
     def _group_items_by_type(self, catalogue):
+        """Regroupe les objets du catalogue par type métier."""
         # On sépare le catalogue par type pour choisir ensuite le bon gabarit.
         sections = {"badge": [], "titre": [], "theme": [], "autre": []}
         for item in catalogue:
@@ -201,7 +209,9 @@ class ShopView(tk.Frame):
             )
         return sections
 
-    # ── section builders ───────────────────────────────────────────────────
+    # --------------------------------------------------------
+    # Méthodes de construction des sections
+    # --------------------------------------------------------
 
     def _build_section(self, parent, item_type: str, items, owned_ids, data):
         """Section verticale (badge, titre, theme)."""
@@ -280,6 +290,7 @@ class ShopView(tk.Frame):
                 )
 
     def _create_horizontal_scroller(self, parent, height: int):
+        """Crée une zone de défilement horizontale pour les petites cartes."""
         container = tk.Frame(parent, bg=self.bg)
         canvas = tk.Canvas(container, bg=self.bg, height=height, highlightthickness=0)
         scrollbar = tk.Scrollbar(container, orient="horizontal", command=canvas.xview)
@@ -300,7 +311,9 @@ class ShopView(tk.Frame):
             "scrollbar": scrollbar,
         }
 
-    # ── item card ──────────────────────────────────────────────────────────
+    # --------------------------------------------------------
+    # Méthodes de construction des cartes
+    # --------------------------------------------------------
 
     def _build_item_card(
         self,
@@ -315,6 +328,7 @@ class ShopView(tk.Frame):
         row: int = 0,
         column: int = 0,
     ) -> None:
+        """Construit une carte d'objet avec son état et ses actions."""
         # -------- Item card --------
         is_owned = item.item_id in owned_ids
         is_active = self._is_item_active(item.item_id, item.item_type, data)
@@ -408,7 +422,7 @@ class ShopView(tk.Frame):
             # Les objets sans mécanique d'activation restent informatifs.
             tk.Label(
                 actions,
-                text="Nonee action",
+                text="Aucune action",
                 font=("Segoe UI", 10, "bold"),
                 bg=theme.WORKSPACE_BACKGROUND,
                 fg=theme.WORKSPACE_NEUTRAL_TEXT,
@@ -417,6 +431,7 @@ class ShopView(tk.Frame):
             ).pack(side="right")
 
     def _make_action_button(self, parent, text: str, kind: str, command):
+        """Construit un bouton d'achat ou d'activation."""
         bg, active_bg = (
             (theme.WORKSPACE_BLUE_DARK, theme.WORKSPACE_BLUE_LIGHT)
             if kind == "buy"
@@ -438,9 +453,12 @@ class ShopView(tk.Frame):
             command=command,
         )
 
-    # ── Aide à l'état ──────────────────────────────────────────────────────
+    # --------------------------------------------------------
+    # Méthodes d'état et d'actions
+    # --------------------------------------------------------
 
     def _is_item_active(self, item_id: int, item_type: str, data) -> bool:
+        """Indique si l'objet correspond à l'objet actif de son type."""
         # Chaque type cosmétique a une seule clé d'état actif dans BoutiqueData.
         key = {
             "badge": "active_badge_id",

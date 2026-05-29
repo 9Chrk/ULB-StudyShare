@@ -35,8 +35,8 @@ def get_users_with_at_least_n_courses(cursor, min_courses: int = 3) -> List[Tupl
 
 
 def get_courses_with_most_resumes(cursor) -> List[Tuple]:
-    """Retourne les cours classés selon le nombre total de résumés associés."""
-    # LEFT JOIN pour conserver aussi les cours sans aucun résumé.
+    """Retourne le cours ayant le plus grand nombre de résumés associés."""
+    # LEFT JOIN pour rester défensif si aucun résumé n'a encore été publié.
     cursor.execute(
         """
         SELECT c.codeCours, c.nomCours, COUNT(r.idResume) AS nb_resumes
@@ -44,6 +44,7 @@ def get_courses_with_most_resumes(cursor) -> List[Tuple]:
         LEFT JOIN Resume r ON r.codeCours = c.codeCours
         GROUP BY c.codeCours, c.nomCours
         ORDER BY nb_resumes DESC, c.nomCours ASC
+        LIMIT 1
         """,
     )
     return cursor.fetchall()

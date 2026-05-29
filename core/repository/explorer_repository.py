@@ -1,4 +1,4 @@
-"""Requêtes SQL liées a l'explorateur de cours."""
+"""Requêtes SQL liées à l'explorateur de cours."""
 
 from typing import List, Optional
 
@@ -16,7 +16,7 @@ def get_all_courses(cursor) -> List[CourseInfo]:
 
 
 def search_courses(cursor, query: str) -> List[CourseInfo]:
-    """Recherche un cours par code, nom ou faculte."""
+    """Recherche un cours par code, nom ou faculté."""
     like_query = f"%{query}%"
     cursor.execute(
         """
@@ -34,7 +34,7 @@ def search_courses(cursor, query: str) -> List[CourseInfo]:
 
 
 def insert_course(cursor, code: str, name: str, faculty: str) -> bool:
-    """Inséré un nouveau cours et signale si l'insertion a eu lieu."""
+    """Insère un nouveau cours et signale si l'insertion a eu lieu."""
     cursor.execute(
         """
         INSERT INTO Cours (codeCours, nomCours, faculte)
@@ -46,7 +46,7 @@ def insert_course(cursor, code: str, name: str, faculty: str) -> bool:
 
 
 def get_summaries_by_course(cursor, course_code: str) -> List[ExplorerSummary]:
-    """Renvoie les resumes publics d'un cours avec leur note moyenne."""
+    """Renvoie les résumés publics d'un cours avec leur note moyenne."""
     cursor.execute(
         """
         SELECT r.idResume,
@@ -82,7 +82,7 @@ def get_summaries_by_course(cursor, course_code: str) -> List[ExplorerSummary]:
 def insert_summary(
     cursor, course_code: str, user_id: int, title: str, content: str, academic_year: str
 ) -> None:
-    """Inséré un resume public pour le cours et l'annee choisis."""
+    """Insère un résumé public pour le cours et l'année choisis."""
     cursor.execute(
         """
         INSERT INTO Resume (titre, description, datePublication, version, visibilite, idUtilisateur, codeCours, codeAnnee)
@@ -93,7 +93,7 @@ def insert_summary(
 
 
 def check_already_evaluated(cursor, summary_id: int, user_id: int) -> bool:
-    """Vérifie si l'utilisateur a deja évalué ce resume."""
+    """Vérifie si l'utilisateur a déjà évalué ce résumé."""
     cursor.execute(
         "SELECT 1 FROM Evalue WHERE idResume = %s AND idUtilisateur = %s",
         (summary_id, user_id),
@@ -102,7 +102,7 @@ def check_already_evaluated(cursor, summary_id: int, user_id: int) -> bool:
 
 
 def get_summary_author_id(cursor, summary_id: int) -> Optional[int]:
-    """Renvoie l'auteur d'un resume, ou None si le resume n'existe pas."""
+    """Renvoie l'auteur d'un résumé, ou None si le résumé n'existe pas."""
     cursor.execute(
         "SELECT idUtilisateur FROM Resume WHERE idResume = %s",
         (summary_id,),
@@ -114,7 +114,7 @@ def get_summary_author_id(cursor, summary_id: int) -> Optional[int]:
 def insert_evaluation(
     cursor, summary_id: int, user_id: int, rating: int, comment: str
 ) -> None:
-    """Ajoute une evaluation sur un resume."""
+    """Ajoute une évaluation sur un résumé."""
     cursor.execute(
         """
         INSERT INTO Evalue (idUtilisateur, idResume, note, commentaire, dateEvaluation)

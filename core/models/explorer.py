@@ -1,4 +1,4 @@
-"""Modèles de donnees lies a l'explorateur de cours."""
+"""Modèles de données liés à l'explorateur de cours."""
 
 from dataclasses import dataclass
 from datetime import date
@@ -7,7 +7,7 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class CourseInfo:
-    """Cours affiche dans l'explorateur."""
+    """Cours affiché dans l'explorateur."""
 
     code: str
     name: str
@@ -16,7 +16,7 @@ class CourseInfo:
 
 @dataclass(frozen=True)
 class ExplorerSummary:
-    """Resume public associe a un cours."""
+    """Résumé public associé à un cours."""
 
     summary_id: int
     title: str
@@ -29,7 +29,7 @@ class ExplorerSummary:
 
 @dataclass(frozen=True)
 class ExplorerData:
-    """Donnees necessaires a la vue explorateur."""
+    """Données nécessaires à la vue explorateur."""
 
     courses: list[CourseInfo]
     summaries: list[ExplorerSummary]

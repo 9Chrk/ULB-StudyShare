@@ -1,4 +1,4 @@
-"""Import des objets cosmétiques et de leurs sous-types metier."""
+"""Import des objets cosmétiques et de leurs sous-types métier."""
 
 import mysql.connector
 
@@ -7,13 +7,13 @@ from core.importers.utils import bounded_int, clean_text
 
 def import_objects(
     cursor, objects: list[dict], stats: dict[str, int]
-) -> dict[str, tuple[int, str]]:
+) -> dict[str, tuple[int, str, int]]:
     """Insère 'ObjetCosmetique' puis, si besoin, son sous-type.
 
     Returns:
-        dict[str, tuple[int, str]]: index nomObjet -> (idObjet, type).
+        dict[str, tuple[int, str, int]]: index nomObjet -> (idObjet, type, prix).
     """
-    object_map: dict[str, tuple[int, str]] = {}
+    object_map: dict[str, tuple[int, str, int]] = {}
     subtype_tables = {
         "badge": "Badge",
         "titre": "Titre",
@@ -44,7 +44,7 @@ def import_objects(
                 """,
                 (object_id, name, description, points),
             )
-            object_map[name] = (object_id, object_type)
+            object_map[name] = (object_id, object_type, points)
 
             # Les types spécialisés ont aussi une ligne dans leur table dédiée.
             subtype_table = subtype_tables.get(object_type)

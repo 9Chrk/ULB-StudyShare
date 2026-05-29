@@ -30,18 +30,20 @@ class AppController:
         """Conserve la fenêtre racine et instancie les contrôleurs spécialisés."""
         self.root = root
 
-        # utilisateur connecté
+        # Utilisateur connecté.
         self.current_user_id = None
         self._refresh_listeners: list[Callable[[], None]] = []
 
-        # instances des contrôleurs
+        # Instances des contrôleurs.
         self.auth_controller = AuthController(root, self)
         self.workspace_controller = WorkspaceController(root, self)
 
-        # point d'entrée de l'application
+        # Point d'entrée de l'application.
         with_alpha_transition(self.root, self.show_login)
 
-    # ---------- FONCTIONS DE NAVIGATION ENTRE VUES ---------
+    # --------------------------------------------------------
+    # Méthodes de navigation
+    # --------------------------------------------------------
 
     def show_login(self):
         """Affiche l'écran de connexion."""
@@ -55,7 +57,9 @@ class AppController:
         """Affiche l'espace de travail après une connexion réussie."""
         self.workspace_controller.show_workspace()
 
-    # ---------- FONCTIONS DE RAFRAÎCHISSEMENT GLOBAL ----------
+    # --------------------------------------------------------
+    # Méthodes de rafraîchissement global
+    # --------------------------------------------------------
 
     def subscribe_refresh(self, callback: Callable[[], None]) -> None:
         """Ajoute un observateur appelé quand les données applicatives changent."""
@@ -72,7 +76,9 @@ class AppController:
         for callback in list(self._refresh_listeners):
             callback()
 
-    # ---------- FONCTIONS DE GESTION DE LA BOUTIQUE ----------
+    # --------------------------------------------------------
+    # Méthodes de gestion de la boutique
+    # --------------------------------------------------------
 
     def buy_shop_item(self, item_id: int) -> PurchaseResult:
         """Tente l'achat d'un objet boutique pour l'utilisateur courant."""
@@ -88,7 +94,9 @@ class AppController:
             self.refresh()
         return result
 
-    # --------- FONCTIONS DE GESTION DE LA BIBLIOTHÈQUE PERSONNELLE ----------
+    # --------------------------------------------------------
+    # Méthodes de gestion de la bibliothèque personnelle
+    # --------------------------------------------------------
 
     def modify_summary(
         self, summary_id: int, title: str, content: str
@@ -110,7 +118,9 @@ class AppController:
             self.refresh()
         return result
 
-    # ---------- FONCTIONS DE GESTION DE L'EXPLORATEUR ----------
+    # --------------------------------------------------------
+    # Méthodes de gestion de l'explorateur
+    # --------------------------------------------------------
 
     def add_explorer_course(
         self, code: str, name: str, faculty: str
@@ -143,7 +153,9 @@ class AppController:
             self.refresh()
         return result
 
-    # ---------- FONCTIONS DE RÉCUPÉRATION DE DONNÉES ----------
+    # --------------------------------------------------------
+    # Méthodes de récupération de données
+    # --------------------------------------------------------
 
     def get_dashboard_data(self) -> DashboardData:
         """Retourne les données nécessaires au tableau de bord."""

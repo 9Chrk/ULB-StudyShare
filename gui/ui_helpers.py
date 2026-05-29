@@ -20,20 +20,22 @@ def clear_frames(root: tk.Tk) -> None:
 def bind_entry_placeholder(entry, placeholder: str, is_password: bool = False) -> None:
     """Ajoute un placeholder géré au focus sur un champ de saisie."""
 
-    def focus_in(_event):
+    def _focus_in(_event):
+        """Retire le placeholder lorsque le champ reçoit le focus."""
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             if is_password:
                 entry.config(show="•")
 
-    def focus_out(_event):
+    def _focus_out(_event):
+        """Restaure le placeholder lorsque le champ est vide."""
         if entry.get() == "":
             entry.insert(0, placeholder)
             if is_password:
                 entry.config(show="")
 
-    entry.bind("<FocusIn>", focus_in)
-    entry.bind("<FocusOut>", focus_out)
+    entry.bind("<FocusIn>", _focus_in)
+    entry.bind("<FocusOut>", _focus_out)
 
 
 def center_window(

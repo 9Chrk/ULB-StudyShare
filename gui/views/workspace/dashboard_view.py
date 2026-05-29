@@ -6,7 +6,7 @@ import gui.views.common.theme as theme
 
 
 class DashboardView(tk.Frame):
-    """Vue du tableau de bord simple pour illustrer le layout principal."""
+    """Vue du tableau de bord avec profil, solde et activité récente."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
@@ -28,7 +28,7 @@ class DashboardView(tk.Frame):
 
         self.subtitle = tk.Label(
             self,
-            text="Bienvenue sur ULB StudyShare!",
+            text="Bienvenue sur ULB StudyShare !",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -42,7 +42,7 @@ class DashboardView(tk.Frame):
         """Recharge les données dashboard et reconstruit le contenu dynamique."""
         data = self.app_controller.get_dashboard_data()
         username = data.profile.username if data.profile else "Invité"
-        self.subtitle.configure(text=f"Bienvenue sur ULB StudyShare, {username}!")
+        self.subtitle.configure(text=f"Bienvenue sur ULB StudyShare, {username} !")
 
         for child in self.content_frame.winfo_children():
             child.destroy()

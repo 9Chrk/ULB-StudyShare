@@ -9,19 +9,21 @@ def xml_to_dict(file_path: str) -> list[dict]:
     root = tree.getroot()
     data = []
 
-    # On parcourt chaque noeud racine et on le convertit en structure Python.
+    # On parcourt chaque nœud racine et on le convertit en structure Python.
     for element in root:
         data.append(_parse_element(element))
 
     return data
 
 
-# ---------- FONCTION AUXILIAIRE POUR XML ---------
-# ⚠️ ATTENTION : CETTE SECTION EST GÉNÉRÉ PAR IA
+# --------------------------------------------------------
+# Fonction auxiliaire XML
+# --------------------------------------------------------
+# ATTENTION : CETTE SECTION EST GÉNÉRÉE PAR IA.
 
 
 def _parse_element(element) -> dict:
-    """Fonction auxiliaire pour parser un élément XML récursivement"""
+    """Convertit récursivement un élément XML en dictionnaire."""
     result = {}
 
     # Capturer les attributs

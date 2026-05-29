@@ -89,3 +89,18 @@ def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
         (user_id, user_id, user_id),
     )
     return cursor.fetchall()
+
+
+def get_point_transactions(cursor, user_id: int, limit: int = 20) -> List[Tuple]:
+    """Retourne les dernières transactions de points d'un utilisateur."""
+    cursor.execute(
+        """
+        SELECT dateTransaction, natureTransaction, motif, montantPoints
+        FROM TransactionPoints
+        WHERE idUtilisateur = %s
+        ORDER BY dateTransaction DESC, idTransaction DESC
+        LIMIT %s
+        """,
+        (user_id, limit),
+    )
+    return cursor.fetchall()

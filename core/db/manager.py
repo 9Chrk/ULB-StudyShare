@@ -15,8 +15,11 @@ class DBManager:
         return self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Commit si aucune exception, puis ferme proprement curseur et connexion."""
+        """Commit si aucune exception, rollback sinon, puis ferme proprement."""
         if exc_type is None:
             self.connection.commit()
+        else:
+            self.connection.rollback()
+
         self.cursor.close()
         self.connection.close()

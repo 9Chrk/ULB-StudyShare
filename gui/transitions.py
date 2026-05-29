@@ -10,7 +10,7 @@ def with_alpha_transition(
 ) -> None:
     """Exécute callback en rendant la fenêtre temporairement transparente."""
 
-    original_alpha = get_window_alpha(root)
+    original_alpha = _get_window_alpha(root)
 
     # Si l'alpha n'est pas supporté, on exécute simplement le callback sans transition.
     if original_alpha is None:
@@ -18,7 +18,7 @@ def with_alpha_transition(
         return
 
     # Essayer de rendre la fenêtre transparente avant d'exécuter le callback.
-    if not set_window_alpha(root, hidden_alpha):
+    if not _set_window_alpha(root, hidden_alpha):
         callback()
         return
 
@@ -27,13 +27,15 @@ def with_alpha_transition(
     root.update_idletasks()
 
     sleep(0.2)
-    set_window_alpha(root, original_alpha)
+    _set_window_alpha(root, original_alpha)
 
 
-# ---------- FONCTIONS UTILITAIRES ----------
+# --------------------------------------------------------
+# Méthodes utilitaires internes
+# --------------------------------------------------------
 
 
-def get_window_alpha(root: tk.Tk) -> Optional[float]:
+def _get_window_alpha(root: tk.Tk) -> Optional[float]:
     """Retourne l'alpha courant, ou None si non supporté."""
     try:
         return float(root.attributes("-alpha"))
@@ -41,7 +43,7 @@ def get_window_alpha(root: tk.Tk) -> Optional[float]:
         return None
 
 
-def set_window_alpha(root: tk.Tk, value: float) -> bool:
+def _set_window_alpha(root: tk.Tk, value: float) -> bool:
     """Essaie de changer l'alpha, renvoie True si OK, False sinon."""
     if value is None:
         return False

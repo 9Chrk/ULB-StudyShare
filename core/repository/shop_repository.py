@@ -149,7 +149,7 @@ def create_spend_transaction(cursor, user_id: int, amount: int, reason: str) -> 
 
 
 def activate_item(cursor, user_id: int, item_id: int, item_type: str) -> bool:
-    """Active un objet possédé selon son type (badge, titre, theme)."""
+    """Active un objet possédé selon son type (badge, titre, thème)."""
     if item_type == "badge":
         # Chaque type met à jour une colonne différente dans Utilisateur.
         cursor.execute(

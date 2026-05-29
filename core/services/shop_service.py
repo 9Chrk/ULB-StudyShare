@@ -2,6 +2,8 @@
 
 from typing import Optional
 
+from mysql.connector import Error
+
 from core.db.manager import DBManager
 from core.models.shop import ActivationResult
 from core.models.shop import PurchaseResult
@@ -62,27 +64,31 @@ def buy_item(user_id: Optional[int], item_id: int) -> PurchaseResult:
     if not user_id:
         return PurchaseResult(False, "Utilisateur non connecté.")
 
-    with DBManager() as cursor:
-        item = get_item_by_id(cursor, item_id)
-        if item is None:
-            return PurchaseResult(False, "Objet introuvable.")
+    try:
+        with DBManager() as cursor:
+            item = get_item_by_id(cursor, item_id)
+            if item is None:
+                return PurchaseResult(False, "Objet introuvable.")
 
-        if is_item_owned(cursor, user_id, item_id):
-            return PurchaseResult(False, "Cet objet est déjà possédé.")
+            if is_item_owned(cursor, user_id, item_id):
+                return PurchaseResult(False, "Cet objet est déjà possédé.")
 
-        state = get_user_shop_state(cursor, user_id)
-        if state is None:
-            return PurchaseResult(False, "Profil utilisateur introuvable.")
+            state = get_user_shop_state(cursor, user_id)
+            if state is None:
+                return PurchaseResult(False, "Profil utilisateur introuvable.")
 
-        if state.points < item.price_points:
-            return PurchaseResult(False, "Points insuffisants pour cet achat.")
+            if state.points < item.price_points:
+                return PurchaseResult(False, "Points insuffisants pour cet achat.")
 
-        add_owned_item(cursor, user_id, item_id)
-        spend_user_points(cursor, user_id, item.price_points)
-        create_spend_transaction(
-            cursor, user_id, item.price_points, f"Achat boutique: {item.name}"
-        )
-        return PurchaseResult(True, f"Achat réussi: {item.name}.")
+            add_owned_item(cursor, user_id, item_id)
+            spend_user_points(cursor, user_id, item.price_points)
+            create_spend_transaction(
+                cursor, user_id, item.price_points, f"Achat boutique : {item.name}"
+            )
+            return PurchaseResult(True, f"Achat réussi : {item.name}.")
+
+    except Error:
+        return PurchaseResult(False, "Achat impossible pour le moment.")
 
 
 def activate_owned_item(user_id: Optional[int], item_id: int) -> ActivationResult:
@@ -90,20 +96,26 @@ def activate_owned_item(user_id: Optional[int], item_id: int) -> ActivationResul
     if not user_id:
         return ActivationResult(False, "Utilisateur non connecté.")
 
-    with DBManager() as cursor:
-        item = get_item_by_id(cursor, item_id)
-        if item is None:
-            return ActivationResult(False, "Objet introuvable.")
+    try:
+        with DBManager() as cursor:
+            item = get_item_by_id(cursor, item_id)
+            if item is None:
+                return ActivationResult(False, "Objet introuvable.")
 
-        if item.item_type not in ("badge", "titre", "theme"):
-            return ActivationResult(False, "Ce type d'objet ne peut pas être activé.")
+            if item.item_type not in ("badge", "titre", "theme"):
+                return ActivationResult(
+                    False, "Ce type d'objet ne peut pas être activé."
+                )
 
-        if not is_item_owned(cursor, user_id, item_id):
-            return ActivationResult(
-                False, "Vous devez acheter cet objet avant activation."
-            )
+            if not is_item_owned(cursor, user_id, item_id):
+                return ActivationResult(
+                    False, "Vous devez acheter cet objet avant activation."
+                )
 
-        if not activate_item(cursor, user_id, item_id, item.item_type):
-            return ActivationResult(False, "Activation impossible.")
+            if not activate_item(cursor, user_id, item_id, item.item_type):
+                return ActivationResult(False, "Activation impossible.")
 
-        return ActivationResult(True, f"{item.name} activé.")
+            return ActivationResult(True, f"{item.name} activé.")
+
+    except Error:
+        return ActivationResult(False, "Activation impossible pour le moment.")

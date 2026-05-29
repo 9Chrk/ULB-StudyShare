@@ -11,10 +11,12 @@ class AuthController:
     """Gère la navigation et les actions entre les vues login/register."""
 
     def __init__(self, root, app_controller):
+        """Conserve les dépendances nécessaires aux vues d'authentification."""
         self.root = root
         self.app_controller = app_controller
 
     def show_login(self):
+        """Affiche la vue de connexion."""
         # On reconstruit la vue pour repartir d'un état propre après chaque navigation.
         login_view.build(
             root=self.root,
@@ -23,6 +25,7 @@ class AuthController:
         )
 
     def show_register(self):
+        """Affiche la vue de création de compte."""
         # Même principe pour l'inscription: la vue est recréée à chaque affichage.
         register_view.build(
             root=self.root,
@@ -30,9 +33,12 @@ class AuthController:
             on_login_link=self.app_controller.show_login,
         )
 
-    # ---------- FONCTIONS DE GESTION DE L'AUTHENTIFICATION ---------
+    # --------------------------------------------------------
+    # Méthodes de gestion de l'authentification
+    # --------------------------------------------------------
 
     def login(self, user_entry, password_entry):
+        """Tente de connecter l'utilisateur à partir des champs de saisie."""
         username = user_entry.get()
         password = password_entry.get()
 
@@ -48,6 +54,7 @@ class AuthController:
             messages.show_error(self.root, message)
 
     def register(self, user_entry, password_entry, confirm_password_entry, email_entry):
+        """Tente de créer un compte à partir des champs d'inscription."""
         username = user_entry.get()
         email = email_entry.get()
         password = password_entry.get()
@@ -58,7 +65,7 @@ class AuthController:
         confirm_password_entry.delete(0, "end")
 
         if password != confirm_password:
-            messages.show_error(self.root, "Passwords do not match.")
+            messages.show_error(self.root, "Les mots de passe ne correspondent pas.")
             return
 
         is_ok, message = auth_service.add(username, password, email)
@@ -66,7 +73,7 @@ class AuthController:
         if is_ok:
             user_entry.delete(0, "end")
             email_entry.delete(0, "end")
-            messages.show_info(self.root, "Registration successful!")
+            messages.show_info(self.root, "Inscription réussie.")
             self.show_login()
         else:
             messages.show_error(self.root, message)

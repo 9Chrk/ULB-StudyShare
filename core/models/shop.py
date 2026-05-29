@@ -27,7 +27,7 @@ class ShopUserState:
 
 @dataclass(frozen=True)
 class ShopData:
-    """Donnees necessaires a la vue shop."""
+    """Données nécessaires à la vue boutique."""
 
     user_id: Optional[int]
     catalogue: list[ShopItem]

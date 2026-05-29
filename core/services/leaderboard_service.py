@@ -1,4 +1,4 @@
-"""Services metier lies au leaderboard."""
+"""Services métier liés au classement."""
 
 from typing import Optional
 

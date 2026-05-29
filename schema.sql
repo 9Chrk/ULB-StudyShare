@@ -155,7 +155,161 @@ CREATE TABLE IF NOT EXISTS Possede (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+/* ------------------------------ INDEX DE PERFORMANCE ------------------------------ */
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_utilisateur_points_nom ON Utilisateur (nombrePoints DESC, nomUtilisateur ASC)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Utilisateur'
+      AND index_name = 'idx_utilisateur_points_nom'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_resume_cours_visibilite_date ON Resume (codeCours, visibilite, datePublication DESC)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Resume'
+      AND index_name = 'idx_resume_cours_visibilite_date'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_resume_utilisateur_date ON Resume (idUtilisateur, datePublication DESC)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Resume'
+      AND index_name = 'idx_resume_utilisateur_date'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_evalue_resume_note ON Evalue (idResume, note)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Evalue'
+      AND index_name = 'idx_evalue_resume_note'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_evalue_utilisateur_date ON Evalue (idUtilisateur, dateEvaluation DESC)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Evalue'
+      AND index_name = 'idx_evalue_utilisateur_date'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_transaction_user_nature_date ON TransactionPoints (idUtilisateur, natureTransaction, dateTransaction DESC)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'TransactionPoints'
+      AND index_name = 'idx_transaction_user_nature_date'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_possede_objet ON Possede (idObjet)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Possede'
+      AND index_name = 'idx_possede_objet'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_objet_prix_nom ON ObjetCosmetique (prixPoints, nomObjet)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'ObjetCosmetique'
+      AND index_name = 'idx_objet_prix_nom'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_est_donne_annee_cours ON EstDonnePendant (codeAnnee, codeCours)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'EstDonnePendant'
+      AND index_name = 'idx_est_donne_annee_cours'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'CREATE INDEX idx_cours_faculte_nom ON Cours (faculte, nomCours)',
+        'SELECT 1'
+    )
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'Cours'
+      AND index_name = 'idx_cours_faculte_nom'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 /* ------------------------------ GARDE-FOU - TRIGGERS MÉTIER ------------------------------ */
+
+/* ATTENTION : CETTE SECTION EST GÉNÉRÉE AVEC L'AIDE DE L'IA. */
 
 DROP TRIGGER IF EXISTS trg_badge_exclusif_ins;
 DROP TRIGGER IF EXISTS trg_titre_exclusif_ins;
@@ -171,7 +325,7 @@ FOR EACH ROW
 BEGIN
     IF EXISTS (SELECT 1 FROM Titre WHERE idObjet = NEW.idObjet)
        OR EXISTS (SELECT 1 FROM ThemeProfil WHERE idObjet = NEW.idObjet) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet déjà classé dans une autre catégorie.';
     END IF;
 END;
 
@@ -181,7 +335,7 @@ FOR EACH ROW
 BEGIN
     IF EXISTS (SELECT 1 FROM Badge WHERE idObjet = NEW.idObjet)
        OR EXISTS (SELECT 1 FROM ThemeProfil WHERE idObjet = NEW.idObjet) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet déjà classé dans une autre catégorie.';
     END IF;
 END;
 
@@ -191,7 +345,7 @@ FOR EACH ROW
 BEGIN
     IF EXISTS (SELECT 1 FROM Badge WHERE idObjet = NEW.idObjet)
        OR EXISTS (SELECT 1 FROM Titre WHERE idObjet = NEW.idObjet) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet deja classe dans une autre categorie.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Objet déjà classé dans une autre catégorie.';
     END IF;
 END;
 
@@ -209,11 +363,11 @@ BEGIN
      WHERE idResume = NEW.idResume;
 
     IF NEW.dateEvaluation < v_date_publication THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date evaluation < date publication.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date d''évaluation antérieure à la publication.';
     END IF;
 
     IF NEW.idUtilisateur = v_auteur THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un utilisateur ne peut pas evaluer son propre resume.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un utilisateur ne peut pas évaluer son propre résumé.';
     END IF;
 END;
 
@@ -230,7 +384,7 @@ BEGIN
      WHERE idUtilisateur = NEW.idUtilisateur;
 
     IF DATE(NEW.dateAchat) < v_date_inscription THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date achat < date inscription.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Date d''achat antérieure à l''inscription.';
     END IF;
 END;
 
@@ -244,7 +398,7 @@ BEGIN
          WHERE idUtilisateur = NEW.idUtilisateur
            AND idObjet = NEW.idBadgeActif
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Badge actif non possede par l utilisateur.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Badge actif non possédé par l''utilisateur.';
     END IF;
 
     IF NEW.idTitreActif IS NOT NULL AND NOT EXISTS (
@@ -252,7 +406,7 @@ BEGIN
          WHERE idUtilisateur = NEW.idUtilisateur
            AND idObjet = NEW.idTitreActif
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Titre actif non possede par l utilisateur.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Titre actif non possédé par l''utilisateur.';
     END IF;
 
     IF NEW.idThemeActif IS NOT NULL AND NOT EXISTS (
@@ -260,6 +414,6 @@ BEGIN
          WHERE idUtilisateur = NEW.idUtilisateur
            AND idObjet = NEW.idThemeActif
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Theme actif non possede par l utilisateur.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Thème actif non possédé par l''utilisateur.';
     END IF;
 END;

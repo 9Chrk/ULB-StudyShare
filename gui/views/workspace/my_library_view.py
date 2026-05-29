@@ -1,4 +1,4 @@
-"""Vue Bibliothèque personnelle apres connexion."""
+"""Vue Bibliothèque personnelle après connexion."""
 
 import tkinter as tk
 from tkinter import messagebox
@@ -9,7 +9,7 @@ import gui.views.common.theme as theme
 
 
 class MyLibraryView(tk.Frame):
-    """Page Bibliothèque personnelle: resumes publies et evaluations recues."""
+    """Page Bibliothèque personnelle: résumés publiés et évaluations reçues."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
@@ -60,10 +60,12 @@ class MyLibraryView(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-    # ---------- HELPERS ----------
+    # --------------------------------------------------------
+    # Méthodes de construction communes
+    # --------------------------------------------------------
 
     def _make_label(self, text, font, parent=None, fg=None, bg=None, **kwargs):
-        """Cree un tk.Label avec les valeurs par defaut de la vue."""
+        """Crée un tk.Label avec les valeurs par défaut de la vue."""
         return tk.Label(
             parent or self,
             text=text,
@@ -74,13 +76,13 @@ class MyLibraryView(tk.Frame):
         )
 
     def _make_panel_label(self, parent, text, font, fg=None, **kwargs):
-        """Cree un tk.Label sur fond blanc."""
+        """Crée un tk.Label sur fond blanc."""
         return self._make_label(
             text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs
         )
 
     def _make_panel_frame(self, parent, **kwargs):
-        """Cree un panneau blanc réutilisable."""
+        """Crée un panneau blanc réutilisable."""
         return tk.Frame(
             parent,
             bg=theme.COLORS.white,
@@ -101,6 +103,7 @@ class MyLibraryView(tk.Frame):
         ).pack(anchor="w", pady=(2, 10))
 
     def _make_empty_label(self, parent, text: str) -> None:
+        """Affiche un message d'état vide dans une section."""
         self._make_panel_label(
             parent,
             text,
@@ -111,7 +114,7 @@ class MyLibraryView(tk.Frame):
         ).pack(anchor="w", pady=(4, 0))
 
     def _make_badge(self, parent, text: str, fg=None, bg=None) -> tk.Label:
-        """Cree un petit badge discret."""
+        """Crée un petit badge discret."""
         return tk.Label(
             parent,
             text=text,
@@ -146,16 +149,18 @@ class MyLibraryView(tk.Frame):
         )
 
     def _stars_for_rating(self, rating: float) -> str:
-        """Convertit une note 0-5 en etoiles pleines/vides."""
+        """Convertit une note 0-5 en étoiles pleines/vides."""
         filled = max(0, min(5, int(round(rating))))
         return "★" * filled + "☆" * (5 - filled)
 
     def _format_rating(self, rating: float) -> str:
+        """Formate une note moyenne pour l'affichage."""
         if rating <= 0:
             return "Aucune note"
         return f"{rating:.1f}/5"
 
     def _rating_color(self, rating: float) -> str:
+        """Retourne la couleur associée à une note moyenne."""
         if rating <= 0:
             return theme.WORKSPACE_MUTED
         if rating > 3:
@@ -167,6 +172,7 @@ class MyLibraryView(tk.Frame):
     def _make_rating_row(
         self, parent, rating: float, bg: str, color=None
     ) -> tk.Frame:
+        """Construit une ligne d'étoiles et de note chiffrée."""
         row = tk.Frame(parent, bg=bg)
         star_color = color or theme.WORKSPACE_ORANGE
         text_color = color or theme.WORKSPACE_MUTED
@@ -187,6 +193,7 @@ class MyLibraryView(tk.Frame):
         return row
 
     def _average_summary_rating(self, summaries) -> float:
+        """Calcule la moyenne des notes des résumés qui ont reçu une évaluation."""
         rated = [
             summary.average_rating
             for summary in summaries
@@ -196,10 +203,12 @@ class MyLibraryView(tk.Frame):
             return 0
         return sum(rated) / len(rated)
 
-    # ---------- DATA & RENDER ----------
+    # --------------------------------------------------------
+    # Méthodes de données et rendu
+    # --------------------------------------------------------
 
     def refresh(self) -> None:
-        """Recharge les resumes et evaluations de la bibliotheque."""
+        """Recharge les résumés et évaluations de la bibliothèque."""
         data = self.app_controller.get_my_library_data()
         self._render_summary_cards(data.summaries, data.evaluations)
         self._render_content(data.summaries, data.evaluations)
@@ -241,9 +250,12 @@ class MyLibraryView(tk.Frame):
         self._build_summaries_section(summaries)
         self._build_evaluations_section(evaluations)
 
-    # ---------- SECTION BUILDERS ----------
+    # --------------------------------------------------------
+    # Méthodes de construction des sections
+    # --------------------------------------------------------
 
     def _build_summaries_section(self, summaries) -> None:
+        """Construit la section listant les résumés publiés."""
         section = self._make_panel_frame(self.scroll_frame)
         section.pack(fill="x", pady=(0, 16))
         self._make_section_header(
@@ -272,12 +284,13 @@ class MyLibraryView(tk.Frame):
             )
 
     def _build_evaluations_section(self, evaluations) -> None:
+        """Construit la section listant les évaluations reçues."""
         section = self._make_panel_frame(self.scroll_frame)
         section.pack(fill="x", pady=(0, 4))
         self._make_section_header(
             section,
             "Évaluations reçues sur mes résumés",
-            "Les derniers retours des autres étudiants, avec la note en un coup d'oeil.",
+            "Les derniers retours des autres étudiants, avec la note en un coup d'œil.",
         )
 
         if not evaluations:
@@ -299,9 +312,12 @@ class MyLibraryView(tk.Frame):
                 column=index % 2,
             )
 
-    # ---------- CARD BUILDERS ----------
+    # --------------------------------------------------------
+    # Méthodes de construction des cartes
+    # --------------------------------------------------------
 
     def _build_summary_card(self, parent, summary, row: int, column: int) -> None:
+        """Construit une carte de résumé avec ses actions."""
         card = tk.Frame(
             parent,
             bg=theme.COLORS.white,
@@ -359,18 +375,19 @@ class MyLibraryView(tk.Frame):
             actions,
             "Modifier",
             "edit",
-            lambda current=summary: self.edit_summary(current),
+            lambda current=summary: self._edit_summary(current),
         ).pack(side="left", padx=(0, 8))
         self._make_action_button(
             actions,
             "Supprimer",
             "delete",
-            lambda current=summary: self.delete_summary(current),
+            lambda current=summary: self._delete_summary(current),
         ).pack(side="left")
 
     def _build_evaluation_card(
         self, parent, evaluation, row: int, column: int
     ) -> None:
+        """Construit une carte d'évaluation reçue."""
         card = tk.Frame(
             parent,
             bg=theme.COLORS.white,
@@ -411,10 +428,12 @@ class MyLibraryView(tk.Frame):
             anchor="w"
         )
 
-    # ---------- ACTIONS ----------
+    # --------------------------------------------------------
+    # Méthodes d'actions
+    # --------------------------------------------------------
 
-    def edit_summary(self, summary) -> None:
-        """Action pour modifier le resume via une fenetre modale."""
+    def _edit_summary(self, summary) -> None:
+        """Action pour modifier le résumé via une fenêtre modale."""
         popup = tk.Toplevel(self)
         popup.title("Modifier le résumé")
         popup.geometry("520x390")
@@ -447,6 +466,7 @@ class MyLibraryView(tk.Frame):
         content_text.pack(fill="both", expand=True, padx=16)
 
         def save_changes() -> None:
+            """Valide les modifications saisies dans la fenêtre modale."""
             new_title = title_entry.get().strip()
             new_content = content_text.get("1.0", tk.END).strip()
 
@@ -466,7 +486,7 @@ class MyLibraryView(tk.Frame):
             save_changes,
         ).pack(anchor="e", padx=16, pady=16)
 
-    def delete_summary(self, summary) -> None:
+    def _delete_summary(self, summary) -> None:
         """Action déclenchée par le bouton Supprimer d'une carte."""
         confirm = messagebox.askyesno(
             "Attention",

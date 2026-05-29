@@ -1,4 +1,4 @@
-"""Import des resumes depuis la source utilisateurs XML."""
+"""Import des résumés depuis la source utilisateurs XML."""
 
 from typing import Optional
 
@@ -15,7 +15,7 @@ def import_resumes(
     year_code: str,
     stats: dict[str, int],
 ) -> dict[tuple[str, str, str], int]:
-    """Insère les resumes puis retourne un index metier pour les evaluations.
+    """Insère les résumés puis retourne un index métier pour les évaluations.
 
     Returns:
         dict[tuple[str, str, str], int]: (auteur, cours, titre) -> idResume.
@@ -42,7 +42,7 @@ def import_resumes(
             date_publication = sql_date_or_today(resume.get("datePublication"))
             description = f"Résumé importé pour {code_cours}."
 
-            # On conserve uniquement les resumes references par un cours connu.
+            # On conserve uniquement les résumés référencés par un cours connu.
             if not code_cours or not title or code_cours not in course_codes:
                 stats["skipped"] += 1
                 continue
@@ -66,11 +66,19 @@ def import_resumes(
                 resume_id = cursor.lastrowid
                 if not resume_id:
                     # Fallback défensif si le last row id n'est pas disponible.
-                    resume_id = find_resume_id(cursor, user_id, code_cours, title)
+                    resume_id = _find_resume_id(cursor, user_id, code_cours, title)
 
                 if resume_id is not None:
                     resume_map[(username, code_cours, title)] = resume_id
                     stats["resumes"] += 1
+                    cursor.execute(
+                        """
+                        INSERT INTO TransactionPoints (montantPoints, natureTransaction, motif, idUtilisateur)
+                        VALUES (%s, 'gain', %s, %s)
+                        """,
+                        (10, "Publication importée", user_id),
+                    )
+                    stats["transactions"] += 1
                 else:
                     stats["skipped"] += 1
             except mysql.connector.Error:
@@ -79,8 +87,8 @@ def import_resumes(
     return resume_map
 
 
-def find_resume_id(cursor, user_id: int, code_cours: str, title: str) -> Optional[int]:
-    """Recherche l'ID d'un resume existant via une cle metier simple."""
+def _find_resume_id(cursor, user_id: int, code_cours: str, title: str) -> Optional[int]:
+    """Recherche l'ID d'un résumé existant via une clé métier simple."""
     cursor.execute(
         """
         SELECT idResume

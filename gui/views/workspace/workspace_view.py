@@ -48,19 +48,21 @@ class WorkspaceView(tk.Frame):
 
         # -------- Boot --------
         # Initialiser les vues et la sidebar
-        self.create_views()
-        self.configure_sidebar_items()
+        self._create_views()
+        self._configure_sidebar_items()
         self.app_controller.subscribe_refresh(self.refresh)
 
         # Ajouter le bouton Exit en bas
-        self.sidebar.add_exit_button(on_exit_callback=self.on_exit)
+        self.sidebar.add_exit_button(on_exit_callback=self._on_exit)
 
         # Vue par défaut
         self.show_view("dashboard")
 
-    # ---------- NAVIGATION ENTRE VUES ----------
+    # --------------------------------------------------------
+    # Méthodes de navigation
+    # --------------------------------------------------------
 
-    def on_exit(self) -> None:
+    def _on_exit(self) -> None:
         """Quitter l'espace de travail et revenir au login."""
         self.destroy()
         self.app_controller.show_login()
@@ -104,9 +106,11 @@ class WorkspaceView(tk.Frame):
             refresh()
         self.needs_refresh[view_name] = False
 
-    # ---------- INITIALISATION DES VUES ----------
+    # --------------------------------------------------------
+    # Méthodes d'initialisation des vues
+    # --------------------------------------------------------
 
-    def create_views(self) -> None:
+    def _create_views(self) -> None:
         """Instancie toutes les vues de l'application dans la zone de contenu."""
         # -------- Imports locaux --------
         # Imports locaux pour éviter les imports circulaires
@@ -138,7 +142,7 @@ class WorkspaceView(tk.Frame):
             self.views[name] = frame
             self.needs_refresh[name] = True
 
-    def configure_sidebar_items(self) -> None:
+    def _configure_sidebar_items(self) -> None:
         """Configure les entrées de navigation de la sidebar."""
         # -------- Navigation labels --------
         items = {

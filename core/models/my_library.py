@@ -1,4 +1,4 @@
-"""Modèles de donnees lies a la bibliotheque personnelle."""
+"""Modèles de données liés à la bibliothèque personnelle."""
 
 from dataclasses import dataclass
 from datetime import date
@@ -7,7 +7,7 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class LibrarySummary:
-    """Resume publie par l'utilisateur connecte."""
+    """Résumé publié par l'utilisateur connecté."""
 
     summary_id: int
     title: str
@@ -19,7 +19,7 @@ class LibrarySummary:
 
 @dataclass(frozen=True)
 class ReceivedEvaluation:
-    """Evaluation recue sur un resume de l'utilisateur connecte."""
+    """Évaluation reçue sur un résumé de l'utilisateur connecté."""
 
     summary_title: str
     rating: int
@@ -29,7 +29,7 @@ class ReceivedEvaluation:
 
 @dataclass(frozen=True)
 class MyLibraryData:
-    """Donnees necessaires a la vue bibliotheque personnelle."""
+    """Données nécessaires à la vue bibliothèque personnelle."""
 
     user_id: Optional[int]
     summaries: list[LibrarySummary]
@@ -38,7 +38,7 @@ class MyLibraryData:
 
 @dataclass(frozen=True)
 class LibraryActionResult:
-    """Résultat d'une action sur un resume de la bibliotheque."""
+    """Résultat d'une action sur un résumé de la bibliothèque."""
 
     success: bool
     message: str

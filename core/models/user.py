@@ -1,7 +1,7 @@
 """Modèles de données liés aux utilisateurs."""
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 
@@ -27,7 +27,7 @@ class DashboardActivity:
 
 @dataclass(frozen=True)
 class DashboardData:
-    """Donnees necessaires a la vue dashboard."""
+    """Données nécessaires à la vue tableau de bord."""
 
     profile: Optional[UserInfo]
     active_title: Optional[str]
@@ -35,8 +35,19 @@ class DashboardData:
 
 
 @dataclass(frozen=True)
+class PointTransaction:
+    """Transaction de points affichée dans l'historique du profil."""
+
+    transaction_date: datetime
+    nature: str
+    reason: str
+    amount: int
+
+
+@dataclass(frozen=True)
 class ProfileData:
-    """Donnees necessaires a la vue profil."""
+    """Données nécessaires à la vue profil."""
 
     user_id: Optional[int]
     profile: Optional[UserInfo]
+    point_transactions: list[PointTransaction]

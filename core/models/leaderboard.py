@@ -1,4 +1,4 @@
-"""Modèles de donnees lies au leaderboard."""
+"""Modèles de données liés au leaderboard."""
 
 from dataclasses import dataclass
 
@@ -14,7 +14,7 @@ class LeaderboardEntry:
 
 @dataclass(frozen=True)
 class LeaderboardData:
-    """Donnees necessaires a la vue leaderboard."""
+    """Données nécessaires à la vue classement."""
 
     current_username: str
     entries: list[LeaderboardEntry]

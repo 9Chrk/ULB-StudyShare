@@ -1,8 +1,8 @@
-"""Services metier lies a l'explorateur de cours."""
+"""Services métier liés à l'explorateur de cours."""
 
 from typing import Optional
 
-from mysql.connector import IntegrityError
+from mysql.connector import Error, IntegrityError
 
 from core.db.manager import DBManager
 from core.models.explorer import ExplorerActionResult
@@ -14,7 +14,7 @@ def get_explorer_data(
     search_query: Optional[str] = None,
     selected_course_code: Optional[str] = None,
 ) -> ExplorerData:
-    """Renvoie les cours, années et resumes de la selection courante."""
+    """Renvoie les cours, années et résumés de la sélection courante."""
     query = (search_query or "").strip()
     course_code = (selected_course_code or "").strip() or None
 
@@ -53,9 +53,14 @@ def add_course(code: str, name: str, faculty: str) -> ExplorerActionResult:
             repository.insert_course(cursor, code, name, faculty)
 
     except IntegrityError:
-        return ExplorerActionResult(False, "Ce cours existe deja.")
+        return ExplorerActionResult(False, "Ce cours existe déjà.")
 
-    return ExplorerActionResult(True, "Cours ajoute avec succès.")
+    except Error:
+        return ExplorerActionResult(
+            False, "Impossible d'ajouter le cours pour le moment."
+        )
+
+    return ExplorerActionResult(True, "Cours ajouté avec succès.")
 
 
 def publish_summary(
@@ -65,9 +70,9 @@ def publish_summary(
     content: str,
     academic_year: str,
 ) -> ExplorerActionResult:
-    """Publie un resume et attribue les points associés."""
+    """Publie un résumé et attribue les points associés."""
     if not user_id:
-        return ExplorerActionResult(False, "Utilisateur non connecte.")
+        return ExplorerActionResult(False, "Utilisateur non connecté.")
 
     course_code = (course_code or "").strip()
     title = title.strip()
@@ -75,7 +80,8 @@ def publish_summary(
     academic_year = academic_year.strip()
 
     if not course_code:
-        return ExplorerActionResult(False, "Selectionnez un cours.")
+        return ExplorerActionResult(False, "Sélectionnez un cours.")
+
     if not title or not content or not academic_year:
         return ExplorerActionResult(False, "Tous les champs sont obligatoires.")
 
@@ -84,21 +90,26 @@ def publish_summary(
             repository.insert_summary(
                 cursor, course_code, user_id, title, content, academic_year
             )
-            repository.award_points(cursor, user_id, 10, "Publication resume")
+            repository.award_points(cursor, user_id, 10, "Publication de résumé")
+
     except IntegrityError:
         return ExplorerActionResult(
             False, "Publication impossible pour ce cours ou cette année."
         )
 
-    return ExplorerActionResult(True, "Resume publie. +10 points.")
+    except Error:
+        return ExplorerActionResult(False, "Publication impossible pour le moment.")
+
+    return ExplorerActionResult(True, "Résumé publié. +10 points.")
 
 
 def evaluate_summary(
     user_id: Optional[int], summary_id: int, rating: int, comment: str
 ) -> ExplorerActionResult:
-    """Ajoute une evaluation sur un resume public."""
+    """Ajoute une évaluation sur un résumé public."""
     if not user_id:
-        return ExplorerActionResult(False, "Utilisateur non connecte.")
+        return ExplorerActionResult(False, "Utilisateur non connecté.")
+
     if not 1 <= rating <= 5:
         return ExplorerActionResult(False, "La note doit être comprise entre 1 et 5.")
 
@@ -108,17 +119,21 @@ def evaluate_summary(
         with DBManager() as cursor:
             author_id = repository.get_summary_author_id(cursor, summary_id)
             if author_id is None:
-                return ExplorerActionResult(False, "Resume introuvable.")
+                return ExplorerActionResult(False, "Résumé introuvable.")
             if author_id == user_id:
                 return ExplorerActionResult(
-                    False, "Vous ne pouvez pas evaluer votre propre resume."
+                    False, "Vous ne pouvez pas évaluer votre propre résumé."
                 )
             if repository.check_already_evaluated(cursor, summary_id, user_id):
-                return ExplorerActionResult(False, "Vous avez deja évalué ce resume.")
+                return ExplorerActionResult(False, "Vous avez déjà évalué ce résumé.")
 
             repository.insert_evaluation(cursor, summary_id, user_id, rating, comment)
-            repository.award_points(cursor, user_id, 2, "Evaluation resume")
-    except IntegrityError:
-        return ExplorerActionResult(False, "Evaluation impossible pour ce resume.")
+            repository.award_points(cursor, user_id, 2, "Évaluation de résumé")
 
-    return ExplorerActionResult(True, "Evaluation enregistrée. +2 points.")
+    except IntegrityError:
+        return ExplorerActionResult(False, "Évaluation impossible pour ce résumé.")
+
+    except Error:
+        return ExplorerActionResult(False, "Évaluation impossible pour le moment.")
+
+    return ExplorerActionResult(True, "Évaluation enregistrée. +2 points.")

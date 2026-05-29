@@ -7,6 +7,7 @@ import gui.views.common.theme as theme
 
 
 def _format_float(value) -> str:
+    """Formate un nombre avec deux décimales, ou '-' si absent."""
     if value is None:
         return "-"
     return f"{float(value):.2f}"
@@ -34,7 +35,7 @@ class StatisticsView(tk.Frame):
 
         tk.Label(
             self,
-            text="Vue d'ensemble des requêtes SQL demandés par l'énoncé.",
+            text="Vue d'ensemble des requêtes SQL demandées par l'énoncé.",
             font=("Segoe UI", 12),
             bg=bg,
             fg=theme.WORKSPACE_MUTED,
@@ -57,6 +58,7 @@ class StatisticsView(tk.Frame):
         self._build_scroll_area(data)
 
     def _build_summary_cards(self, data) -> None:
+        """Construit les cartes de synthèse des statistiques globales."""
         # -------- Summary cards --------
         cards_frame = tk.Frame(self.content_frame, bg=self.bg)
         cards_frame.pack(fill="x", padx=24, pady=(16, 12))
@@ -114,6 +116,7 @@ class StatisticsView(tk.Frame):
             ).pack(anchor="w")
 
     def _build_scroll_area(self, data) -> None:
+        """Construit la zone scrollable contenant les tableaux détaillés."""
         # -------- Tables container --------
         container = tk.Frame(self.content_frame, bg=self.bg)
         container.pack(fill="both", expand=True, padx=24, pady=(0, 16))
@@ -137,6 +140,7 @@ class StatisticsView(tk.Frame):
         self._build_sections(data)
 
     def _build_sections(self, data) -> None:
+        """Déclare et construit toutes les sections statistiques."""
         # -------- Section registry --------
         # Chaque bloc relie un titre, une source de données et un renderer dédié.
         sections = [
@@ -182,6 +186,7 @@ class StatisticsView(tk.Frame):
             self._build_table_section(title, rows, headers, row_builder)
 
     def _build_table_section(self, title: str, rows, headers, row_builder) -> None:
+        """Construit une section tableau générique."""
         # -------- Table section --------
         section = tk.Frame(
             self.scroll_frame,
@@ -232,21 +237,25 @@ class StatisticsView(tk.Frame):
         scrollbar.pack(side="right", fill="y")
 
     def _rows_top_users(self, tree, rows) -> None:
+        """Insère les lignes de la statistique Top 10 utilisateurs."""
         # Les numéros de rang sont reconstruits à l'affichage.
         for index, row in enumerate(rows, start=1):
             tree.insert("", "end", values=(index, row.username, row.points, row.level))
 
     def _rows_multi_course_users(self, tree, rows) -> None:
+        """Insère les utilisateurs ayant publié dans au moins trois cours."""
         for row in rows:
             tree.insert(
                 "", "end", values=(row.username, row.course_count, row.resume_count)
             )
 
     def _rows_top_courses(self, tree, rows) -> None:
+        """Insère les cours classés par nombre de résumés."""
         for row in rows:
             tree.insert("", "end", values=(row.code, row.name, row.resume_count))
 
     def _rows_best_rated_resumes(self, tree, rows) -> None:
+        """Insère les meilleurs résumés par cours."""
         for row in rows:
             tree.insert(
                 "",
@@ -260,10 +269,12 @@ class StatisticsView(tk.Frame):
             )
 
     def _rows_users_without_resumes(self, tree, rows) -> None:
+        """Insère les utilisateurs qui n'ont jamais publié."""
         for row in rows:
             tree.insert("", "end", values=(row.username, row.email, row.points))
 
     def _rows_overspending_users(self, tree, rows) -> None:
+        """Insère les utilisateurs dont les dépenses dépassent le solde."""
         for row in rows:
             tree.insert(
                 "",
@@ -272,6 +283,7 @@ class StatisticsView(tk.Frame):
             )
 
     def _format_top_object(self, data) -> str:
+        """Retourne le libellé de l'objet cosmétique le plus acheté."""
         rows = data.most_bought_cosmetics
         if not rows:
             return "-"

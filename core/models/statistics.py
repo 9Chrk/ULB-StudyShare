@@ -1,4 +1,4 @@
-"""Modèles de donnees lies aux statistiques globales."""
+"""Modèles de données liés aux statistiques globales."""
 
 from dataclasses import dataclass
 from typing import Optional

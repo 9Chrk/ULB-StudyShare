@@ -5,7 +5,7 @@ from typing import Optional
 
 
 def clean_text(value: object) -> str:
-    """Convertit une valeur en texte nettoyé (None -> chaine vide)."""
+    """Convertit une valeur en texte nettoyé (None -> chaîne vide)."""
     return str(value or "").strip()
 
 
@@ -29,7 +29,7 @@ def to_int(value: object, default: int) -> int:
 def bounded_int(
     value: object, default: int, minimum: int, maximum: Optional[int] = None
 ) -> int:
-    """Convertit en entier dans un intervalle autorise, sinon 'default'."""
+    """Convertit en entier dans un intervalle autorisé, sinon 'default'."""
     number = to_int(value, default)
 
     if number < minimum:

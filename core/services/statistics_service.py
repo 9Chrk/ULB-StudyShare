@@ -1,4 +1,4 @@
-"""Services metier lies aux statistiques globales."""
+"""Services métier liés aux statistiques globales."""
 
 from typing import Optional
 
@@ -8,7 +8,7 @@ import core.repository.statistics_repository as repository
 
 
 def get_statistics_data(user_id: Optional[int]) -> models.StatisticsData:
-    """Renvoie toutes les statistiques demandees par le guide."""
+    """Renvoie toutes les statistiques demandées par le guide."""
     if not user_id:
         return models.StatisticsData(
             top_users=[],

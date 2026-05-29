@@ -1,4 +1,4 @@
-"""Import des cours et de leur rattachement a une année académique."""
+"""Import des cours et de leur rattachement à une année académique."""
 
 import mysql.connector
 
@@ -25,7 +25,7 @@ def import_courses(
         name = clean_text(row.get("nom"))
         faculty = clean_text(row.get("faculte"))
 
-        # On ignore les lignes incompletes avant insert SQL.
+        # On ignore les lignes incomplètes avant insert SQL.
         if not code or not name or not faculty:
             stats["skipped"] += 1
             continue
@@ -53,7 +53,7 @@ def import_course_year_links(
     year_label: str,
     stats: dict[str, int],
 ) -> None:
-    """Cree l'année académique cible puis associe tous les cours importés.
+    """Crée l'année académique cible puis associe tous les cours importés.
 
     Cette fonction se base sur les 'course_codes' retournés par
     'import_courses' pour remplir 'EstDonnePendant'.

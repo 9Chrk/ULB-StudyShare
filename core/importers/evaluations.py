@@ -1,4 +1,4 @@
-"""Import des evaluations de resumes depuis le JSON commentaires."""
+"""Import des évaluations de résumés depuis le JSON commentaires."""
 
 import mysql.connector
 
@@ -12,10 +12,10 @@ def import_evaluations(
     resume_map: dict[tuple[str, str, str], int],
     stats: dict[str, int],
 ) -> None:
-    """Insère les evaluations JSON quand auteur, destinataire et resume existent.
+    """Insère les évaluations JSON quand auteur, destinataire et résumé existent.
 
-    La resolution du resume se fait via la cle metier
-    '(destinataire, cours, titre)' construite pendant l'import des resumes.
+    La résolution du résumé se fait via la clé métier
+    '(destinataire, cours, titre)' construite pendant l'import des résumés.
     """
     for evaluation in evaluations:
         author_name = clean_text(evaluation.get("auteur"))
@@ -41,7 +41,7 @@ def import_evaluations(
             stats["skipped"] += 1
             continue
 
-        # On filtre l'auto-evaluation cote import avant le trigger SQL.
+        # On filtre l'auto-évaluation côté import avant le trigger SQL.
         if author_id == recipient_id:
             stats["skipped"] += 1
             continue
@@ -66,6 +66,14 @@ def import_evaluations(
             )
             if cursor.rowcount > 0:
                 stats["evaluations"] += 1
+                cursor.execute(
+                    """
+                    INSERT INTO TransactionPoints (montantPoints, natureTransaction, motif, idUtilisateur)
+                    VALUES (%s, 'gain', %s, %s)
+                    """,
+                    (2, "Évaluation importée", author_id),
+                )
+                stats["transactions"] += 1
 
         except mysql.connector.Error:
             stats["skipped"] += 1

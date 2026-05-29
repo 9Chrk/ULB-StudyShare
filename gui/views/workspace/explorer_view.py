@@ -1,4 +1,4 @@
-"""Vue Explorateur: recherche de cours, publication et evaluation de resumes."""
+"""Vue Explorateur: recherche de cours, publication et évaluation de résumés."""
 
 import tkinter as tk
 from tkinter import ttk
@@ -9,12 +9,12 @@ import gui.views.common.theme as theme
 
 
 class ExplorerView(tk.Frame):
-    """Page explorateur avec recherche de cours et resumes publics."""
+    """Page explorateur avec recherche de cours et résumés publics."""
 
     def __init__(
         self, root, app_controller, bg: str = theme.WORKSPACE_BACKGROUND, **kwargs
     ):
-        """Construit la vue explorateur et charge les donnees initiales."""
+        """Construit la vue explorateur et charge les données initiales."""
         super().__init__(master=root, bg=bg, **kwargs)
         self.app_controller = app_controller
         self.bg = bg
@@ -31,7 +31,7 @@ class ExplorerView(tk.Frame):
             "Explorateur", ("Segoe UI", 20, "bold"), fg=theme.WORKSPACE_TEXT
         ).grid(row=0, column=0, columnspan=2, sticky="nw", padx=24, pady=(24, 8))
         self._make_label(
-            "Recherchez un cours, publiez un resume et evaluez les contributions.",
+            "Recherchez un cours, publiez un résumé et évaluez les contributions.",
             ("Segoe UI", 12),
             fg=theme.WORKSPACE_MUTED,
         ).grid(row=1, column=0, columnspan=2, sticky="nw", padx=24)
@@ -39,10 +39,12 @@ class ExplorerView(tk.Frame):
         self._build_course_panel()
         self._build_summary_panel()
 
-    # ---------- HELPERS ----------
+    # --------------------------------------------------------
+    # Méthodes de construction communes
+    # --------------------------------------------------------
 
     def _make_label(self, text, font, parent=None, fg=None, bg=None, **kwargs):
-        """Cree un tk.Label avec les valeurs par defaut de la vue."""
+        """Crée un tk.Label avec les valeurs par défaut de la vue."""
         return tk.Label(
             parent or self,
             text=text,
@@ -53,13 +55,13 @@ class ExplorerView(tk.Frame):
         )
 
     def _make_panel_label(self, parent, text, font, fg=None, **kwargs):
-        """Cree un tk.Label sur fond blanc."""
+        """Crée un tk.Label sur fond blanc."""
         return self._make_label(
             text, font, parent=parent, fg=fg, bg=theme.COLORS.white, **kwargs
         )
 
     def _make_panel_frame(self, parent, **kwargs):
-        """Cree un panneau blanc réutilisable."""
+        """Crée un panneau blanc réutilisable."""
         return tk.Frame(
             parent,
             bg=theme.COLORS.white,
@@ -96,13 +98,17 @@ class ExplorerView(tk.Frame):
         )
 
     def _format_rating(self, rating: float, count: int) -> str:
+        """Formate une note moyenne avec son nombre d'évaluations."""
         if count <= 0:
             return "Aucune note"
         return f"{rating:.1f}/5 ({count})"
 
-    # ---------- LAYOUT ----------
+    # --------------------------------------------------------
+    # Méthodes de layout
+    # --------------------------------------------------------
 
     def _build_course_panel(self) -> None:
+        """Construit le panneau latéral de recherche et sélection de cours."""
         panel = self._make_panel_frame(self)
         panel.grid(row=2, column=0, sticky="nsew", padx=(24, 8), pady=(16, 24))
         panel.grid_rowconfigure(2, weight=1)
@@ -136,7 +142,7 @@ class ExplorerView(tk.Frame):
             actions, "Chercher", "primary", self.refresh, width=9
         ).grid(row=0, column=1, padx=(0, 8))
         self._make_action_button(
-            actions, "Ajouter", "success", self.popup_add_course, width=9
+            actions, "Ajouter", "success", self._popup_add_course, width=9
         ).grid(row=0, column=2)
 
         columns = ("code", "name", "faculty")
@@ -150,9 +156,10 @@ class ExplorerView(tk.Frame):
         self.course_tree.column("name", width=220, stretch=True)
         self.course_tree.column("faculty", width=130, stretch=True)
         self.course_tree.grid(row=1, column=0, sticky="nsew")
-        self.course_tree.bind("<<TreeviewSelect>>", self.on_course_select)
+        self.course_tree.bind("<<TreeviewSelect>>", self._on_course_select)
 
     def _build_summary_panel(self) -> None:
+        """Construit le panneau des résumés du cours sélectionné."""
         panel = self._make_panel_frame(self)
         panel.grid(row=2, column=1, sticky="nsew", padx=(8, 24), pady=(16, 24))
         panel.grid_rowconfigure(2, weight=1)
@@ -163,7 +170,7 @@ class ExplorerView(tk.Frame):
         header.grid_columnconfigure(0, weight=1)
 
         self.selected_course_label = self._make_panel_label(
-            header, "Selectionnez un cours", ("Segoe UI", 13, "bold")
+            header, "Sélectionnez un cours", ("Segoe UI", 13, "bold")
         )
         self.selected_course_label.grid(row=0, column=0, sticky="w")
 
@@ -171,7 +178,7 @@ class ExplorerView(tk.Frame):
             header,
             "Publier",
             "primary",
-            self.popup_publish,
+            self._popup_publish,
             state="disabled",
             width=9,
         )
@@ -179,7 +186,7 @@ class ExplorerView(tk.Frame):
 
         self.summary_hint = self._make_panel_label(
             panel,
-            "Les resumes publics du cours selectionne apparaitront ici.",
+            "Les résumés publics du cours sélectionné apparaîtront ici.",
             ("Segoe UI", 9),
             fg=theme.WORKSPACE_MUTED,
         )
@@ -208,13 +215,15 @@ class ExplorerView(tk.Frame):
         footer = tk.Frame(panel, bg=theme.COLORS.white)
         footer.grid(row=3, column=0, sticky="ew", pady=(10, 0))
         self._make_action_button(
-            footer, "Évaluer", "success", self.popup_evaluate, width=10
+            footer, "Évaluer", "success", self._popup_evaluate, width=10
         ).pack(side="right")
 
-    # ---------- DATA & RENDER ----------
+    # --------------------------------------------------------
+    # Méthodes de données et rendu
+    # --------------------------------------------------------
 
     def refresh(self) -> None:
-        """Recharge les cours et les resumes de la selection courante."""
+        """Recharge les cours et les résumés de la sélection courante."""
         data = self.app_controller.get_explorer_data(
             self.search_var.get(), self.current_course_code or ""
         )
@@ -250,7 +259,7 @@ class ExplorerView(tk.Frame):
             self._rendering_courses = False
 
     def _render_summaries(self, summaries) -> None:
-        """Reconstruit la liste des resumes du cours selectionne."""
+        """Reconstruit la liste des résumés du cours sélectionné."""
         for item in self.summary_tree.get_children():
             self.summary_tree.delete(item)
 
@@ -272,19 +281,22 @@ class ExplorerView(tk.Frame):
         self._update_selected_course_label()
 
     def _update_selected_course_label(self) -> None:
+        """Met à jour le libellé et l'état du bouton de publication."""
         if self.current_course_code:
             self.selected_course_label.config(
-                text=f"Resumes pour {self.current_course_code}"
+                text=f"Résumés pour {self.current_course_code}"
             )
             self.publish_button.config(state="normal")
         else:
-            self.selected_course_label.config(text="Selectionnez un cours")
+            self.selected_course_label.config(text="Sélectionnez un cours")
             self.publish_button.config(state="disabled")
 
-    # ---------- EVENTS ----------
+    # --------------------------------------------------------
+    # Méthodes d'événements
+    # --------------------------------------------------------
 
-    def on_course_select(self, _event=None) -> None:
-        """Charge les resumes quand un cours est selectionne."""
+    def _on_course_select(self, _event=None) -> None:
+        """Charge les résumés quand un cours est sélectionné."""
         if self._rendering_courses:
             return
         selection = self.course_tree.selection()
@@ -296,9 +308,12 @@ class ExplorerView(tk.Frame):
         self.current_course_code = selected_course_code
         self.refresh()
 
-    # ---------- ACTIONS ----------
+    # --------------------------------------------------------
+    # Méthodes d'actions
+    # --------------------------------------------------------
 
-    def popup_add_course(self) -> None:
+    def _popup_add_course(self) -> None:
+        """Ouvre la fenêtre modale d'ajout de cours."""
         popup = tk.Toplevel(self)
         popup.title("Nouveau cours")
         popup.geometry("360x250")
@@ -311,6 +326,7 @@ class ExplorerView(tk.Frame):
         faculty_entry = self._add_popup_entry(popup, "Faculté")
 
         def save() -> None:
+            """Valide la création du cours depuis la modale."""
             result = self.app_controller.add_explorer_course(
                 code_entry.get(), name_entry.get(), faculty_entry.get()
             )
@@ -324,13 +340,14 @@ class ExplorerView(tk.Frame):
             anchor="e", padx=16, pady=16
         )
 
-    def popup_publish(self) -> None:
+    def _popup_publish(self) -> None:
+        """Ouvre la fenêtre modale de publication d'un résumé."""
         if not self.current_course_code:
-            show_error(self, "Selectionnez un cours.")
+            show_error(self, "Sélectionnez un cours.")
             return
 
         popup = tk.Toplevel(self)
-        popup.title("Publier un resume")
+        popup.title("Publier un résumé")
         popup.geometry("520x430")
         popup.configure(bg=theme.WORKSPACE_BACKGROUND)
         popup.transient(self.winfo_toplevel())
@@ -369,6 +386,7 @@ class ExplorerView(tk.Frame):
         content_text.pack(fill="both", expand=True, padx=16)
 
         def save() -> None:
+            """Valide la publication du résumé depuis la modale."""
             result = self.app_controller.publish_summary(
                 self.current_course_code,
                 title_entry.get(),
@@ -385,13 +403,19 @@ class ExplorerView(tk.Frame):
             anchor="e", padx=16, pady=16
         )
 
-    def popup_evaluate(self) -> None:
+    def _popup_evaluate(self) -> None:
+        """Ouvre la fenêtre modale d'évaluation d'un résumé."""
         selection = self.summary_tree.selection()
         if not selection:
-            show_error(self, "Selectionnez un resume.")
+            show_error(self, "Sélectionnez un résumé.")
             return
 
-        summary_id = int(self.summary_tree.item(selection[0], "values")[0])
+        try:
+            summary_id = int(self.summary_tree.item(selection[0], "values")[0])
+        except (TypeError, ValueError, IndexError):
+            show_error(self, "Sélection de résumé invalide.")
+            return
+
         popup = tk.Toplevel(self)
         popup.title("Évaluer")
         popup.geometry("360x260")
@@ -403,6 +427,7 @@ class ExplorerView(tk.Frame):
         comment_entry = self._add_popup_entry(popup, "Commentaire")
 
         def save() -> None:
+            """Valide l'évaluation saisie dans la modale."""
             try:
                 rating = int(rating_entry.get())
             except ValueError:
@@ -423,6 +448,7 @@ class ExplorerView(tk.Frame):
         )
 
     def _add_popup_entry(self, popup, label: str) -> tk.Entry:
+        """Ajoute un champ texte libellé dans une fenêtre modale."""
         self._make_label(
             label,
             ("Segoe UI", 10, "bold"),

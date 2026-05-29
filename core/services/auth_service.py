@@ -20,15 +20,19 @@ def check(username: str, password: str) -> Tuple[bool, str, Optional[int]]:
     if not is_valid:
         return False, error, None
 
-    # 2) Récupération de l'ID utilisateur en base
-    with DBManager() as cursor:
-        user_id = get_user_id_with_credentials(cursor, username.strip(), password)
+    try:
+        # 2) Récupération de l'ID utilisateur en base
+        with DBManager() as cursor:
+            user_id = get_user_id_with_credentials(cursor, username.strip(), password)
+
+    except mysql.connector.Error:
+        return False, "Connexion à la base de données impossible.", None
 
     # 3) Aucun enregistrement trouvé : on renvoie un message d'erreur générique
     if not user_id:
-        return False, "Incorrect username or password.", None
+        return False, "Nom d'utilisateur ou mot de passe incorrect.", None
 
-    return True, "Success", user_id
+    return True, "Connexion réussie.", user_id
 
 
 def add(username: str, password: str, email: str) -> Tuple[bool, str]:
@@ -48,12 +52,12 @@ def add(username: str, password: str, email: str) -> Tuple[bool, str]:
             user_or_email_exists = username_or_email_exists(cursor, username, email)
 
             if user_or_email_exists:
-                return False, "Username or email already exists."
+                return False, "Ce nom d'utilisateur ou cet e-mail existe déjà."
 
             # 3) Insérer le nouvel utilisateur
             insert_user(cursor, username, email, password)
 
-        return True, "Account created successfully."
+        return True, "Compte créé avec succès."
 
     except mysql.connector.Error:
-        return False, "Unable to create the account at the moment."
+        return False, "Impossible de créer le compte pour le moment."

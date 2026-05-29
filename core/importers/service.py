@@ -1,9 +1,9 @@
-"""Orchestrateur d'import des donnees fichiers vers la base SQL.
+"""Orchestrateur d'import des données fichiers vers la base SQL.
 
 Ce module centralise le pipeline complet :
 1) lecture CSV/XML/JSON,
 2) reset des tables cible,
-3) insertion par domaine metier dans un ordre compatible FK/triggers.
+3) insertion par domaine métier dans un ordre compatible FK/triggers.
 """
 
 from core.db.manager import DBManager
@@ -35,8 +35,8 @@ RESET_TABLES = [
 ]
 
 
-def reset_import_tables(cursor) -> None:
-    """Vide les tables importees pour repartir d'un état propre.
+def _reset_import_tables(cursor) -> None:
+    """Vide les tables importées pour repartir d'un état propre.
 
     L'ordre est explicite via 'RESET_TABLES'. Les contraintes FK sont
     désactivées temporairement pour permettre le 'TRUNCATE' en chaine.
@@ -59,7 +59,7 @@ def import_data(
     """Importe les fichiers 'data' dans SQL et retourne les statistiques.
 
     Returns:
-        dict[str, int]: compteurs d'insertion et de lignes ignorees.
+        dict[str, int]: compteurs d'insertion et de lignes ignorées.
     """
     stats = {
         "courses": 0,
@@ -70,6 +70,7 @@ def import_data(
         "possessions": 0,
         "active_objects": 0,
         "evaluations": 0,
+        "transactions": 0,
         "skipped": 0,
     }
 
@@ -81,9 +82,9 @@ def import_data(
 
     with DBManager() as cursor:
         # On repart toujours d'une base vide pour garantir un import déterministe.
-        reset_import_tables(cursor)
+        _reset_import_tables(cursor)
 
-        # Import des references (cours + année) avant les entités dépendantes.
+        # Import des références (cours + année) avant les entités dépendantes.
         course_codes = import_courses(cursor, courses, stats)
         import_course_year_links(
             cursor, course_codes, DEFAULT_YEAR_CODE, DEFAULT_YEAR_LABEL, stats
@@ -93,7 +94,7 @@ def import_data(
         object_map = import_objects(cursor, objects, stats)
         user_map = import_users(cursor, users, stats)
 
-        # Les resumes/possessions/activations/evaluations dependent des maps precedentes.
+        # Les résumés, possessions, activations et évaluations dépendent des maps précédentes.
         resume_map = import_resumes(
             cursor, users, user_map, course_codes, DEFAULT_YEAR_CODE, stats
         )

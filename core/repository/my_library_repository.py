@@ -1,4 +1,4 @@
-"""Requêtes SQL liées à 'my library"."""
+"""Requêtes SQL liées à la bibliothèque personnelle."""
 
 from typing import List
 

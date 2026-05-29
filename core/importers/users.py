@@ -47,6 +47,15 @@ def import_users(cursor, users: list[dict], stats: dict[str, int]) -> dict[str, 
 
             user_map[username] = user_id
             stats["users"] += 1
+            if points > 0:
+                cursor.execute(
+                    """
+                    INSERT INTO TransactionPoints (montantPoints, natureTransaction, motif, idUtilisateur)
+                    VALUES (%s, 'gain', %s, %s)
+                    """,
+                    (points, "Solde initial importé", user_id),
+                )
+                stats["transactions"] += 1
         except mysql.connector.Error:
             stats["skipped"] += 1
 
@@ -57,7 +66,7 @@ def import_possessions(
     cursor,
     users: list[dict],
     user_map: dict[str, int],
-    object_map: dict[str, tuple[int, str]],
+    object_map: dict[str, tuple[int, str, int]],
     stats: dict[str, int],
 ) -> None:
     """Insère les possessions d'objets cosmétiques dans 'Possede'."""
@@ -83,7 +92,7 @@ def import_possessions(
                 stats["skipped"] += 1
                 continue
 
-            object_id, _ = object_entry
+            object_id, _, price_points = object_entry
 
             try:
                 cursor.execute(
@@ -92,6 +101,14 @@ def import_possessions(
                 )
                 if cursor.rowcount > 0:
                     stats["possessions"] += 1
+                    cursor.execute(
+                        """
+                        INSERT INTO TransactionPoints (montantPoints, natureTransaction, motif, idUtilisateur)
+                        VALUES (%s, 'depense', %s, %s)
+                        """,
+                        (price_points, f"Achat importé : {name}", user_id),
+                    )
+                    stats["transactions"] += 1
             except mysql.connector.Error:
                 stats["skipped"] += 1
 
@@ -100,13 +117,13 @@ def apply_active_objects(
     cursor,
     users: list[dict],
     user_map: dict[str, int],
-    object_map: dict[str, tuple[int, str]],
+    object_map: dict[str, tuple[int, str, int]],
     stats: dict[str, int],
 ) -> None:
-    """Applique les objets actifs utilisateur (badge, titre, theme).
+    """Applique les objets actifs utilisateur (badge, titre, thème).
 
-    La possession est verifiee avant update pour rester coherente avec les
-    regles metier enforcees par trigger SQL.
+    La possession est vérifiée avant update pour rester cohérente avec les
+    règles métier appliquées par trigger SQL.
     """
     active_specs = (
         ("badgeActif", "idBadgeActif", "badge"),
@@ -131,7 +148,7 @@ def apply_active_objects(
                 stats["skipped"] += 1
                 continue
 
-            object_id, object_type = object_entry
+            object_id, object_type, _ = object_entry
             if object_type != expected_type:
                 stats["skipped"] += 1
                 continue

@@ -1,6 +1,8 @@
 """Point d'entrée principal: GUI toujours, import optionnel avec --init."""
 
 import sys
+from typing import List, Optional
+
 import mysql.connector
 
 from core.db.init import execute_sql_script
@@ -8,7 +10,7 @@ from core.importers.service import import_data
 from gui.app import run
 
 
-def print_import_stats(stats: dict[str, int]) -> None:
+def _print_import_stats(stats: dict[str, int]) -> None:
     """Affiche les compteurs issus de l'import en mode console."""
     print("Import terminé.\n")
     print("-------- Statistiques --------")
@@ -22,6 +24,7 @@ def print_import_stats(stats: dict[str, int]) -> None:
         ("Objets possédés", stats["possessions"]),
         ("Objets actifs appliqués", stats["active_objects"]),
         ("Évaluations", stats["evaluations"]),
+        ("Transactions de points", stats["transactions"]),
         ("Lignes ignorées", stats["skipped"]),
     ]
 
@@ -32,13 +35,13 @@ def print_import_stats(stats: dict[str, int]) -> None:
     print("------------------------------\n")
 
 
-def run_import_mode() -> None:
+def _run_import_mode() -> None:
     """Lance l'import des données puis affiche le résumé des statistiques."""
     stats = import_data()
-    print_import_stats(stats)
+    _print_import_stats(stats)
 
 
-def main(argv: list[str] | None = None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     """Point d'entrée CLI: initialise la base, importe si demandé, puis lance la GUI."""
     args = argv if argv is not None else sys.argv
     options = [arg.strip().lower() for arg in args[1:]]
@@ -54,7 +57,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if init_requested:
         try:
-            run_import_mode()
+            _run_import_mode()
         except mysql.connector.Error as error:
             print("Erreur MySQL pendant l'import:", error)
 
