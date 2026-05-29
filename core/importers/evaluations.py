@@ -71,7 +71,7 @@ def import_evaluations(
                     INSERT INTO TransactionPoints (montantPoints, natureTransaction, motif, idUtilisateur)
                     VALUES (%s, 'gain', %s, %s)
                     """,
-                    (2, "Évaluation importée", author_id),
+                    (2, "Évaluation reçue importée", recipient_id),
                 )
                 stats["transactions"] += 1
 

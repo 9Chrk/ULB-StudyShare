@@ -128,7 +128,7 @@ def evaluate_summary(
                 return ExplorerActionResult(False, "Vous avez déjà évalué ce résumé.")
 
             repository.insert_evaluation(cursor, summary_id, user_id, rating, comment)
-            repository.award_points(cursor, user_id, 2, "Évaluation de résumé")
+            repository.award_points(cursor, author_id, 2, "Évaluation reçue")
 
     except IntegrityError:
         return ExplorerActionResult(False, "Évaluation impossible pour ce résumé.")
@@ -136,4 +136,6 @@ def evaluate_summary(
     except Error:
         return ExplorerActionResult(False, "Évaluation impossible pour le moment.")
 
-    return ExplorerActionResult(True, "Évaluation enregistrée. +2 points.")
+    return ExplorerActionResult(
+        True, "Évaluation enregistrée. L'auteur reçoit +2 points."
+    )
