@@ -129,7 +129,7 @@ class DashboardView(tk.Frame):
                     text={
                         "Published": "Publié",
                         "Evaluated": "Évalué",
-                        "Transaction": "Transaction",
+                        "Transaction": "Dépense",
                     }.get(item.activity_type, item.activity_type),
                     font=("Segoe UI", 10, "bold"),
                     bg=theme.COLORS.white,

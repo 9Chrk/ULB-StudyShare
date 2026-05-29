@@ -71,22 +71,55 @@ def get_recent_activity(cursor, user_id: int) -> List[Tuple]:
     """Retourne les activités récentes d'un utilisateur, triées de la plus récente à la plus ancienne."""
     cursor.execute(
         """
-        SELECT 'Published' AS type, r.titre AS title, r.datePublication AS date
-        FROM Resume r
-        WHERE r.idUtilisateur = %s
-        UNION ALL
-        SELECT 'Evaluated' AS type, r.titre AS title, e.dateEvaluation AS date
-        FROM Evalue e
-        JOIN Resume r ON e.idResume = r.idResume
-        WHERE e.idUtilisateur = %s
-        UNION ALL
-        SELECT 'Transaction' AS type, tp.motif AS title, tp.dateTransaction AS date
-        FROM TransactionPoints tp
-        WHERE tp.idUtilisateur = %s
-        ORDER BY date DESC
+        WITH published_resumes AS (
+            SELECT
+                r.idUtilisateur,
+                r.titre,
+                r.datePublication,
+                ROW_NUMBER() OVER (
+                    PARTITION BY r.idUtilisateur
+                    ORDER BY r.idResume
+                ) AS publication_rank
+            FROM Resume r
+            WHERE r.idUtilisateur = %s
+        ),
+        publication_transactions AS (
+            SELECT
+                tp.idUtilisateur,
+                tp.dateTransaction,
+                ROW_NUMBER() OVER (
+                    PARTITION BY tp.idUtilisateur
+                    ORDER BY tp.idTransaction
+                ) AS publication_rank
+            FROM TransactionPoints tp
+            WHERE tp.idUtilisateur = %s
+              AND tp.natureTransaction = 'gain'
+              AND tp.motif LIKE 'Publication%%'
+        )
+        SELECT type, title, activity_date
+        FROM (
+            SELECT
+                'Published' AS type,
+                pr.titre AS title,
+                COALESCE(pt.dateTransaction, pr.datePublication) AS activity_date
+            FROM published_resumes pr
+            LEFT JOIN publication_transactions pt
+                   ON pt.idUtilisateur = pr.idUtilisateur
+                  AND pt.publication_rank = pr.publication_rank
+            UNION ALL
+            SELECT 'Evaluated' AS type, r.titre AS title, e.dateEvaluation AS activity_date
+            FROM Evalue e
+            JOIN Resume r ON e.idResume = r.idResume
+            WHERE e.idUtilisateur = %s
+            UNION ALL
+            SELECT 'Transaction' AS type, tp.motif AS title, tp.dateTransaction AS activity_date
+            FROM TransactionPoints tp
+            WHERE tp.idUtilisateur = %s AND tp.natureTransaction = 'depense'
+        ) recent_activity
+        ORDER BY activity_date DESC
         LIMIT 8
         """,
-        (user_id, user_id, user_id),
+        (user_id, user_id, user_id, user_id),
     )
     return cursor.fetchall()
 
