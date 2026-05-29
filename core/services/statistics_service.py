@@ -35,7 +35,9 @@ def get_statistics_data(user_id: Optional[int]) -> models.StatisticsData:
         ]
 
         top_courses = [
-            models.TopCourseStat(code=row[0], name=row[1], resume_count=row[2])
+            models.TopCourseStat(
+                code=row[0], name=row[1], credits=row[2], resume_count=row[3]
+            )
             for row in repository.get_courses_with_most_resumes(cursor)
         ]
 
@@ -43,8 +45,9 @@ def get_statistics_data(user_id: Optional[int]) -> models.StatisticsData:
             models.BestRatedResumeStat(
                 course_code=row[0],
                 course_name=row[1],
-                resume_title=row[2],
-                average_rating=float(row[3]),
+                course_credits=row[2],
+                resume_title=row[3],
+                average_rating=float(row[4]),
             )
             for row in repository.get_best_rated_resumes_by_course(cursor)
         ]

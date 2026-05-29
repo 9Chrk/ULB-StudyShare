@@ -8,9 +8,11 @@ from core.models.explorer import ExplorerSummary
 
 def get_all_courses(cursor) -> List[CourseInfo]:
     """Renvoie tous les cours triés par nom."""
-    cursor.execute("SELECT codeCours, nomCours, faculte FROM Cours ORDER BY nomCours")
+    cursor.execute(
+        "SELECT codeCours, nomCours, faculte, credits FROM Cours ORDER BY nomCours"
+    )
     return [
-        CourseInfo(code=row[0], name=row[1], faculty=row[2])
+        CourseInfo(code=row[0], name=row[1], faculty=row[2], credits=row[3])
         for row in cursor.fetchall()
     ]
 
@@ -20,7 +22,7 @@ def search_courses(cursor, query: str) -> List[CourseInfo]:
     like_query = f"%{query}%"
     cursor.execute(
         """
-        SELECT codeCours, nomCours, faculte
+        SELECT codeCours, nomCours, faculte, credits
         FROM Cours
         WHERE codeCours LIKE %s OR nomCours LIKE %s OR faculte LIKE %s
         ORDER BY nomCours
@@ -28,19 +30,21 @@ def search_courses(cursor, query: str) -> List[CourseInfo]:
         (like_query, like_query, like_query),
     )
     return [
-        CourseInfo(code=row[0], name=row[1], faculty=row[2])
+        CourseInfo(code=row[0], name=row[1], faculty=row[2], credits=row[3])
         for row in cursor.fetchall()
     ]
 
 
-def insert_course(cursor, code: str, name: str, faculty: str) -> bool:
+def insert_course(
+    cursor, code: str, name: str, faculty: str, credits: int
+) -> bool:
     """Insère un nouveau cours et signale si l'insertion a eu lieu."""
     cursor.execute(
         """
-        INSERT INTO Cours (codeCours, nomCours, faculte)
-        VALUES (%s, %s, %s)
+        INSERT INTO Cours (codeCours, nomCours, faculte, credits)
+        VALUES (%s, %s, %s, %s)
         """,
-        (code, name, faculty),
+        (code, name, faculty, credits),
     )
     return cursor.rowcount > 0
 

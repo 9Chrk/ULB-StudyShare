@@ -39,10 +39,10 @@ def get_courses_with_most_resumes(cursor) -> List[Tuple]:
     # LEFT JOIN pour rester défensif si aucun résumé n'a encore été publié.
     cursor.execute(
         """
-        SELECT c.codeCours, c.nomCours, COUNT(r.idResume) AS nb_resumes
+        SELECT c.codeCours, c.nomCours, c.credits, COUNT(r.idResume) AS nb_resumes
         FROM Cours c
         LEFT JOIN Resume r ON r.codeCours = c.codeCours
-        GROUP BY c.codeCours, c.nomCours
+        GROUP BY c.codeCours, c.nomCours, c.credits
         ORDER BY nb_resumes DESC, c.nomCours ASC
         LIMIT 1
         """,
@@ -56,18 +56,19 @@ def get_best_rated_resumes_by_course(cursor) -> List[Tuple]:
     # Deuxième sous-requête: meilleur score obtenu dans chaque cours.
     cursor.execute(
         """
-        SELECT rr.codeCours, rr.nomCours, rr.titre, rr.avg_note
+        SELECT rr.codeCours, rr.nomCours, rr.credits, rr.titre, rr.avg_note
         FROM (
             SELECT
                 c.codeCours,
                 c.nomCours,
+                c.credits,
                 r.idResume,
                 r.titre,
                 AVG(e.note) AS avg_note
             FROM Resume r
             JOIN Cours c ON c.codeCours = r.codeCours
             JOIN Evalue e ON e.idResume = r.idResume
-            GROUP BY c.codeCours, c.nomCours, r.idResume, r.titre
+            GROUP BY c.codeCours, c.nomCours, c.credits, r.idResume, r.titre
         ) AS rr
         JOIN (
             SELECT codeCours, MAX(avg_note) AS best_avg

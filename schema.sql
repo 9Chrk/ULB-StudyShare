@@ -69,7 +69,9 @@ CREATE TABLE IF NOT EXISTS Cours (
     codeCours       VARCHAR(20) PRIMARY KEY,
     nomCours        VARCHAR(150) NOT NULL,
     faculte         VARCHAR(150) NOT NULL,
-    CONSTRAINT uq_cours_nom UNIQUE (nomCours)
+    credits         TINYINT UNSIGNED NOT NULL DEFAULT 5,
+    CONSTRAINT uq_cours_nom UNIQUE (nomCours),
+    CONSTRAINT ck_cours_credits CHECK (credits >= 1)
 );
 
 CREATE TABLE IF NOT EXISTS AnneeAcademique (

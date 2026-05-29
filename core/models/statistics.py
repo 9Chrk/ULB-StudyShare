@@ -28,6 +28,7 @@ class TopCourseStat:
 
     code: str
     name: str
+    credits: int
     resume_count: int
 
 
@@ -37,6 +38,7 @@ class BestRatedResumeStat:
 
     course_code: str
     course_name: str
+    course_credits: int
     resume_title: str
     average_rating: float
 

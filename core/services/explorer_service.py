@@ -39,18 +39,33 @@ def get_explorer_data(
     )
 
 
-def add_course(code: str, name: str, faculty: str) -> ExplorerActionResult:
+def add_course(
+    code: str, name: str, faculty: str, credits: str
+) -> ExplorerActionResult:
     """Ajoute un cours dans le catalogue."""
     code = code.strip().upper()
     name = name.strip()
     faculty = faculty.strip()
+    credits = credits.strip()
 
-    if not code or not name or not faculty:
-        return ExplorerActionResult(False, "Code, nom et faculté obligatoires.")
+    if not code or not name or not faculty or not credits:
+        return ExplorerActionResult(
+            False, "Code, nom, faculté et crédits obligatoires."
+        )
+
+    try:
+        credits_value = int(credits)
+    except ValueError:
+        return ExplorerActionResult(False, "Le nombre de crédits doit être entier.")
+
+    if credits_value < 1:
+        return ExplorerActionResult(
+            False, "Le nombre de crédits doit être supérieur ou égal à 1."
+        )
 
     try:
         with DBManager() as cursor:
-            repository.insert_course(cursor, code, name, faculty)
+            repository.insert_course(cursor, code, name, faculty, credits_value)
 
     except IntegrityError:
         return ExplorerActionResult(False, "Ce cours existe déjà.")

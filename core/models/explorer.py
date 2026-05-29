@@ -12,6 +12,7 @@ class CourseInfo:
     code: str
     name: str
     faculty: str
+    credits: int
 
 
 @dataclass(frozen=True)

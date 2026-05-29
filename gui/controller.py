@@ -123,10 +123,10 @@ class AppController:
     # --------------------------------------------------------
 
     def add_explorer_course(
-        self, code: str, name: str, faculty: str
+        self, code: str, name: str, faculty: str, credits: str
     ) -> ExplorerActionResult:
         """Tente d'ajouter un cours depuis l'explorateur."""
-        result = explorer_service.add_course(code, name, faculty)
+        result = explorer_service.add_course(code, name, faculty, credits)
         if result.success:
             self.refresh()
         return result

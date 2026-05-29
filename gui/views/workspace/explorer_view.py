@@ -23,8 +23,8 @@ class ExplorerView(tk.Frame):
         self._rendering_courses = False
 
         self.grid_rowconfigure(2, weight=1)
-        self.grid_columnconfigure(0, weight=2)
-        self.grid_columnconfigure(1, weight=15)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=25)
 
         # -------- Header --------
         self._make_label(
@@ -145,16 +145,18 @@ class ExplorerView(tk.Frame):
             actions, "Ajouter", "success", self._popup_add_course, width=9
         ).grid(row=0, column=2)
 
-        columns = ("code", "name", "faculty")
+        columns = ("code", "name", "faculty", "credits")
         self.course_tree = ttk.Treeview(
             search_frame, columns=columns, show="headings", selectmode="browse"
         )
         self.course_tree.heading("code", text="Code")
         self.course_tree.heading("name", text="Cours")
         self.course_tree.heading("faculty", text="Faculté")
+        self.course_tree.heading("credits", text="Crédits")
         self.course_tree.column("code", width=100, stretch=False)
         self.course_tree.column("name", width=220, stretch=True)
         self.course_tree.column("faculty", width=130, stretch=True)
+        self.course_tree.column("credits", width=70, stretch=False, anchor="center")
         self.course_tree.grid(row=1, column=0, sticky="nsew")
         self.course_tree.bind("<<TreeviewSelect>>", self._on_course_select)
 
@@ -246,7 +248,7 @@ class ExplorerView(tk.Frame):
                     "",
                     "end",
                     iid=course.code,
-                    values=(course.code, course.name, course.faculty),
+                    values=(course.code, course.name, course.faculty, course.credits),
                 )
 
             if selected_code in course_codes:
@@ -316,7 +318,7 @@ class ExplorerView(tk.Frame):
         """Ouvre la fenêtre modale d'ajout de cours."""
         popup = tk.Toplevel(self)
         popup.title("Nouveau cours")
-        popup.geometry("360x250")
+        popup.geometry("360x310")
         popup.configure(bg=theme.WORKSPACE_BACKGROUND)
         popup.transient(self.winfo_toplevel())
         popup.grab_set()
@@ -324,11 +326,15 @@ class ExplorerView(tk.Frame):
         code_entry = self._add_popup_entry(popup, "Code")
         name_entry = self._add_popup_entry(popup, "Nom")
         faculty_entry = self._add_popup_entry(popup, "Faculté")
+        credits_entry = self._add_popup_entry(popup, "Crédits")
 
         def save() -> None:
             """Valide la création du cours depuis la modale."""
             result = self.app_controller.add_explorer_course(
-                code_entry.get(), name_entry.get(), faculty_entry.get()
+                code_entry.get(),
+                name_entry.get(),
+                faculty_entry.get(),
+                credits_entry.get(),
             )
             if result.success:
                 popup.destroy()

@@ -159,13 +159,13 @@ class StatisticsView(tk.Frame):
             (
                 "Cours avec le plus de résumés",
                 data.top_courses,
-                ("Code", "Cours", "Résumés"),
+                ("Code", "Cours", "Crédits", "Résumés"),
                 self._rows_top_courses,
             ),
             (
                 "Meilleurs résumés par cours",
                 data.best_rated_resumes,
-                ("Code", "Cours", "Résumé", "Note moyenne"),
+                ("Code", "Cours", "Crédits", "Résumé", "Note moyenne"),
                 self._rows_best_rated_resumes,
             ),
             (
@@ -252,7 +252,9 @@ class StatisticsView(tk.Frame):
     def _rows_top_courses(self, tree, rows) -> None:
         """Insère les cours classés par nombre de résumés."""
         for row in rows:
-            tree.insert("", "end", values=(row.code, row.name, row.resume_count))
+            tree.insert(
+                "", "end", values=(row.code, row.name, row.credits, row.resume_count)
+            )
 
     def _rows_best_rated_resumes(self, tree, rows) -> None:
         """Insère les meilleurs résumés par cours."""
@@ -263,6 +265,7 @@ class StatisticsView(tk.Frame):
                 values=(
                     row.course_code,
                     row.course_name,
+                    row.course_credits,
                     row.resume_title,
                     _format_float(row.average_rating),
                 ),

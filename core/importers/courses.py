@@ -2,6 +2,7 @@
 
 import mysql.connector
 
+from core.importers.utils import bounded_int
 from core.importers.utils import clean_text
 
 
@@ -24,6 +25,7 @@ def import_courses(
         code = clean_text(row.get("code_cours"))
         name = clean_text(row.get("nom"))
         faculty = clean_text(row.get("faculte"))
+        credits = bounded_int(row.get("credits"), default=5, minimum=1)
 
         # On ignore les lignes incomplètes avant insert SQL.
         if not code or not name or not faculty:
@@ -33,10 +35,10 @@ def import_courses(
         try:
             cursor.execute(
                 """
-                INSERT INTO Cours (codeCours, nomCours, faculte)
-                VALUES (%s, %s, %s)
+                INSERT INTO Cours (codeCours, nomCours, faculte, credits)
+                VALUES (%s, %s, %s, %s)
                 """,
-                (code, name, faculty),
+                (code, name, faculty, credits),
             )
             course_codes.add(code)
             stats["courses"] += 1
