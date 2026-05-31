@@ -32,6 +32,7 @@ Le projet est construit en **Python** avec une interface **Tkinter** et une base
 - [Installation et lancement](#installation-et-lancement)
 - [Jeu de données](#jeu-de-donnees)
 - [Architecture](#architecture)
+- [Documents remis — Phase 2](#documents-remis-phase-2)
 - [Flux général](#flux-general)
 - [Problèmes fréquents](#problemes-frequents)
 
@@ -221,6 +222,18 @@ ULB-StudyShare/
 ├── requirements.txt               # Dépendances Python
 └── schema.sql                     # Schéma MySQL, contraintes et déclencheurs
 ```
+
+---
+
+<a id="documents-remis-phase-2"></a>
+
+## 📄 Documents remis — Phase 2
+
+Les documents de remise de la phase 2 sont disponibles dans `docs/remise/phase-2/` :
+
+- [Entité-Association et Modèle relationnel — actualisé](docs/remise/phase-2/Entité-Association_et_Modèle-relationnel_ACTUALISÉ.pdf)
+- [Requêtes](docs/remise/phase-2/Requêtes.pdf)
+- [Slides](docs/remise/phase-2/Slides.pdf)
 
 ---
 
