@@ -15,6 +15,8 @@ L’application propose une bibliothèque personnelle, un classement, des points
 
 ## 📸 Captures d’écran
 
+![Tableau de bord](assets/screenshots/dashboard.png)
+
 | Connexion                                  | Tableau de bord                                      | Explorateur                                     |
 |--------------------------------------------|------------------------------------------------------|-------------------------------------------------|
 | ![Connexion](assets/screenshots/login.png) | ![Tableau de bord](assets/screenshots/dashboard.png) | ![Explorateur](assets/screenshots/explorer.png) |
