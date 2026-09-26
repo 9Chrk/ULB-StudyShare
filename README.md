@@ -1,18 +1,21 @@
 # ULB StudyShare
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![UI](https://img.shields.io/badge/UI-Tkinter-green)
-![Database](https://img.shields.io/badge/Database-MySQL-orange)
-![Project](https://img.shields.io/badge/ULB-INFO--H303-lightgrey)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square)
+![UI](https://img.shields.io/badge/UI-Tkinter-green?style=flat-square)
+![Database](https://img.shields.io/badge/Database-MySQL-orange?style=flat-square)
 
-ULB StudyShare est une application de partage de résumés de cours entre étudiants.  
-Elle permet de consulter un catalogue de cours, publier des résumés, évaluer les contributions des autres utilisateurs, suivre ses points, acheter des objets cosmétiques et consulter des statistiques issues de la base de données.
+ULB StudyShare est une application de **partage de résumés de cours entre étudiants**, développée en **Python avec Tkinter et MySQL**. Consultez le catalogue de cours, publiez vos résumés et évaluez les contributions des autres étudiants.
 
-Le projet est construit en **Python** avec une interface **Tkinter** et une base de données **MySQL**. Les données initiales sont importées depuis des fichiers CSV, XML et JSON.
+L’application propose une bibliothèque personnelle, un classement, des points et une boutique d’objets cosmétiques. Une vue de statistiques complète l’exploration des données, importées depuis des fichiers CSV, XML et JSON.
+
+> Projet académique ULB — INFO-H303.
+> Bases de données
 
 ---
 
-## 📸 Captures d'écran
+<a id="captures-decran"></a>
+
+## 📸 Captures d’écran
 
 | Connexion                                  | Tableau de bord                                      | Explorateur                                     |
 |--------------------------------------------|------------------------------------------------------|-------------------------------------------------|
@@ -32,9 +35,9 @@ Le projet est construit en **Python** avec une interface **Tkinter** et une base
 - [Installation et lancement](#installation-et-lancement)
 - [Jeu de données](#jeu-de-donnees)
 - [Architecture](#architecture)
-- [Documents remis — Phase 2](#documents-remis-phase-2)
 - [Flux général](#flux-general)
 - [Problèmes fréquents](#problemes-frequents)
+- [Documents remis — Phase 2](#documents-remis-phase-2)
 
 ---
 
@@ -183,7 +186,7 @@ Le projet suit une organisation en couches :
 ULB-StudyShare/
 ├── assets/
 │   ├── images/                    # Logo ULB et icônes de navigation
-│   └── screenshots/               # Captures d'écran à ajouter au README
+│   └── screenshots/               # Captures présentées dans ce README
 │
 ├── core/
 │   ├── auth/                      # Validation des champs connexion/inscription
@@ -222,18 +225,6 @@ ULB-StudyShare/
 ├── requirements.txt               # Dépendances Python
 └── schema.sql                     # Schéma MySQL, contraintes et déclencheurs
 ```
-
----
-
-<a id="documents-remis-phase-2"></a>
-
-## 📄 Documents remis — Phase 2
-
-Les documents de remise de la phase 2 sont disponibles dans `docs/remise/phase-2/` :
-
-- [Entité-Association et Modèle relationnel — actualisé](docs/remise/phase-2/Entité-Association_et_Modèle-relationnel_ACTUALISÉ.pdf)
-- [Requêtes](docs/remise/phase-2/Requêtes.pdf)
-- [Slides](docs/remise/phase-2/Slides.pdf)
 
 ---
 
@@ -277,4 +268,12 @@ python3 main.py --init
 
 ---
 
-Projet académique ULB - INFO-H303 Bases de données.
+<a id="documents-remis-phase-2"></a>
+
+## 📄 Documents remis — Phase 2
+
+Les documents de remise de la phase 2 sont disponibles dans `docs/remise/phase-2/` :
+
+- [Entité-Association et Modèle relationnel — actualisé](docs/remise/phase-2/Entité-Association_et_Modèle-relationnel_ACTUALISÉ.pdf)
+- [Requêtes](docs/remise/phase-2/Requêtes.pdf)
+- [Slides](docs/remise/phase-2/Slides.pdf)
