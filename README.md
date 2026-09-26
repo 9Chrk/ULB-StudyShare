@@ -8,8 +8,8 @@ ULB StudyShare est une application de **partage de résumés de cours entre étu
 
 L’application propose une bibliothèque personnelle, un classement, des points et une boutique d’objets cosmétiques. Une vue de statistiques complète l’exploration des données, importées depuis des fichiers CSV, XML et JSON.
 
-> Projet académique ULB — INFO-H303.
-> Bases de données
+> Projet académique ULB — INFO-H303
+> Bases de données · 2025-2026
 
 <a id="captures-decran"></a>
 
@@ -38,6 +38,7 @@ L’application propose une bibliothèque personnelle, un classement, des points
 - [Flux général](#flux-general)
 - [Problèmes fréquents](#problemes-frequents)
 - [Documents remis — Phase 2](#documents-remis-phase-2)
+- [Licence](#licence)
 
 <a id="fonctionnalites"></a>
 
@@ -259,3 +260,9 @@ Les documents de remise de la phase 2 sont disponibles dans `docs/remise/phase-2
 - [Entité-Association et Modèle relationnel — actualisé](docs/remise/phase-2/Entité-Association_et_Modèle-relationnel_ACTUALISÉ.pdf)
 - [Requêtes](docs/remise/phase-2/Requêtes.pdf)
 - [Slides](docs/remise/phase-2/Slides.pdf)
+
+<a id="licence"></a>
+
+## 📜 Licence
+
+Ce projet est distribué sous licence [MIT](LICENSE).
