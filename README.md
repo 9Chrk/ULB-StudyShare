@@ -11,8 +11,6 @@ L’application propose une bibliothèque personnelle, un classement, des points
 > Projet académique ULB — INFO-H303.
 > Bases de données
 
----
-
 <a id="captures-decran"></a>
 
 ## 📸 Captures d’écran
@@ -39,8 +37,6 @@ L’application propose une bibliothèque personnelle, un classement, des points
 - [Problèmes fréquents](#problemes-frequents)
 - [Documents remis — Phase 2](#documents-remis-phase-2)
 
----
-
 <a id="fonctionnalites"></a>
 
 ## ✨ Fonctionnalités
@@ -55,8 +51,6 @@ L’application propose une bibliothèque personnelle, un classement, des points
 - **Classement** : affichage des meilleurs contributeurs selon leurs points.
 - **Statistiques** : vue dédiée aux requêtes SQL demandées par l'énoncé du projet.
 - **Import automatique** : chargement des cours, utilisateurs, résumés, objets et évaluations depuis les fichiers de `data/`.
-
----
 
 <a id="prerequis"></a>
 
@@ -74,8 +68,6 @@ Dépendances Python utilisées :
 - `python-dotenv` : chargement du fichier `.env`
 - `mysql-connector-python` : connexion à MySQL
 - `Pillow` : chargement et traitement des images/icônes dans l'interface
-
----
 
 <a id="configuration-mysql"></a>
 
@@ -100,8 +92,6 @@ DB_NAME=ULBStudyShareDB
 3. Vérifier que le serveur MySQL est démarré et que l'utilisateur configuré peut créer une base de données.
 
 Le script `schema.sql` crée la base `ULBStudyShareDB` si elle n'existe pas, puis crée les tables, contraintes et déclencheurs nécessaires.
-
----
 
 <a id="installation-et-lancement"></a>
 
@@ -151,8 +141,6 @@ python3 main.py --init
 python3 main.py
 ```
 
----
-
 <a id="jeu-de-donnees"></a>
 
 ## 🗃️ Jeu de données
@@ -165,8 +153,6 @@ Les fichiers de données sont stockés dans `data/` et sont importés par `core/
 | `data/recompenses.xml` | XML | Objets cosmétiques de la boutique : badges, titres, thèmes | 45 objets |
 | `data/utilisateurs` | XML | Utilisateurs, résumés, achats, objets actifs | 50 utilisateurs, 90 résumés |
 | `data/commentaires.json` | JSON | Évaluations et commentaires sur les résumés | 94 évaluations |
-
----
 
 <a id="architecture"></a>
 
@@ -226,8 +212,6 @@ ULB-StudyShare/
 └── schema.sql                     # Schéma MySQL, contraintes et déclencheurs
 ```
 
----
-
 <a id="flux-general"></a>
 
 ## 🧬 Flux général
@@ -242,8 +226,6 @@ main.py
               ├── WorkspaceController
               └── services -> repositories -> DBManager -> MySQL
 ```
-
----
 
 <a id="problemes-frequents"></a>
 
@@ -265,8 +247,6 @@ Relancer l'import :
 ```bash
 python3 main.py --init
 ```
-
----
 
 <a id="documents-remis-phase-2"></a>
 
